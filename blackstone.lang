@@ -17,6 +17,5 @@
 # - EntityAction
 # - GameAction
 # - SelectObject
-# - Else
 # Every other codeblock will be handled either by the compiler or third-party libraries.
 PlayerAction.SendMessage = PlayerAction SendMessage Text(s)
