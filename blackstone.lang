@@ -12,4 +12,11 @@
 #
 # Do note this syntax is not finalized.
 # I wouldn't recommend adding to this until it's finalized.
+# This frontend is for the following code blocks:
+# - PlayerAction
+# - EntityAction
+# - GameAction
+# - SelectObject
+# - Else
+# Every other codeblock will be handled either by the compiler or third-party libraries.
 PlayerAction.SendMessage = PlayerAction SendMessage Text(s)
