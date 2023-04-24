@@ -1,0 +1,15 @@
+# This file represents a frontend for the Blackstone language.
+# It defines how certain DiamondFire code blocks are called.
+#
+# Syntax requirements:
+# <calling> = <block> <command> <arguments seen in item lore>
+#
+# So, this means that in: `PlayerAction.SendMessage = PlayerAction SendMessage Text(s)`
+# PlayerAction.SendMessage is how you call the block from the language
+# PlayerAction is the block you call.
+# SendMessage is the action on the block.
+# Text(s) is the argument. You can add another space after for another argument.
+#
+# Do note this syntax is not finalized.
+# I wouldn't recommend adding to this until it's finalized.
+PlayerAction.SendMessage = PlayerAction SendMessage Text(s)
