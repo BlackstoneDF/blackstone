@@ -30,13 +30,13 @@ player.sendMessage(#[args]) <- PlayerAction SendMessage Text(s)
 # ENTITY ACTIONS                    #
 #####################################
 
-
+entity.damage(#[args]) <- EntityAction Damage Number
 
 #####################################
 # GAME ACTIONS                      #
 #####################################
 
-
+instance.setBlock(#[args]) <- GameAction SetBlock Item Location
 
 #####################################
 # SELECT OBJECTS                    #
