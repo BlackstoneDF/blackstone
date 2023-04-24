@@ -1,8 +1,10 @@
 use base64::Engine;
+use serde::{Deserialize, Serialize};
 
 use super::block::Block;
 
 #[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize)]
 pub enum VariableScope {
     Local,
     Unsaved,
@@ -20,6 +22,7 @@ impl VariableScope {
 }
 
 #[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize)]
 pub enum BracketType {
     Norm,
     Repeat,

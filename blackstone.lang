@@ -24,6 +24,7 @@
 # Do note this syntax is not finalized.
 # I wouldn't recommend adding to this until it's finalized.
 
+
 #####################################
 # PLAYER ACTIONS                    #
 #####################################
@@ -52,7 +53,7 @@ instance.setBlock(#[Item], #[Location]) <- GameAction SetBlock
 # SET VARIABLE                      #
 #####################################
 
-var #[Variable] = #[Any] <- SetVariable =
+var #[Variable]: #[Type] = #[Any] <- SetVariable =
 var #[Variable] createList(#[Any(s)]) <- SetVariable CreateList
 
 #####################################
