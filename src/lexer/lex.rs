@@ -38,7 +38,10 @@ pub fn attempt_tokenize_str(input: &str, current_char: &u32, current_line: &u32)
             returned_token.token = token;
             return Some(returned_token);
         }
-    } 
+    } else if let Some(token) = tokenize_identifier(input) {
+        returned_token.token = token;
+        return Some(returned_token);
+    }
     None
 }
 
@@ -51,4 +54,32 @@ pub fn tokenize_single_ch(input: char) -> Option<TokenType> {
         '=' => Some(Equals),
         _ => None
     }
+}
+
+pub fn tokenize_identifier(input: &str) -> Option<TokenType> {
+    let valid_starters = ['A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'G', 'H' , 
+        'I' , 'J' , 'K' , 'L' , 'M' , 'N', 'O' , 'P' , 
+        'Q' , 'R' , 'S' , 'T' , 'U', 'V' , 'W' , 'X' , 
+        'Y' , 'Z' , 'a' , 'b', 'c' , 'd' , 'e' , 'f' , 
+        'g' , 'h' , 'i', 'j' , 'k' , 'l' , 'm' , 'n' , 
+        'o' , 'p', 'q' , 'r' , 's' , 't' , 'u' , 'v' , 
+        'w', 'x' , 'y' , 'z', '_'];
+    let valid_continuers = ['A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'G', 'H' , 
+        'I' , 'J' , 'K' , 'L' , 'M' , 'N', 'O' , 'P' , 
+        'Q' , 'R' , 'S' , 'T' , 'U', 'V' , 'W' , 'X' , 
+        'Y' , 'Z' , 'a' , 'b', 'c' , 'd' , 'e' , 'f' , 
+        'g' , 'h' , 'i', 'j' , 'k' , 'l' , 'm' , 'n' , 
+        'o' , 'p', 'q' , 'r' , 's' , 't' , 'u' , 'v' , 
+        'w', 'x' , 'y' , 'z' , '_' , '0' , '1' , '2' , 
+        '3' , '4' , '5' , '6' , '7' , '8' , '9'];
+    if !input.starts_with(valid_starters) {
+        return None;
+    }
+    for ch in input.chars() {
+        if !valid_continuers.contains(&ch) {
+            return None;
+        }    
+    }
+    return Some(Identifier(input.to_string()));
+    
 }
