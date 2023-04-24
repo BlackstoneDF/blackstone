@@ -38,11 +38,13 @@ impl BracketType {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code, unused)]
 pub enum BracketDirection {
     Open,
     Close,
 }
 
+#[allow(dead_code, unused)]
 impl BracketDirection {
     pub fn to_json(self) -> String {
         match self {
@@ -52,6 +54,7 @@ impl BracketDirection {
     }
 }
 
+#[allow(dead_code, unused)]
 pub fn process_block_vec(input: Vec<Block>) -> String {
     let mut out_str = String::new();
     out_str.push_str(r#"{"blocks":["#);

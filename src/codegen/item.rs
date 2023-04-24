@@ -3,6 +3,7 @@ use crate::codegen::misc::VariableScope;
 use super::item_data::ItemData;
 
 #[derive(Debug, Clone)]
+#[allow(dead_code, unused)]
 pub struct Item {
     pub id: String,
     pub slot: i32,
@@ -18,6 +19,7 @@ pub struct Item {
             },
             "slot": 1
  */
+#[allow(dead_code, unused)]
 impl Item {
     pub fn to_json(self) -> String {
         format!(
