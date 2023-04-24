@@ -6,16 +6,20 @@
 # <calling> <- <block> <command> <arguments seen in item lore>
 #
 # In the calling section:
-# #[args] represents the arguments passed in
-# #[args:1] represents that there is only one argument valid, useful in SetVariable blocks
-# #[name] represents the variable being set in SetVariable. This gets it's own case as to prevent uncomfortable syntax
+# #[Number] -> Number
+# #[Text] -> Text
+# #[Variable] -> A variable item
+# #[Item] -> Any item, vanilla or ItemAPI
+# #[Location] - A valid location
+#
 # Semicolons are not necessary, they are auto-handled by the compiler
 #
-# So, this means that in: `PlayerAction.SendMessage <- PlayerAction SendMessage Text(s)`
-# PlayerAction.SendMessage({args}) is how you call the block from the language
+# So, this means that in: `PlayerAction.SendMessage(#[Text(s)]) <- PlayerAction SendMessage`
+# PlayerAction.SendMessage(#[Text(s)]) is how you call the block from the language
+# #[Text(s)] will be filled in with a series of strings
 # PlayerAction is the block you call.
 # SendMessage is the action on the block.
-# Text(s) is the argument. You can add another space after for another argument.
+#
 #
 # Do note this syntax is not finalized.
 # I wouldn't recommend adding to this until it's finalized.
@@ -24,19 +28,19 @@
 # PLAYER ACTIONS                    #
 #####################################
 
-player.sendMessage(#[args]) <- PlayerAction SendMessage Text(s)
+player.sendMessage(#[Text(s)]) <- PlayerAction SendMessage
 
 #####################################
 # ENTITY ACTIONS                    #
 #####################################
 
-entity.damage(#[args]) <- EntityAction Damage Number
+entity.damage(#[Number]) <- EntityAction Damage
 
 #####################################
 # GAME ACTIONS                      #
 #####################################
 
-instance.setBlock(#[args]) <- GameAction SetBlock Item Location
+instance.setBlock(#[Item], #[Location]) <- GameAction SetBlock
 
 #####################################
 # SELECT OBJECTS                    #
@@ -48,8 +52,8 @@ instance.setBlock(#[args]) <- GameAction SetBlock Item Location
 # SET VARIABLE                      #
 #####################################
 
-var #[var] = #[args:1] <- SetVariable = Any
-var #[var] createList(#[args]) <- SetVariable CreateList Any
+var #[Variable] = #[Any] <- SetVariable =
+var #[Variable] createList(#[Any(s)]) <- SetVariable CreateList
 
 #####################################
 # IF PLAYER                         #
@@ -73,14 +77,14 @@ var #[var] createList(#[args]) <- SetVariable CreateList Any
 # IF VARIABLE                       #
 #####################################
 
-if #[args:1] = #[args] <- IfVariable = Any Any(s)
-if #[args:1] != #[args] <- IfVariable != Any Any(s)
-if #[args:1] > #[args:1] <- IfVariable > Number Number
-if #[args:1] >= #[args:1] <- IfVariable >= Number Number
-if #[args:1] < #[args:1] <- IfVariable < Number Number
-if #[args:1] <= #[args:1] <- IfVariable <= Number Number
-if #[args:1] in #[args:1]..#[args:1] <- IfVariable InRange Any Any Any
-if #[args:1] isNear #[args:1] <- IfVariable LocIsNear Location Location
+if #[Any] = #[Any(s)] <- IfVariable
+if #[Any] != #[Any(s)] <- IfVariable
+if #[Number] > #[Number] <- IfVariable >
+if #[Number] >= #[Number] <- IfVariable >=
+if #[Number] < #[Number] <- IfVariable <
+if #[Number] <= #[Number] <- IfVariable <=
+if #[Any] in #[Any]..#[Any] <- IfVariable InRange 
+if #[Location] isNear #[Location] <- IfVariable LocIsNear
 
 #####################################
 # CONTROL                           #
