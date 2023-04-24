@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use super::block::Block;
 
-#[derive(Debug, Clone)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum VariableScope {
     Local,
     Unsaved,
@@ -12,7 +11,7 @@ pub enum VariableScope {
 }
 
 impl VariableScope {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         match self {
             VariableScope::Local => format!("local"),
             VariableScope::Unsaved => format!("unsaved"),
@@ -21,15 +20,14 @@ impl VariableScope {
     }
 }
 
-#[derive(Debug, Clone)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BracketType {
     Norm,
     Repeat,
 }
 
 impl BracketType {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         match self {
             Self::Norm => format!("norm"),
             Self::Repeat => format!("repeat"),
@@ -46,7 +44,7 @@ pub enum BracketDirection {
 
 #[allow(dead_code, unused)]
 impl BracketDirection {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         match self {
             Self::Open => format!("open"),
             Self::Close => format!("close"),
