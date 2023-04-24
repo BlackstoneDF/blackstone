@@ -1,4 +1,4 @@
-use std::{net::TcpStream, io::{Write, Read}};
+use std::{net::TcpStream, io::Write};
 
 use codegen::{misc::process_block_vec, block::Block, item::Item, item_data::ItemData};
 
@@ -34,10 +34,6 @@ fn main() {
     
     let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
     stream.write_all(send.as_bytes()).expect("failed to write all");
-    // let mut read: &mut [u8] = &mut [];
-    // stream.read(&mut read).expect("failed to read");
-    // println!("{}", std::str::from_utf8(read).expect("failed to utf8"));
-
 }
 
 fn help_message() {

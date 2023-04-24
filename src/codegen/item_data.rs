@@ -1,6 +1,7 @@
 use super::misc::VariableScope;
 
 #[derive(Debug, Clone)]
+#[allow(dead_code, unused)]
 pub enum ItemData {
     Variable { scope: VariableScope, name: String },
     Number { data: f32 },
@@ -13,6 +14,7 @@ pub enum ItemData {
     NoData,
 }
 
+#[allow(dead_code, unused)]
 impl ItemData {
     pub fn to_json(&self) -> String {
         match self {

@@ -1,16 +1,7 @@
 use super::{misc::{BracketType, BracketDirection}, item::Item};
 
 
-/* pub struct Block<'a> {
-    pub id: &'a str,
-    pub block: &'a str,
-    pub items: Option<Vec<Item>>,
-    pub data: Option<&'a str>,
-    pub action: Option<&'a str>,
-    pub direct: Option<BracketDirection>,
-    pub typ: Option<BracketType>,
-} */
-
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum Block<'a> {
     CodeBlock {
@@ -37,74 +28,7 @@ pub enum Block<'a> {
     }
 }
 
-/* impl Block<'_> {
-    pub fn to_json(self) -> String {
-        let mut out_str = String::new();
-        out_str.push_str(
-            format!(
-                r#"{{"id":"{}","block":"{}","args":{{"items":"#,
-                self.id, self.block
-            )
-            .as_str(),
-        );
-        // left: {}]}}}}
-        if let Some(v) = self.items {
-            out_str.push_str("[");
-            for item in v {
-                out_str.push_str(format!("{}", item.to_json()).as_str());
-                out_str.push(',');
-            }
-            out_str.pop();
-            out_str.push_str("]");
-        } else {
-            out_str.push_str("[]");
-        }
-        out_str.push_str("}");
-
-        // left: ,}}
-        if let Some(v) = self.data {
-            out_str.push_str(format!(r#","data":{v}""#).as_str());
-        }
-        if let Some(v) = self.action {
-            out_str.push_str(format!(r#","action":"{v}""#).as_str());
-        }
-        if let Some(v) = self.direct {
-            let json = v.to_json();
-            out_str.push_str(format!(r#","direct":"{json}""#).as_str());
-        }
-        if let Some(v) = self.typ {
-            let json = v.to_json();
-            out_str.push_str(format!(r#","type":"{json}""#).as_str());
-        }
-        out_str.push_str("}");
-        out_str
-    }
-} */
-
-/*
-{
-  "blocks": [
-    {
-      "id": "block",
-      "block": "event",
-      "args": {
-        "items": []
-      },
-      "action": "PlaceBlock"
-    },
-    {
-      "id": "block",
-      "block": "player_action",
-      "args": {
-        "items": []
-      },
-      "action": "SendMessageSeq"
-    }
-  ]
-}
-
- */
-
+#[allow(dead_code, unused)]
 impl Block<'_> {
     pub fn to_json(self) -> String {
         match self {
@@ -118,7 +42,7 @@ impl Block<'_> {
                 format!(r#"{{"id":"block","block":"{block}","args":{{"items":[{items_str}]}},"action":"{action}","data":"{data}"}}"#) 
             },
             Block::EventDefinition { block, action } => format!(r#"{{"id":"block","block":"{block}","action":"{action}","args":{{"items":[]}}}}"#),
-            Block::Bracket { direct, typ } => format!(r#"{{}}"#),
+            Block::Bracket { direct, typ } => format!(r#"{{"id":"bracket","direct":"{}","type":"{}"}}"#, direct.to_json(), typ.to_json()),
             Block::FunctionDefinition { block, data } => format!(r#"{{"id":"block","block":"{block}","data:{data}"}}"#),
             Block::FunctionCall { block, data } => format!(r#"{{"id":"block","block":"{block}",}}"#),
         }
