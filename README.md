@@ -2,10 +2,14 @@
 Blackstone is a programming language designed to help create plots on the MCDiamondFire Minecraft server.
 
 # Community Links
-`todo!()`
+Discord: ![https://discord.gg/c7qzkNAURV](https://discord.gg/c7qzkNAURV)
 
-# Setup
-`todo!()`
+# Installation
+## Cargo
+You can install this using the cargo toolchain.
+```
+cargo install df-blackstone
+```
 
 # Documentation
 `todo!()`
