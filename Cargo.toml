@@ -2,20 +2,15 @@
 name = "blackstone-df"
 version = "0.1.0"
 edition = "2021"
-license = "Apache 2.0"
+license = "Apache License, Version 2.0 "
 readme = "README.md"
 repository = "https://github.com/BlackstoneDF/blackstone"
 homepage = "https://github.com/BlackstoneDF/blackstone"
 description = "A programming language designed for the DiamondFire Minecraft server."
 
-# Compile for full blackstone name
+# Compile for shorthand `bls`, as to not exhaust the hands when typing
 [[bin]]
-name = "blackstone"
-path = "src/main.rs"
-
-# Compile for shorthand bl name
-[[bin]]
-name = "bl"
+name = "bls"
 path = "src/main.rs"
 
 [dependencies]

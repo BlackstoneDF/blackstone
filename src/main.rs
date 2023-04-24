@@ -8,16 +8,16 @@ fn help_message() {
     println!(r#"
 Blackstone's compiler & build tooling
 
-Usage: blackstone [commands]
+Usage: bls [commands]
 
 Built-in commands:
-    version                 Get the current version of DFScript.
-    init                    Initialize a new DFScript environment in your current directory.
-    build [script]          Builds the script provided & sends it via `recode` mod.
-    build-all               Builds all scripts in the `scripts` directory & sends it via `recode` mod.
-    build-stdout [script]   Sends the script data to the console instead of to `recode`.
+    version                 Get the current version of Blackstone.
+    init                    Initialize a new Blackstone environment in your current directory.
+    build [script]          Builds the code provided & sends it via `recode` mod.
+    build-all               Builds all code in the `scripts` directory & sends it via `recode` mod.
+    build-stdout [script]   Sends the code data to the console instead of to `recode`.
                             Useful if you don't have `recode` installed.
-    build_test              Run the build test.
+    build_test              Run the tests in the code.
     add [package]           Add an external package to your scripts.
     "#);
 }
