@@ -1,5 +1,6 @@
 # This file represents a frontend for the Blackstone language.
 # It defines how certain DiamondFire code blocks are called.
+# This will also be useful if there is an IDE extension for this
 #
 # Syntax requirements:
 # <calling> = <block> <command> <arguments seen in item lore>
@@ -12,10 +13,56 @@
 #
 # Do note this syntax is not finalized.
 # I wouldn't recommend adding to this until it's finalized.
-# This frontend is for the following code blocks:
-# - PlayerAction
-# - EntityAction
-# - GameAction
-# - SelectObject
-# Every other codeblock will be handled either by the compiler or third-party libraries.
-PlayerAction.SendMessage = PlayerAction SendMessage Text(s)
+
+#####################################
+# PLAYER ACTIONS                    #
+#####################################
+
+PA::SendMessage = PlayerAction SendMessage Text(s)
+
+#####################################
+# ENTITY ACTIONS                    #
+#####################################
+
+
+
+#####################################
+# GAME ACTIONS                      #
+#####################################
+
+
+
+#####################################
+# SELECT OBJECTS                    #
+#####################################
+
+
+
+#####################################
+# IF PLAYER                         #
+#####################################
+
+
+
+
+#####################################
+# IF GAME                           #
+#####################################
+
+
+
+#####################################
+# IF ENTITY                         #
+#####################################
+
+
+
+#####################################
+# IF VARIABLE                       #
+#####################################
+
+
+
+#####################################
+# CONTROL                           #
+#####################################

@@ -13,6 +13,8 @@ description = "A programming language designed for the DiamondFire Minecraft ser
 name = "bls"
 path = "src/main.rs"
 
+# Please try to minimize dependencies.
+# I don't want a really long time taken when building.
 [dependencies]
 base64 = "0.21.0"
 lazy_static = "1.4.0"

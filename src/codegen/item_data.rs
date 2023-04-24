@@ -6,6 +6,7 @@ pub enum ItemData {
     Number { data: f32 },
     Text { data: String },
     VanillaItem { data: String },
+    Sound { sound: String, pitch: f32, vol: f32 },
     NoData,
 }
 
@@ -20,6 +21,9 @@ impl ItemData {
             }
             Self::Text { data } => {
                 format!(r#""data":{{"name":"{data}"}}"#)
+            }
+            Self::Sound { sound, pitch, vol } => {
+                format!(r#""data":{{"sound":"{sound}","pitch":"{pitch}","vol":"{vol}"}}"#)
             }
             Self::VanillaItem { data } => format!(r#""data":{{"item":"{data}"}}"#),
             Self::NoData => format!(r#""NoData""#),

@@ -1,4 +1,6 @@
 mod codegen;
+mod lexer;
+mod parser;
 
 fn main() {
     help_message();
@@ -21,3 +23,4 @@ Built-in commands:
     add [package]           Add an external package to your scripts.
     "#);
 }
+
