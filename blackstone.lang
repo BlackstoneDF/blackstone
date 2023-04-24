@@ -73,7 +73,14 @@ var #[var] createList(#[args]) <- SetVariable CreateList Any
 # IF VARIABLE                       #
 #####################################
 
-
+if #[args:1] = #[args] <- IfVariable = Any Any(s)
+if #[args:1] != #[args] <- IfVariable != Any Any(s)
+if #[args:1] > #[args:1] <- IfVariable > Number Number
+if #[args:1] >= #[args:1] <- IfVariable >= Number Number
+if #[args:1] < #[args:1] <- IfVariable < Number Number
+if #[args:1] <= #[args:1] <- IfVariable <= Number Number
+if #[args:1] in #[args:1]..#[args:1] <- IfVariable InRange Any Any Any
+if #[args:1] isNear #[args:1] <- IfVariable LocIsNear Location Location
 
 #####################################
 # CONTROL                           #
