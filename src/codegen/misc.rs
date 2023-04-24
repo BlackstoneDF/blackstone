@@ -12,7 +12,7 @@ pub enum VariableScope {
 }
 
 impl VariableScope {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         match self {
             VariableScope::Local => format!("local"),
             VariableScope::Unsaved => format!("unsaved"),
@@ -29,7 +29,7 @@ pub enum BracketType {
 }
 
 impl BracketType {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         match self {
             Self::Norm => format!("norm"),
             Self::Repeat => format!("repeat"),
@@ -44,7 +44,7 @@ pub enum BracketDirection {
 }
 
 impl BracketDirection {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         match self {
             Self::Open => format!("open"),
             Self::Close => format!("close"),
