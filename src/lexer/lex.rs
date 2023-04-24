@@ -17,8 +17,13 @@ pub fn string_to_tokens(input: String) -> Vec<Token> {
                 current_char += 1;
                 str_builder.push(ch);
 
-                if let Some(token) = attempt_tokenize_str(&str_builder, &current_char, &current_line) {
-                    stream.push(token);
+                
+                if let Some(token) = attempt_tokenize_str(&str_builder) {
+                    stream.push(Token {
+                        at_line: current_line,
+                        at_char: current_char,
+                        token
+                    });
                     str_builder = String::new();
                 }
             }
@@ -27,7 +32,7 @@ pub fn string_to_tokens(input: String) -> Vec<Token> {
     vec![]
 }
 
-pub fn attempt_tokenize_str(input: &str, current_char: &u32, current_line: &u32) -> Option<Token> {
+pub fn attempt_tokenize_str(input: &str) -> Option<TokenType> {
     let mut returned_token = Token {
         at_line: *current_line,
         at_char: *current_char,
