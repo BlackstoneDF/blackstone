@@ -3,15 +3,9 @@ use std::{net::TcpStream, io::Write};
 use codegen::{misc::process_block_vec, block::Block, item::Item, item_data::ItemData};
 
 mod codegen;
+mod lexer;
+mod parser;
 
-
-/*
-{
-  "data": "{\"author\":\"PyDF\",\"name\":\"PyDF Template\",\"data\": \"H4sIAEoo8GMC/22PzwrCMAzGX0V63kE9eOhVEH0GJ5I1cRa7drTxIKPvbrox/6BQaPL78n0kg2pcMLek9OI4KIvyT0RVcyGkj8FQSoUhMBTE10iAhUBsi13cTN0cJOXExsSxfZtfuhq24e5Zr5rKoq5VZz2ZCBfW1FEEh7XKKmdxJhdYDEupf9Ibd2Zov/JDzzb4Iu7AJSpaGZH+kBZ7i0h+XN3MY/jw0Fnz9+rPBdabfMrynnO8mAw4AQAA\"}",
-  "type": "template",
-  "source": "PyToDF"
-}
- */
 fn main() {
     help_message();
 
