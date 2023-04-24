@@ -29,7 +29,12 @@ impl Item {
             self.slot
         )
     }
-    pub fn from_strs(from: String, full_line: String, line_number: i32, raw_file: String) -> Vec<Self> {
+    pub fn from_strs(
+        from: String,
+        full_line: String,
+        line_number: i32,
+        raw_file: String,
+    ) -> Vec<Self> {
         let mut out = Vec::new();
 
         let mut in_string = false;
@@ -50,12 +55,24 @@ impl Item {
 
         let mut slot = 0;
         for arg in split {
-            out.push(Item::from_str(arg.to_string(), slot, full_line.clone(), line_number, raw_file.clone()));
+            out.push(Item::from_str(
+                arg.to_string(),
+                slot,
+                full_line.clone(),
+                line_number,
+                raw_file.clone(),
+            ));
             slot += 1;
         }
         out
     }
-    pub fn from_str(from: String, slot: i32, full_line: String, line_number: i32, raw_file: String) -> Self {
+    pub fn from_str(
+        from: String,
+        slot: i32,
+        full_line: String,
+        line_number: i32,
+        raw_file: String,
+    ) -> Self {
         if from.starts_with("\"") && from.ends_with("\"") {
             let from = from.replace("\"", "");
             return Item {
@@ -72,9 +89,7 @@ impl Item {
             };
         }
         if from.starts_with("vanilla_item![") && from.ends_with("]") {
-            let from = from
-                .replace("vanilla_item![", "")
-                .replace("]", "");
+            let from = from.replace("vanilla_item![", "").replace("]", "");
             let split = from.split(':').collect::<Vec<_>>();
             if split.len() < 2 {
                 // errors::throw_error("not enough arguments in `vanilla_item!` statement", &full_line, &raw_file, line_number)
@@ -85,8 +100,8 @@ impl Item {
             return Item {
                 id: "item".to_string(),
                 slot,
-                item: ItemData::VanillaItem { data: datas }
-            }
+                item: ItemData::VanillaItem { data: datas },
+            };
         }
         println!("bad item from string {from} to item");
         return Item {
