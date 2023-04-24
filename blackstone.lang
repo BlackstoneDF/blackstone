@@ -3,10 +3,16 @@
 # This will also be useful if there is an IDE extension for this
 #
 # Syntax requirements:
-# <calling> = <block> <command> <arguments seen in item lore>
+# <calling> <- <block> <command> <arguments seen in item lore>
 #
-# So, this means that in: `PlayerAction.SendMessage = PlayerAction SendMessage Text(s)`
-# PlayerAction.SendMessage is how you call the block from the language
+# In the calling section:
+# #[args] represents the arguments passed in
+# #[args:1] represents that there is only one argument valid, useful in SetVariable blocks
+# #[name] represents the variable being set in SetVariable. This gets it's own case as to prevent uncomfortable syntax
+# Semicolons are not necessary, they are auto-handled by the compiler
+#
+# So, this means that in: `PlayerAction.SendMessage <- PlayerAction SendMessage Text(s)`
+# PlayerAction.SendMessage({args}) is how you call the block from the language
 # PlayerAction is the block you call.
 # SendMessage is the action on the block.
 # Text(s) is the argument. You can add another space after for another argument.
@@ -18,7 +24,7 @@
 # PLAYER ACTIONS                    #
 #####################################
 
-PA::SendMessage = PlayerAction SendMessage Text(s)
+player.sendMessage(#[args]) <- PlayerAction SendMessage Text(s)
 
 #####################################
 # ENTITY ACTIONS                    #
@@ -39,9 +45,15 @@ PA::SendMessage = PlayerAction SendMessage Text(s)
 
 
 #####################################
-# IF PLAYER                         #
+# SET VARIABLE                      #
 #####################################
 
+var #[var] = #[args:1] <- SetVariable = Any
+var #[var] createList(#[args]) <- SetVariable CreateList Any
+
+#####################################
+# IF PLAYER                         #
+#####################################
 
 
 
