@@ -33,19 +33,12 @@ pub fn string_to_tokens(input: String) -> Vec<Token> {
 }
 
 pub fn attempt_tokenize_str(input: &str) -> Option<TokenType> {
-    let mut returned_token = Token {
-        at_line: *current_line,
-        at_char: *current_char,
-        token: TokenType::NoType,
-    };
     if let Some(ch) = input.chars().nth(0) {
         if let Some(token) = tokenize_single_ch(ch) {
-            returned_token.token = token;
-            return Some(returned_token);
+            return Some(token);
         }
     } else if let Some(token) = tokenize_identifier(input) {
-        returned_token.token = token;
-        return Some(returned_token);
+        return Some(token);
     }
     None
 }
