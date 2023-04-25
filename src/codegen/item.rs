@@ -20,6 +20,7 @@ pub struct Item {
             "slot": 1
  */
 #[allow(dead_code, unused)]
+#[allow(clippy::wrong_self_convention)] // we want to_json for consistency
 impl Item {
     pub fn to_json(self) -> String {
         format!(
@@ -53,16 +54,14 @@ impl Item {
         }
         split.push(builder.trim().to_string());
 
-        let mut slot = 0;
-        for arg in split {
+        for (slot, arg) in split.into_iter().enumerate() {
             out.push(Item::from_str(
                 arg.to_string(),
-                slot,
+                slot.try_into().expect("failed to i32"),
                 full_line.clone(),
                 line_number,
                 raw_file.clone(),
             ));
-            slot += 1;
         }
         out
     }

@@ -1,9 +1,3 @@
-use std::fs::read;
-
-use serde::de::IntoDeserializer;
-
-use crate::lexer::lex;
-
 use super::tokens::{Token, TokenType};
 
 pub struct Lexer {
@@ -14,14 +8,14 @@ pub struct Lexer {
 }
 
 fn is_identifiable(ch: char) -> bool {
-    'a' <= ch && ch <= 'z'
-        || 'A' <= ch && ch <= 'Z'
+    ch.is_ascii_uppercase()
+        || ch.is_ascii_lowercase()
         || ch == '_'
         || ch == '.'
         || ch == '%'
 }
 fn is_digit(ch: char) -> bool {
-    '0' <= ch && ch <= '9'
+    ch.is_ascii_digit() || ch == '.'
 }
 
 impl Lexer {
@@ -47,11 +41,11 @@ impl Lexer {
         self.ch = self
             .input
             .chars()
-            .nth(self.position as usize)
+            .nth(self.position)
             .unwrap_or('\0');
         self.input
             .chars()
-            .nth(self.position as usize)
+            .nth(self.position)
             .unwrap_or('\0')
     }
 
@@ -68,7 +62,7 @@ impl Lexer {
 
     pub fn read_identifier(&mut self) -> String {
         let pos = self.position;
-        while self.position < self.input.len().try_into().unwrap() && is_identifiable(self.ch) {
+        while self.position < self.input.len() && is_identifiable(self.ch) {
             self.read_char();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
@@ -83,7 +77,7 @@ impl Lexer {
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         let ret: String = chars.into();
-        ret.replace('\"', '')
+        ret.replace('\"', "")
     }
 
     pub fn read_percent_expression(&mut self) -> (String, String) {
@@ -93,8 +87,8 @@ impl Lexer {
             self.read_char();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
-        let chars = chars.trim_start_matches("%");
-        let chars = chars.split_once("(").expect("somehow failed to split? catch error later");
+        let chars = chars.trim_start_matches('%');
+        let chars = chars.split_once('(').expect("somehow failed to split? catch error later");
         (chars.0.into(), chars.1.into())
     }
 
@@ -115,7 +109,7 @@ impl Lexer {
             ';' => token = TokenType::Semicolon,
             '{' => token = TokenType::OpenBraces,
             '}' => token = TokenType::CloseBraces,
-            '\0' => token = TokenType::EOF,
+            '\0' => token = TokenType::Eof,
             '/' => token = TokenType::Slash,
             '*' => token = TokenType::Star,
             ',' => token = TokenType::Comma,
