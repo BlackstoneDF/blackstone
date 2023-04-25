@@ -7,6 +7,7 @@ use super::{
 /// See individual variant documentation for more information.
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
+#[allow(clippy::enum_variant_names)] // allowing this, CodeBlock is just a catch all for any non-event or non-function / non-process
 pub enum Block<'a> {
     /// Defines a single code action (e.g. PlayerAction or Control).
     ///   - &'a str `block`: The associated block (cobblestone for PlayerAction, etc.)
@@ -50,6 +51,7 @@ pub enum Block<'a> {
 }
 
 #[allow(dead_code, unused)]
+#[allow(clippy::wrong_self_convention)] // we want to_json for consistency
 impl Block<'_> {
     /// converts self to a workable json String
     pub fn to_json(&self) -> String {

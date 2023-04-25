@@ -8,10 +8,10 @@ pub struct Lexer {
 }
 
 fn is_identifiable(ch: char) -> bool {
-    ('a'..='z').contains(&ch) || ('A'..='Z').contains(&ch) || ch == '_' || ch == '.' || ch == '%'
+    ch.is_ascii_uppercase() || ch.is_ascii_lowercase() || ch == '_' || ch == '.' || ch == '%'
 }
 fn is_digit(ch: char) -> bool {
-    ('0'..='9').contains(&ch)
+    ch.is_ascii_digit() || ch == '.'
 }
 
 impl Lexer {
@@ -67,6 +67,20 @@ impl Lexer {
         ret.replace('\"', "")
     }
 
+    pub fn read_percent_expression(&mut self) -> (String, String) {
+        let pos = self.position;
+        self.read_char();
+        while self.position < self.input.len() && self.ch != ')' {
+            self.read_char();
+        }
+        let chars = self.input.get(pos..self.position).expect("failed to slice");
+        let chars = chars.trim_start_matches('%');
+        let chars = chars
+            .split_once('(')
+            .expect("somehow failed to split? catch error later");
+        (chars.0.into(), chars.1.into())
+    }
+
     pub fn read_whitespace(&mut self) {
         while self.ch.is_whitespace() {
             self.read_char();
@@ -91,6 +105,7 @@ impl Lexer {
             '.' => token = TokenType::Dot,
             '+' => token = TokenType::Plus,
             '-' => token = TokenType::Minus,
+            '%' => token = TokenType::PercentExpr(self.read_percent_expression()),
             _ => {
                 if self.ch == '%' {
                 } else if is_identifiable(self.ch) {

@@ -1,10 +1,17 @@
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use crate::lexer::{lex::Lexer, tokens::TokenType};
+use crate::{
+    lexer::{
+        lex::Lexer,
+        tokens::{Token, TokenType},
+    },
+    tokengrouper::grouper::transform_to_ast,
+};
 
 mod codegen;
+mod ir;
 mod lexer;
-mod parser;
+mod tokengrouper;
 
 fn main() {
     help_message();
@@ -14,7 +21,7 @@ fn main() {
             block: "event",
             action: "Join",
         },
-        Block::Code {
+        Block::CodeBlock {
             block: "player_action",
             items: vec![Item {
                 id: "txt".to_string(),
@@ -28,39 +35,34 @@ fn main() {
         },
     ]);
     println!("{s}");
-    // let send =
-    //     r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
-    // let send = send.replace("%s%", &s);
-    // println!("{send}");
-    //
-    // let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
-    // stream
-    //     .write_all(send.as_bytes())
-    //     .expect("failed to write all");
+    /* let send =
+        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
+    let send = send.replace("%s%", &s);
+    println!("{send}");
 
-    let mut lexer = Lexer::new(
-        r#"
-playerEvent.join()
-{
-    player.sendMessage("Hello world!");
-    
-    // by default, it is local
-    var x = 10;
+    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
+    stream
+        .write_all(send.as_bytes())
+        .expect("failed to write all"); */
 
-    // make it global or saved
-    var game.y = 30;
-    var save.z = 40;
-
-    // %var() syntax works like normal
-    player.sendMessage("x is %var(x) | y is %var(y) | z is %var(z)");
-}"#
-        .to_string(),
-    );
+    let input = r#"
+    playerEvent.join()
+    {
+        player.sendMessage("Hello world!");
+    }"#;
+    let mut lexer = Lexer::new(input.to_string());
     let mut c = 0;
+    let mut tokens = vec![];
     loop {
         c += 1;
         let tok = lexer.read_token();
-        println!("{tok:?}");
+        let line = 0;
+        let at_char = lexer.position;
+        tokens.push(Token {
+            at_char: at_char as u32,
+            at_line: 0,
+            token: tok.clone(),
+        });
         if let TokenType::Eof = tok {
             break;
         }
@@ -68,6 +70,9 @@ playerEvent.join()
             break;
         }
     }
+    println!("tokens: {tokens:#?}");
+    let ast = transform_to_ast(tokens);
+    // println!("{ast:#?}");
 }
 
 fn help_message() {

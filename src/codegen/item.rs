@@ -20,8 +20,9 @@ pub struct Item {
             "slot": 1
  */
 #[allow(dead_code, unused)]
+#[allow(clippy::wrong_self_convention)] // we want to_json for consistency
 impl Item {
-    pub fn to_json(&self) -> String {
+    pub fn to_json(self) -> String {
         format!(
             r#"{{"item":{{"id":"{}",{}}},"slot":{}}}"#,
             self.id,
@@ -56,7 +57,7 @@ impl Item {
         for (slot, arg) in split.into_iter().enumerate() {
             out.push(Item::from_str(
                 arg.to_string(),
-                slot as i32,
+                slot.try_into().expect("failed to i32"),
                 full_line.clone(),
                 line_number,
                 raw_file.clone(),

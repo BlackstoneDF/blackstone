@@ -1,18 +1,20 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
     pub at_line: u32,
     pub at_char: u32,
     pub token: TokenType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub enum TokenType {
     Identifier(String),
     Text(String),
     Number(String), // this is actually a string because %math, %var, etc. exist'
     Location(i32, i32, i32, i32, i32),
-    Tuple(Vec<TokenType>),
+    Block(Vec<Token>),
+    Tuple(Vec<Token>),
+    PercentExpr((String, String)),
     OpenParen,
     CloseParen,
     OpenBraces,
