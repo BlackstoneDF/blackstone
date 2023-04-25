@@ -13,9 +13,9 @@ pub enum VariableScope {
 impl VariableScope {
     pub fn to_json(&self) -> String {
         match self {
-            VariableScope::Local => format!("local"),
-            VariableScope::Unsaved => format!("unsaved"),
-            VariableScope::Saved => format!("saved"),
+            VariableScope::Local => "local".to_string(),
+            VariableScope::Unsaved => "unsaved".to_string(),
+            VariableScope::Saved => "saved".to_string(),
         }
     }
 }
@@ -29,8 +29,8 @@ pub enum BracketType {
 impl BracketType {
     pub fn to_json(&self) -> String {
         match self {
-            Self::Norm => format!("norm"),
-            Self::Repeat => format!("repeat"),
+            Self::Norm => "norm".to_string(),
+            Self::Repeat => "repeat".to_string(),
         }
     }
 }
@@ -46,8 +46,8 @@ pub enum BracketDirection {
 impl BracketDirection {
     pub fn to_json(&self) -> String {
         match self {
-            Self::Open => format!("open"),
-            Self::Close => format!("close"),
+            Self::Open => "open".to_string(),
+            Self::Close => "close".to_string(),
         }
     }
 }
@@ -58,7 +58,7 @@ pub fn process_block_vec(input: Vec<Block>) -> String {
     out_str.push_str(r#"{"blocks":["#);
     for block in input {
         out_str.push_str(block.to_json().as_str());
-        out_str.push_str(",");
+        out_str.push(',');
     }
     out_str.pop();
     out_str.push_str(r#"]}"#);
@@ -67,7 +67,6 @@ pub fn process_block_vec(input: Vec<Block>) -> String {
     let mut encoder = libflate::gzip::Encoder::new(Vec::new()).unwrap();
     std::io::copy(&mut data_as_bytes, &mut encoder).unwrap();
     let compressed = encoder.finish().into_result().unwrap();
-    let b64 = base64::engine::general_purpose::STANDARD.encode(&compressed);
 
-    b64
+    base64::engine::general_purpose::STANDARD.encode(compressed)
 }
