@@ -51,6 +51,7 @@ pub enum IRPlayerEvent {
     Respawn,
 }
 
+#[allow(dead_code)]
 impl IRPlayerEvent {
     fn parse_player_event(code: &str) -> Option<IRPlayerEvent> {
         if !code.starts_with("playerEvent.") {
@@ -74,6 +75,7 @@ pub enum IREntityEvent {
     FallingBlockLands,
 }
 
+#[allow(dead_code)]
 impl IREntityEvent {
     fn parse_entity_event(code: &str) -> Option<IREntityEvent> {
         if !code.starts_with("entityEvent.") {

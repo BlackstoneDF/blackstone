@@ -1,46 +1,80 @@
+use crate::codegen;
+
 #[derive(PartialEq, Default)]
-pub struct Text(pub String);
+pub struct Text(String);
 #[derive(PartialEq, Default)]
-pub struct Number(pub f32);
+pub struct Number(f32);
 #[derive(PartialEq, Default)]
-pub struct Location(pub f32, pub f32, pub f32, pub f32, pub f32);
+pub struct Location(f32, f32, f32, f32, f32);
 #[derive(PartialEq, Default)]
-pub struct Vector(pub f32, pub f32, pub f32);
+pub struct Vector(f32, f32, f32);
 #[derive(PartialEq, Default)]
 pub struct Particle {
-    pub name: String,
-    pub amount: u32,
-    pub spread: (i32, i32),
-    pub motion: (i32, i32, i32),
-    pub motion_variation: u32,
+    name: String,
+    amount: u32,
+    spread: (i32, i32),
+    motion: (i32, i32, i32),
+    motion_variation: u32,
 }
 #[derive(PartialEq, Default)]
-pub struct Texts(pub Vec<Text>);
+pub struct Sound {
+    sound: String,
+    pitch: f32,
+    vol: f32
+}
 #[derive(PartialEq, Default)]
-pub struct Numbers(pub Vec<Number>);
+pub struct Potion {
+    effect: String,
+    dur: u32,
+    amp: u32
+}
 #[derive(PartialEq, Default)]
-pub struct Locations(pub Vec<Location>);
+pub struct Item(codegen::item::Item);
 #[derive(PartialEq, Default)]
-pub struct Vectors(pub Vec<Vector>);
+pub struct Texts(Vec<Text>);
 #[derive(PartialEq, Default)]
-pub struct Particles(pub Vec<Particle>);
+pub struct Numbers(Vec<Number>);
 #[derive(PartialEq, Default)]
-pub struct OptionalText(pub Option<Text>);
+pub struct Locations(Vec<Location>);
 #[derive(PartialEq, Default)]
-pub struct OptionalNumber(pub Option<Number>);
+pub struct Vectors(Vec<Vector>);
 #[derive(PartialEq, Default)]
-pub struct OptionalLocation(pub Option<Location>);
+pub struct Particles(Vec<Particle>);
 #[derive(PartialEq, Default)]
-pub struct OptionalVector(pub Option<Vector>);
+pub struct Items(Vec<Item>);
 #[derive(PartialEq, Default)]
-pub struct OptionalParticle(pub Option<Particle>);
+pub struct Sounds(Vec<Sound>);
 #[derive(PartialEq, Default)]
-pub struct OptionalTexts(pub Option<Texts>);
+pub struct Potions(Vec<Potion>);
 #[derive(PartialEq, Default)]
-pub struct OptionalNumbers(pub Option<Numbers>);
+pub struct OptionalText(Option<Text>);
 #[derive(PartialEq, Default)]
-pub struct OptionalLocations(pub Option<Locations>);
+pub struct OptionalNumber(Option<Number>);
 #[derive(PartialEq, Default)]
-pub struct OptionalVectors(pub Option<Vectors>);
+pub struct OptionalLocation(Option<Location>);
 #[derive(PartialEq, Default)]
-pub struct OptionalParticles(pub Option<Particles>);
+pub struct OptionalVector(Option<Vector>);
+#[derive(PartialEq, Default)]
+pub struct OptionalParticle(Option<Particle>);
+#[derive(PartialEq, Default)]
+pub struct OptionalItem(Option<Item>);
+#[derive(PartialEq, Default)]
+pub struct OptionalSound(Option<Sound>);
+#[derive(PartialEq, Default)]
+pub struct OptionalPotion(Option<Potion>);
+#[derive(PartialEq, Default)]
+pub struct OptionalTexts(Option<Texts>);
+#[derive(PartialEq, Default)]
+pub struct OptionalNumbers(Option<Numbers>);
+#[derive(PartialEq, Default)]
+pub struct OptionalLocations(Option<Locations>);
+#[derive(PartialEq, Default)]
+pub struct OptionalVectors(Option<Vectors>);
+#[derive(PartialEq, Default)]
+pub struct OptionalParticles(Option<Particles>);
+#[derive(PartialEq, Default)]
+pub struct OptionalItems(Option<Items>);
+#[derive(PartialEq, Default)]
+pub struct OptionalSounds(Option<Sounds>);
+#[derive(PartialEq, Default)]
+pub struct OptionalPotions(Option<Potions>);

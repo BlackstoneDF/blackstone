@@ -2,7 +2,7 @@ use crate::codegen::misc::VariableScope;
 
 use super::item_data::ItemData;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Default)]
 #[allow(dead_code, unused)]
 pub struct Item {
     pub id: String,
@@ -22,7 +22,7 @@ pub struct Item {
 #[allow(dead_code, unused)]
 #[allow(clippy::wrong_self_convention)] // we want to_json for consistency
 impl Item {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         format!(
             r#"{{"item":{{"id":"{}",{}}},"slot":{}}}"#,
             self.id,
