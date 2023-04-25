@@ -2,7 +2,7 @@ use crate::codegen::misc::VariableScope;
 
 use super::item_data::ItemData;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Default)]
 #[allow(dead_code, unused)]
 pub struct Item {
     pub id: String,

@@ -2,7 +2,7 @@ use super::misc::VariableScope;
 
 /// Represents a literal block of code in a DF code line.
 /// See individual variant documentation for more information.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Default)]
 #[allow(dead_code, unused)]
 pub enum ItemData {
     /// A DF variable with a given scope and name. Variables with the same name but different scopes do not conflict.
@@ -80,6 +80,7 @@ pub enum ItemData {
         motion: (i32, i32, i32),
         motion_variation: u32,
     },
+    #[default]
     NoData,
 }
 

@@ -3,8 +3,9 @@ use serde::{Deserialize, Serialize};
 
 use super::block::Block;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub enum VariableScope {
+    #[default]
     Local,
     Unsaved,
     Saved,
