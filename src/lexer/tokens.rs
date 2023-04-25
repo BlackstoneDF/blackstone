@@ -6,6 +6,7 @@ pub struct Token {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum TokenType {
     Identifier(String),
     Text(String),
@@ -24,7 +25,7 @@ pub enum TokenType {
     Slash,
     Star,
     NoType,
-    EOF,
+    Eof,
     Comma,
 }
 

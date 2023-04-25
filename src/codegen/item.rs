@@ -21,7 +21,7 @@ pub struct Item {
  */
 #[allow(dead_code, unused)]
 impl Item {
-    pub fn to_json(self) -> String {
+    pub fn to_json(&self) -> String {
         format!(
             r#"{{"item":{{"id":"{}",{}}},"slot":{}}}"#,
             self.id,
@@ -53,16 +53,14 @@ impl Item {
         }
         split.push(builder.trim().to_string());
 
-        let mut slot = 0;
-        for arg in split {
+        for (slot, arg) in split.into_iter().enumerate() {
             out.push(Item::from_str(
                 arg.to_string(),
-                slot,
+                slot as i32,
                 full_line.clone(),
                 line_number,
                 raw_file.clone(),
             ));
-            slot += 1;
         }
         out
     }

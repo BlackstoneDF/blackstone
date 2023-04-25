@@ -1,11 +1,6 @@
-use std::{io::Write, net::TcpStream};
-
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use crate::lexer::{
-    lex::Lexer,
-    tokens::{Token, TokenType},
-};
+use crate::lexer::{lex::Lexer, tokens::TokenType};
 
 mod codegen;
 mod lexer;
@@ -19,7 +14,7 @@ fn main() {
             block: "event",
             action: "Join",
         },
-        Block::CodeBlock {
+        Block::Code {
             block: "player_action",
             items: vec![Item {
                 id: "txt".to_string(),
@@ -66,7 +61,7 @@ playerEvent.join()
         c += 1;
         let tok = lexer.read_token();
         println!("{tok:?}");
-        if let TokenType::EOF = tok {
+        if let TokenType::Eof = tok {
             break;
         }
         if c > 100 {

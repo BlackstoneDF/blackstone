@@ -1,7 +1,3 @@
-use std::fs::read;
-
-use crate::lexer::lex;
-
 use super::tokens::{Token, TokenType};
 
 pub struct Lexer {
@@ -12,15 +8,10 @@ pub struct Lexer {
 }
 
 fn is_identifiable(ch: char) -> bool {
-    'a' <= ch && ch <= 'z'
-        || 'A' <= ch && ch <= 'Z'
-        || ch == '_'
-        || ch == '.'
-        || ch == '%'
-        || ch == '%'
+    ('a'..='z').contains(&ch) || ('A'..='Z').contains(&ch) || ch == '_' || ch == '.' || ch == '%'
 }
 fn is_digit(ch: char) -> bool {
-    '0' <= ch && ch <= '9'
+    ('0'..='9').contains(&ch)
 }
 
 impl Lexer {
@@ -43,22 +34,13 @@ impl Lexer {
 
     pub fn read_char(&mut self) -> char {
         self.position += 1;
-        self.ch = self
-            .input
-            .chars()
-            .nth(self.position as usize)
-            .unwrap_or('\0');
-        self.input
-            .chars()
-            .nth(self.position as usize)
-            .unwrap_or('\0')
+        self.ch = self.input.chars().nth(self.position).unwrap_or('\0');
+        self.input.chars().nth(self.position).unwrap_or('\0')
     }
 
     pub fn read_number(&mut self) -> String {
         let pos = self.position;
-        while self.position < self.input.len().try_into().unwrap() && is_digit(self.ch)
-            || self.ch == '.'
-        {
+        while self.position < self.input.len() && is_digit(self.ch) || self.ch == '.' {
             self.read_char();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
@@ -67,7 +49,7 @@ impl Lexer {
 
     pub fn read_identifier(&mut self) -> String {
         let pos = self.position;
-        while self.position < self.input.len().try_into().unwrap() && is_identifiable(self.ch) {
+        while self.position < self.input.len() && is_identifiable(self.ch) {
             self.read_char();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
@@ -77,12 +59,12 @@ impl Lexer {
     pub fn read_text(&mut self) -> String {
         let pos = self.position;
         self.read_char();
-        while self.position < self.input.len().try_into().unwrap() && self.ch != '"' {
+        while self.position < self.input.len() && self.ch != '"' {
             self.read_char();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         let ret: String = chars.into();
-        ret.replace("\"", "")
+        ret.replace('\"', "")
     }
 
     pub fn read_whitespace(&mut self) {
@@ -102,7 +84,7 @@ impl Lexer {
             ';' => token = TokenType::Semicolon,
             '{' => token = TokenType::OpenBraces,
             '}' => token = TokenType::CloseBraces,
-            '\0' => token = TokenType::EOF,
+            '\0' => token = TokenType::Eof,
             '/' => token = TokenType::Slash,
             '*' => token = TokenType::Star,
             ',' => token = TokenType::Comma,

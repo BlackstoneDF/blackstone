@@ -1,5 +1,4 @@
 use strum::IntoEnumIterator;
-use strum_macros;
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
 pub enum PlayerEvent {
@@ -51,6 +50,7 @@ pub enum PlayerEvent {
     Respawn,
 }
 
+#[allow(dead_code)]
 impl PlayerEvent {
     fn parse_player_event(code: &str) -> Option<PlayerEvent> {
         if !code.starts_with("playerEvent.") {
@@ -74,6 +74,7 @@ pub enum EntityEvent {
     FallingBlockLands,
 }
 
+#[allow(dead_code)]
 impl EntityEvent {
     fn parse_entity_event(code: &str) -> Option<EntityEvent> {
         if !code.starts_with("entityEvent.") {
