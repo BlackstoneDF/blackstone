@@ -23,24 +23,15 @@ pub enum Block<'a> {
     /// Defines the definition of an event (either PlayerEvent or EntityEvent)
     ///   - &'a str `block`: The associated block (Diamond Block for PlayerEvent, Gold Block for EntityEvent)
     ///   - &'a str `action`: The associated action (e.g. join or killPlayer)
-    EventDefinition {
-        block: &'a str,
-        action: &'a str,
-    },
+    EventDefinition { block: &'a str, action: &'a str },
     /// Defines a function definition
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
-    FunctionDefinition {
-        block: &'a str,
-        data: &'a str,
-    },
+    FunctionDefinition { block: &'a str, data: &'a str },
     /// Defines a call to a given function
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
-    FunctionCall {
-        block: &'a str,
-        data: &'a str,
-    },
+    FunctionCall { block: &'a str, data: &'a str },
     /// Defines a bracket block (piston)
     ///   - BracketDirection `direct` - the direction of the bracket (opening or closing)
     ///   - BracketType `type` - the type of the bracket (Normal/Piston or Repeat/Sticky Piston)
@@ -51,7 +42,6 @@ pub enum Block<'a> {
 }
 
 #[allow(dead_code, unused)]
-#[allow(clippy::wrong_self_convention)] // we want to_json for consistency
 impl Block<'_> {
     /// converts self to a workable json String
     pub fn to_json(&self) -> String {

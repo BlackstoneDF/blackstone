@@ -21,7 +21,7 @@ fn main() {
             block: "event",
             action: "Join",
         },
-        Block::CodeBlock {
+        Block::Code {
             block: "player_action",
             items: vec![Item {
                 id: "txt".to_string(),
@@ -56,7 +56,7 @@ fn main() {
     loop {
         c += 1;
         let tok = lexer.read_token();
-        let line = 0;
+        let _line = 0;
         let at_char = lexer.position;
         tokens.push(Token {
             at_char: at_char as u32,
@@ -71,7 +71,7 @@ fn main() {
         }
     }
     println!("tokens: {tokens:#?}");
-    let ast = transform_to_ast(tokens);
+    let _ast = transform_to_ast(tokens);
     // println!("{ast:#?}");
 }
 

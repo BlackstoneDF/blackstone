@@ -1,11 +1,12 @@
-use strum::IntoEnumIterator;
 use crate::ir::values::*;
+use strum::IntoEnumIterator;
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
 pub enum IRPlayerAction {
     SendMessage(Texts),
 }
 
+#[allow(dead_code)]
 impl IRPlayerAction {
     fn parse_player_action(code: &str) -> Option<IRPlayerAction> {
         if !code.starts_with("playerAction.") {
@@ -19,9 +20,10 @@ impl IRPlayerAction {
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
 pub enum IRGameAction {}
 
+#[allow(dead_code)]
 impl IRGameAction {
-    fn parse_player_action(code: &str) -> Option<IRGameAction> {
-        if !code.starts_with("playerAction.") {
+    fn parse_game_action(code: &str) -> Option<IRGameAction> {
+        if !code.starts_with("gameAction.") {
             return None;
         }
         let code = code.trim_start_matches("gameAction.");
@@ -32,8 +34,9 @@ impl IRGameAction {
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
 pub enum IREntityAction {}
 
+#[allow(dead_code)]
 impl IREntityAction {
-    fn parse_player_action(code: &str) -> Option<IREntityAction> {
+    fn parse_entity_action(code: &str) -> Option<IREntityAction> {
         if !code.starts_with("entityAction.") {
             return None;
         }
