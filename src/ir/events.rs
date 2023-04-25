@@ -2,7 +2,7 @@ use strum::IntoEnumIterator;
 use strum_macros;
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
-pub enum PlayerEvent {
+pub enum IRPlayerEvent {
     Join,
     Leave,
     Command,
@@ -51,18 +51,18 @@ pub enum PlayerEvent {
     Respawn,
 }
 
-impl PlayerEvent {
-    fn parse_player_event(code: &str) -> Option<PlayerEvent> {
+impl IRPlayerEvent {
+    fn parse_player_event(code: &str) -> Option<IRPlayerEvent> {
         if !code.starts_with("playerEvent.") {
             return None;
         }
         let code = code.trim_start_matches("playerEvent.");
-        PlayerEvent::iter().find(|event| event.to_string().eq_ignore_ascii_case(code))
+        IRPlayerEvent::iter().find(|event| event.to_string().eq_ignore_ascii_case(code))
     }
 }
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
-pub enum EntityEvent {
+pub enum IREntityEvent {
     EntityDamageEntity,
     EntityKillEntity,
     EntityTakeDamage,
@@ -74,12 +74,12 @@ pub enum EntityEvent {
     FallingBlockLands,
 }
 
-impl EntityEvent {
-    fn parse_entity_event(code: &str) -> Option<EntityEvent> {
+impl IREntityEvent {
+    fn parse_entity_event(code: &str) -> Option<IREntityEvent> {
         if !code.starts_with("entityEvent.") {
             return None;
         }
         let code = code.trim_start_matches("playerEvent.");
-        EntityEvent::iter().find(|event| event.to_string().eq_ignore_ascii_case(code))
+        IREntityEvent::iter().find(|event| event.to_string().eq_ignore_ascii_case(code))
     }
 }
