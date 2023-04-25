@@ -20,13 +20,13 @@ pub struct Particle {
 pub struct Sound {
     sound: String,
     pitch: f32,
-    vol: f32
+    vol: f32,
 }
 #[derive(PartialEq, Default)]
 pub struct Potion {
     effect: String,
     dur: u32,
-    amp: u32
+    amp: u32,
 }
 #[derive(PartialEq, Default)]
 pub struct Item(codegen::item::Item);

@@ -9,7 +9,7 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
     for (count, mut token) in input.into_iter().enumerate() {
         match &token.token {
             TokenType::OpenBraces => {
-                token.token = TokenType::Block(vec![]);
+                token.token = TokenType::Block { tokens: vec![] };
                 output.push(token.clone());
                 adding_to_block += 1;
             }
@@ -17,7 +17,7 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
                 adding_to_block -= 1;
             }
             TokenType::OpenParen => {
-                token.token = TokenType::Tuple(vec![]);
+                token.token = TokenType::Tuple { tokens: vec![] };
                 output.push(token.clone());
                 adding_to_tuple += 1;
             }
@@ -40,7 +40,26 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
                         "will print abnormally ({adding_to_block}/{adding_to_tuple}), {:#?}",
                         token
                     );
-
+                    if adding_to_block > last_adding_to_block {
+                        let mut clone = token.clone();
+                        clone.token = TokenType::Block { tokens: vec![] };
+                        output.push(clone);
+                        if let TokenType::Block { ref mut tokens } =
+                            &mut output.last_mut().expect("failed to get last somehow").token
+                        {
+                            tokens.push(token.clone());
+                        }
+                    }
+                    if adding_to_tuple > last_adding_to_tuple {
+                        let mut clone = token.clone();
+                        clone.token = TokenType::Tuple { tokens: vec![] };
+                        output.push(clone);
+                        if let TokenType::Tuple { ref mut tokens } =
+                            &mut output.last_mut().expect("failed to get last somehow").token
+                        {
+                            tokens.push(token.clone());
+                        }
+                    }
                     // do this after
                     last_adding_to_tuple = adding_to_tuple;
                     last_adding_to_block = adding_to_block;

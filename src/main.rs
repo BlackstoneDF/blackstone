@@ -24,7 +24,7 @@ fn main() {
             block: "event",
             action: "Join",
         },
-        Block::CodeBlock {
+        Block::Code {
             block: "player_action",
             items: vec![Item {
                 id: "txt".to_string(),
@@ -76,10 +76,7 @@ fn main() {
     // println!("tokens: {tokens:#?}");
     let ast = transform_to_ast(tokens);
 
-    println!(
-        "{:#?}",
-        ast
-    );
+    println!("{:#?}", ast);
     // println!("{ast:#?}");
 }
 

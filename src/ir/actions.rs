@@ -20,21 +20,27 @@ pub enum IRPlayerAction {
     SendMessage(Texts), // 2 tags
     SendMessageSequence(Texts, OptionalNumber),
     SendHoverMessage(Text, Text),
-    ShowTitleText(Text, OptionalText, OptionalNumber, OptionalNumber, OptionalNumber),
+    ShowTitleText(
+        Text,
+        OptionalText,
+        OptionalNumber,
+        OptionalNumber,
+        OptionalNumber,
+    ),
     ShowActionBarText(Texts), // 1 tag
     OpenBook(Item),
     SetBossBar(OptionalText, OptionalNumber, OptionalNumber, OptionalNumber), // 3 tags
     RemoveBossBar(OptionalNumber),
-    SendAdvancement(Text, Item), // 1 tag
-    SetPlayerListInfo(OptionalTexts), // 1 tag
+    SendAdvancement(Text, Item),         // 1 tag
+    SetPlayerListInfo(OptionalTexts),    // 1 tag
     PlaySound(Sounds, OptionalLocation), // 1 tag
-    StopSounds(OptionalSounds), // 1 tag
-    PlaySoundFromEntity(Sounds, Text), // 1 tag
+    StopSounds(OptionalSounds),          // 1 tag
+    PlaySoundFromEntity(Sounds, Text),   // 1 tag
     ShowInventoryMenu(OptionalItems),
     ExpandInventoryMenu(OptionalItems),
     SetInventoryMenuItem(Number, OptionalItem),
     SetInventoryMenuName(Text),
-    AddInventoryMenuRow(OptionalItems), // 1 tag
+    AddInventoryMenuRow(OptionalItems),     // 1 tag
     RemoveInventoryMenuRow(OptionalNumber), // 1 tag
     CloseInventory,
     OpenContainerInventory(Location),
@@ -50,8 +56,8 @@ pub enum IRPlayerAction {
     SetAbsorptionHealth(Number),
     SetFoodLevel(Number),
     SetSaturationLevel(Number),
-    GiveExperience(Number), // 1 tag
-    SetExperience(Number), // 1 tag
+    GiveExperience(Number),    // 1 tag
+    SetExperience(Number),     // 1 tag
     GivePotionEffect(Potions), // 3 tags
     RemovePotionEffect(Potions),
     ClearPotionEffects,
@@ -67,21 +73,21 @@ pub enum IRPlayerAction {
     SetAdventureMode,
     SetCreativeMode,
     SetSpectatorMode,
-    SetAllowFlight(), // 1 tag
-    SetPVPAllowed(), // 1 tag
+    SetAllowFlight(),       // 1 tag
+    SetPVPAllowed(),        // 1 tag
     SetDeathDropsEnabled(), // 1 tag
-    SetInventoryKept(), // 1 tag
-    SetCollidable(), // 1 tag
+    SetInventoryKept(),     // 1 tag
+    SetCollidable(),        // 1 tag
     AllowPlaceBreakBlocks(OptionalItems),
     DisallowPlaceBreakBlocks(OptionalItems),
-    SetInstantRespawn(), // 1 tag
-    SetReducedDebugInfo(), // 1 tag
-    Teleport(Location), // 2 tags
-    LaunchUp(Number), // 1 tag
-    LaunchForward(Number), // 2 tags
+    SetInstantRespawn(),                            // 1 tag
+    SetReducedDebugInfo(),                          // 1 tag
+    Teleport(Location),                             // 2 tags
+    LaunchUp(Number),                               // 1 tag
+    LaunchForward(Number),                          // 2 tags
     LaunchTowardLocation(Location, OptionalNumber), // 2 tags
     RideEntity(OptionalText),
-    SetFlying(), // 1 tag
+    SetFlying(),  // 1 tag
     SetGliding(), // 1 tag
     BoostElytra(Item),
     SetRotation(Number, Number),
@@ -89,14 +95,20 @@ pub enum IRPlayerAction {
     SetVelocity(Vector), // 1 tag
     SpectateTarget(OptionalVector),
     SetSpawnPoint(OptionalLocation),
-    LaunchProjectile(Item, OptionalLocation, OptionalText, OptionalNumber, OptionalNumber),
+    LaunchProjectile(
+        Item,
+        OptionalLocation,
+        OptionalText,
+        OptionalNumber,
+        OptionalNumber,
+    ),
     SetPlayerTime(OptionalNumber),
     SetPlayerWeather(), // 1 tag
     SetCompassTarget(Location),
     DisplayBlock(Item, Location, OptionalLocation, OptionalTexts),
     DisplayBlockFracture(Locations, OptionalNumber),
-    DisplayBlockOpenedState(Location), // 1 tag
-    DisplayGatewayBeam(Location), // 1 tag
+    DisplayBlockOpenedState(Location),        // 1 tag
+    DisplayGatewayBeam(Location),             // 1 tag
     DisplaySignText(Location, OptionalTexts), // 2 tags
     DisplayHologram(Location, OptionalText),
     SetFogDistance(OptionalNumber),
@@ -112,8 +124,23 @@ pub enum IRPlayerAction {
     DisplayAnimatedParticleCircle(Particle, Location, OptionalNumber, OptionalNumber),
     DisplayParticleCuboid(Particle, Location, Location, OptionalNumber), // 1 tag
     DisplayAnimatedParticleCuboi(Particle, Location, Location, OptionalNumber, OptionalNumber), // 1 tag
-    DisplayParticleSpiral(Particle, Location, OptionalNumber, OptionalNumber, OptionalNumber, OptionalNumber),
-    DisplayAnimatedParticleSpiral(Particle, Location, OptionalNumber, OptionalNumber, OptionalNumber, OptionalNumber, OptionalNumber),
+    DisplayParticleSpiral(
+        Particle,
+        Location,
+        OptionalNumber,
+        OptionalNumber,
+        OptionalNumber,
+        OptionalNumber,
+    ),
+    DisplayAnimatedParticleSpiral(
+        Particle,
+        Location,
+        OptionalNumber,
+        OptionalNumber,
+        OptionalNumber,
+        OptionalNumber,
+        OptionalNumber,
+    ),
     DisplayParticleSphere(Particle, Location, OptionalNumber),
     DisplayParticleRay(Particle, Location, Vector, OptionalNumber),
     DisplayLightningBolt(Location),
@@ -128,14 +155,14 @@ pub enum IRPlayerAction {
     SetNameColor(OptionalText),
     SetArrowsStucks(OptionalNumber),
     SetBeeStingsStuck(OptionalNumber),
-    SetVisualVire(), // 1 tag
+    SetVisualVire(),             // 1 tag
     SendPlayerAttackAnimation(), // 1 tag
     SendPlayerHurtAnimation(OptionalLocation),
     SendWakeUpAnimation,
     SetStatus(OptionalText),
     SetSkin(OptionalItem),
     RollBackBlockChanges(Number),
-    Kick
+    Kick,
 }
 
 #[allow(dead_code)]
