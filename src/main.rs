@@ -1,10 +1,10 @@
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use crate::lexer::{lex::Lexer, tokens::TokenType};
+use crate::{lexer::{lex::Lexer, tokens::{TokenType, Token}}, tokengrouper::lex::transform_to_ast};
 
 mod codegen;
-mod lexer;
 mod ir;
+mod lexer;
 mod tokengrouper;
 
 fn main() {
@@ -39,32 +39,37 @@ fn main() {
         .write_all(send.as_bytes())
         .expect("failed to write all"); */
 
-    let mut lexer = Lexer::new(
-        r#"
-playerEvent.join()
-{
-    player.sendMessage("Hello world!");
+    let input = r#"
+    playerEvent.join()
+    {
+        player.sendMessage("Hello world!");
+        
+        // by default, it is local
+        var x = 10;
     
-    // by default, it is local
-    var x = 10;
-
-    // test percent exprs
-    %math(2+2), %math(7*4), %var(x)
-
-    // make it global or saved
-    var game.y = 30;
-    var save.z = 40;
-
-    // %var() syntax works like normal
-    player.sendMessage("x is %var(x) | y is %var(y) | z is %var(z)");
-}"#
-        .to_string(),
-    );
+        // test percent exprs
+        %math(2+2), %math(7*4), %var(x)
+    
+        // make it global or saved
+        var game.y = 30;
+        var save.z = 40;
+    
+        // %var() syntax works like normal
+        player.sendMessage("x is %var(x) | y is %var(y) | z is %var(z)");
+    }"#;
+    let mut lexer = Lexer::new(input.to_string());
     let mut c = 0;
+    let mut tokens = vec![];
     loop {
         c += 1;
         let tok = lexer.read_token();
-        println!("{tok:?}");
+        let line = 0;
+        let at_char = lexer.position;
+        tokens.push(Token {
+            at_char: at_char as u32,
+            at_line: 0,
+            token: tok.clone(),
+        });
         if let TokenType::Eof = tok {
             break;
         }
@@ -72,6 +77,9 @@ playerEvent.join()
             break;
         }
     }
+    println!("tokens: {tokens:#?}");
+    let ast = transform_to_ast(tokens);
+    println!("{ast:#?}");
 }
 
 fn help_message() {

@@ -1,9 +1,7 @@
 use strum::IntoEnumIterator;
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
-pub enum IRPlayerAction {
-
-}
+pub enum IRPlayerAction {}
 
 impl IRPlayerAction {
     fn parse_player_action(code: &str) -> Option<IRPlayerAction> {
@@ -15,11 +13,8 @@ impl IRPlayerAction {
     }
 }
 
-
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
-pub enum IRGameAction {
-    
-}
+pub enum IRGameAction {}
 
 impl IRGameAction {
     fn parse_player_action(code: &str) -> Option<IRGameAction> {
@@ -32,9 +27,7 @@ impl IRGameAction {
 }
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
-pub enum IREntityAction {
-    
-}
+pub enum IREntityAction {}
 
 impl IREntityAction {
     fn parse_player_action(code: &str) -> Option<IREntityAction> {
