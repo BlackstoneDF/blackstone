@@ -73,8 +73,8 @@ impl Item {
         line_number: i32,
         raw_file: String,
     ) -> Self {
-        if from.starts_with("\"") && from.ends_with("\"") {
-            let from = from.replace("\"", "");
+        if from.starts_with('\"') && from.ends_with('\"') {
+            let from = from.replace('\"', "");
             return Item {
                 id: "txt".to_string(),
                 slot,
@@ -88,13 +88,13 @@ impl Item {
                 item: ItemData::Number { data: v },
             };
         }
-        if from.starts_with("vanilla_item![") && from.ends_with("]") {
-            let from = from.replace("vanilla_item![", "").replace("]", "");
+        if from.starts_with("vanilla_item![") && from.ends_with(']') {
+            let from = from.replace("vanilla_item![", "").replace(']', "");
             let split = from.split(':').collect::<Vec<_>>();
             if split.len() < 2 {
                 // errors::throw_error("not enough arguments in `vanilla_item!` statement", &full_line, &raw_file, line_number)
             }
-            let id = split.get(0).expect("failed to get id");
+            let id = split.first().expect("failed to get id");
             let count = split.get(1).expect("failed to get count");
             let datas = format!(r#"{{Count:{count}b,DF_NBT:3120,id:\"minecraft:{id}\"}}"#);
             return Item {
@@ -104,13 +104,13 @@ impl Item {
             };
         }
         println!("bad item from string {from} to item");
-        return Item {
+        Item {
             id: "var".to_string(),
             slot,
             item: ItemData::Variable {
                 scope: VariableScope::Unsaved,
                 name: from,
             },
-        };
+        }
     }
 }

@@ -94,7 +94,7 @@ impl ItemData {
                     spread.0, spread.1, motion.0, motion.1, motion.2
                 )
             }
-            Self::NoData => format!(r#""NoData""#),
+            Self::NoData => r#""NoData""#.to_string(),
         }
     }
 }
