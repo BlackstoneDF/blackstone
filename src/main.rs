@@ -33,15 +33,15 @@ fn main() {
         },
     ]);
     println!("{s}");
-    // let send =
-    //     r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
-    // let send = send.replace("%s%", &s);
-    // println!("{send}");
-    //
-    // let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
-    // stream
-    //     .write_all(send.as_bytes())
-    //     .expect("failed to write all");
+    /* let send =
+        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
+    let send = send.replace("%s%", &s);
+    println!("{send}");
+
+    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
+    stream
+        .write_all(send.as_bytes())
+        .expect("failed to write all"); */
 
     let mut lexer = Lexer::new(
         r#"
@@ -51,6 +51,9 @@ playerEvent.join()
     
     // by default, it is local
     var x = 10;
+
+    // test percent exprs
+    %math(2+2), %math(7*4), %var(x)
 
     // make it global or saved
     var game.y = 30;

@@ -12,6 +12,7 @@ pub enum TokenType {
     Number(String), // this is actually a string because %math, %var, etc. exist'
     Location(i32, i32, i32, i32, i32),
     Tuple(Vec<TokenType>),
+    PercentExpr((String, String)),
     OpenParen,
     CloseParen,
     OpenBraces,

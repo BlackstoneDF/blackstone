@@ -1,5 +1,7 @@
 use std::fs::read;
 
+use serde::de::IntoDeserializer;
+
 use crate::lexer::lex;
 
 use super::tokens::{Token, TokenType};
@@ -16,7 +18,6 @@ fn is_identifiable(ch: char) -> bool {
         || 'A' <= ch && ch <= 'Z'
         || ch == '_'
         || ch == '.'
-        || ch == '%'
         || ch == '%'
 }
 fn is_digit(ch: char) -> bool {
@@ -56,7 +57,7 @@ impl Lexer {
 
     pub fn read_number(&mut self) -> String {
         let pos = self.position;
-        while self.position < self.input.len().try_into().unwrap() && is_digit(self.ch)
+        while self.position < self.input.len() && is_digit(self.ch)
             || self.ch == '.'
         {
             self.read_char();
@@ -77,12 +78,24 @@ impl Lexer {
     pub fn read_text(&mut self) -> String {
         let pos = self.position;
         self.read_char();
-        while self.position < self.input.len().try_into().unwrap() && self.ch != '"' {
+        while self.position < self.input.len() && self.ch != '"' {
             self.read_char();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         let ret: String = chars.into();
-        ret.replace("\"", "")
+        ret.replace('\"', '')
+    }
+
+    pub fn read_percent_expression(&mut self) -> (String, String) {
+        let pos = self.position;
+        self.read_char();
+        while self.position < self.input.len() && self.ch != ')' {
+            self.read_char();
+        }
+        let chars = self.input.get(pos..self.position).expect("failed to slice");
+        let chars = chars.trim_start_matches("%");
+        let chars = chars.split_once("(").expect("somehow failed to split? catch error later");
+        (chars.0.into(), chars.1.into())
     }
 
     pub fn read_whitespace(&mut self) {
@@ -109,6 +122,7 @@ impl Lexer {
             '.' => token = TokenType::Dot,
             '+' => token = TokenType::Plus,
             '-' => token = TokenType::Minus,
+            '%' => token = TokenType::PercentExpr(self.read_percent_expression()),
             _ => {
                 if self.ch == '%' {
                 } else if is_identifiable(self.ch) {
