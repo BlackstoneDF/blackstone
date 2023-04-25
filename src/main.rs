@@ -1,6 +1,12 @@
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use crate::{lexer::{lex::Lexer, tokens::{TokenType, Token}}, tokengrouper::grouper::transform_to_ast};
+use crate::{
+    lexer::{
+        lex::Lexer,
+        tokens::{Token, TokenType},
+    },
+    tokengrouper::grouper::transform_to_ast,
+};
 
 mod codegen;
 mod ir;
