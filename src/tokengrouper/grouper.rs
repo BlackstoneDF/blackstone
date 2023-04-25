@@ -29,12 +29,6 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
                     println!("will add normally ({adding_to_block}/{adding_to_tuple}), {:#?}", token);
                     output.push(token);
                 } else {
-                    // let mut token_type = output.get(count).expect("failed to get nth").token;
-                    // if let TokenType::Block(ref mut tree) = token_type {
-                    //     if adding_to_block > 0 {
-                    //         tree.push(token);
-                    //     }
-                    // }
                     println!("will print abnormally ({adding_to_block}/{adding_to_tuple}), {:#?}", token);
                 }
             }

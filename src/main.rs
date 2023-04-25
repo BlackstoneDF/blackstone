@@ -1,6 +1,6 @@
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use crate::{lexer::{lex::Lexer, tokens::{TokenType, Token}}, tokengrouper::lex::transform_to_ast};
+use crate::{lexer::{lex::Lexer, tokens::{TokenType, Token}}, tokengrouper::grouper::transform_to_ast};
 
 mod codegen;
 mod ir;
@@ -43,19 +43,6 @@ fn main() {
     playerEvent.join()
     {
         player.sendMessage("Hello world!");
-        
-        // by default, it is local
-        var x = 10;
-    
-        // test percent exprs
-        %math(2+2), %math(7*4), %var(x)
-    
-        // make it global or saved
-        var game.y = 30;
-        var save.z = 40;
-    
-        // %var() syntax works like normal
-        player.sendMessage("x is %var(x) | y is %var(y) | z is %var(z)");
     }"#;
     let mut lexer = Lexer::new(input.to_string());
     let mut c = 0;
@@ -79,7 +66,7 @@ fn main() {
     }
     println!("tokens: {tokens:#?}");
     let ast = transform_to_ast(tokens);
-    println!("{ast:#?}");
+    // println!("{ast:#?}");
 }
 
 fn help_message() {
