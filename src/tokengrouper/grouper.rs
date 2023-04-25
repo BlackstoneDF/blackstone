@@ -49,11 +49,22 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
                         {
                             tokens.push(token.clone());
                         }
-                    }
-                    if adding_to_tuple > last_adding_to_tuple {
+                    } else if adding_to_tuple > last_adding_to_tuple {
                         let mut clone = token.clone();
                         clone.token = TokenType::Tuple { tokens: vec![] };
                         output.push(clone);
+                        if let TokenType::Tuple { ref mut tokens } =
+                            &mut output.last_mut().expect("failed to get last somehow").token
+                        {
+                            tokens.push(token.clone());
+                        }
+                    } else if adding_to_block == last_adding_to_block {
+                        if let TokenType::Block { ref mut tokens } =
+                            &mut output.last_mut().expect("failed to get last somehow").token
+                        {
+                            tokens.push(token.clone());
+                        }
+                    } else if adding_to_tuple == last_adding_to_tuple {
                         if let TokenType::Tuple { ref mut tokens } =
                             &mut output.last_mut().expect("failed to get last somehow").token
                         {
