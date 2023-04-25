@@ -1,7 +1,10 @@
 use strum::IntoEnumIterator;
+use crate::ir::values::*;
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
-pub enum IRPlayerAction {}
+pub enum IRPlayerAction {
+    SendMessage(Texts),
+}
 
 impl IRPlayerAction {
     fn parse_player_action(code: &str) -> Option<IRPlayerAction> {
