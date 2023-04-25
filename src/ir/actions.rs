@@ -1,5 +1,5 @@
-use strum::IntoEnumIterator;
 use crate::ir::values::*;
+use strum::IntoEnumIterator;
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
 pub enum IRPlayerAction {

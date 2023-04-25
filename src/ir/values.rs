@@ -1,46 +1,46 @@
 #[derive(PartialEq, Default)]
-pub struct Text(String);
+pub struct Text(pub String);
 #[derive(PartialEq, Default)]
-pub struct Number(f32);
+pub struct Number(pub f32);
 #[derive(PartialEq, Default)]
-pub struct Location(f32, f32, f32, f32, f32);
+pub struct Location(pub f32, pub f32, pub f32, pub f32, pub f32);
 #[derive(PartialEq, Default)]
-pub struct Vector(f32, f32, f32);
+pub struct Vector(pub f32, pub f32, pub f32);
 #[derive(PartialEq, Default)]
 pub struct Particle {
-    name: String,
-    amount: u32,
-    spread: (i32, i32),
-    motion: (i32, i32, i32),
-    motion_variation: u32,
+    pub name: String,
+    pub amount: u32,
+    pub spread: (i32, i32),
+    pub motion: (i32, i32, i32),
+    pub motion_variation: u32,
 }
 #[derive(PartialEq, Default)]
-pub struct Texts(Vec<Text>);
+pub struct Texts(pub Vec<Text>);
 #[derive(PartialEq, Default)]
-pub struct Numbers(Vec<Number>);
+pub struct Numbers(pub Vec<Number>);
 #[derive(PartialEq, Default)]
-pub struct Locations(Vec<Location>);
+pub struct Locations(pub Vec<Location>);
 #[derive(PartialEq, Default)]
-pub struct Vectors(Vec<Vector>);
+pub struct Vectors(pub Vec<Vector>);
 #[derive(PartialEq, Default)]
-pub struct Particles(Vec<Particle>);
+pub struct Particles(pub Vec<Particle>);
 #[derive(PartialEq, Default)]
-pub struct OptionalText(Option<Text>);
+pub struct OptionalText(pub Option<Text>);
 #[derive(PartialEq, Default)]
-pub struct OptionalNumber(Option<Number>);
+pub struct OptionalNumber(pub Option<Number>);
 #[derive(PartialEq, Default)]
-pub struct OptionalLocation(Option<Location>);
+pub struct OptionalLocation(pub Option<Location>);
 #[derive(PartialEq, Default)]
-pub struct OptionalVector(Option<Vector>);
+pub struct OptionalVector(pub Option<Vector>);
 #[derive(PartialEq, Default)]
-pub struct OptionalParticle(Option<Particle>);
+pub struct OptionalParticle(pub Option<Particle>);
 #[derive(PartialEq, Default)]
-pub struct OptionalTexts(Option<Texts>);
+pub struct OptionalTexts(pub Option<Texts>);
 #[derive(PartialEq, Default)]
-pub struct OptionalNumbers(Option<Numbers>);
+pub struct OptionalNumbers(pub Option<Numbers>);
 #[derive(PartialEq, Default)]
-pub struct OptionalLocations(Option<Locations>);
+pub struct OptionalLocations(pub Option<Locations>);
 #[derive(PartialEq, Default)]
-pub struct OptionalVectors(Option<Vectors>);
+pub struct OptionalVectors(pub Option<Vectors>);
 #[derive(PartialEq, Default)]
-pub struct OptionalParticles(Option<Particles>);
+pub struct OptionalParticles(pub Option<Particles>);

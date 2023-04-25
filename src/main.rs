@@ -1,6 +1,9 @@
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
+use crate::ir::actions::*;
+use crate::ir::values::*;
 use crate::{
+    ir::values::Text,
     lexer::{
         lex::Lexer,
         tokens::{Token, TokenType},
@@ -34,7 +37,7 @@ fn main() {
             data: "",
         },
     ]);
-    println!("{s}");
+    // println!("{s}");
     /* let send =
         r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
     let send = send.replace("%s%", &s);
@@ -70,8 +73,13 @@ fn main() {
             break;
         }
     }
-    println!("tokens: {tokens:#?}");
+    // println!("tokens: {tokens:#?}");
     let ast = transform_to_ast(tokens);
+
+    println!(
+        "{:#?}",
+        ast
+    );
     // println!("{ast:#?}");
 }
 
