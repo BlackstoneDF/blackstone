@@ -8,11 +8,7 @@ pub struct Lexer {
 }
 
 fn is_identifiable(ch: char) -> bool {
-    ch.is_ascii_uppercase()
-        || ch.is_ascii_lowercase()
-        || ch == '_'
-        || ch == '.'
-        || ch == '%'
+    ch.is_ascii_uppercase() || ch.is_ascii_lowercase() || ch == '_' || ch == '.' || ch == '%'
 }
 fn is_digit(ch: char) -> bool {
     ch.is_ascii_digit() || ch == '.'
@@ -38,22 +34,13 @@ impl Lexer {
 
     pub fn read_char(&mut self) -> char {
         self.position += 1;
-        self.ch = self
-            .input
-            .chars()
-            .nth(self.position)
-            .unwrap_or('\0');
-        self.input
-            .chars()
-            .nth(self.position)
-            .unwrap_or('\0')
+        self.ch = self.input.chars().nth(self.position).unwrap_or('\0');
+        self.input.chars().nth(self.position).unwrap_or('\0')
     }
 
     pub fn read_number(&mut self) -> String {
         let pos = self.position;
-        while self.position < self.input.len() && is_digit(self.ch)
-            || self.ch == '.'
-        {
+        while self.position < self.input.len() && is_digit(self.ch) || self.ch == '.' {
             self.read_char();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
@@ -88,7 +75,9 @@ impl Lexer {
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         let chars = chars.trim_start_matches('%');
-        let chars = chars.split_once('(').expect("somehow failed to split? catch error later");
+        let chars = chars
+            .split_once('(')
+            .expect("somehow failed to split? catch error later");
         (chars.0.into(), chars.1.into())
     }
 
