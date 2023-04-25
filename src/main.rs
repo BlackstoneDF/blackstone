@@ -2,6 +2,11 @@ use std::{io::Write, net::TcpStream};
 
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
+use crate::lexer::{
+    lex::Lexer,
+    tokens::{Token, TokenType},
+};
+
 mod codegen;
 mod lexer;
 mod parser;
@@ -28,15 +33,46 @@ fn main() {
         },
     ]);
     println!("{s}");
-    let send =
-        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
-    let send = send.replace("%s%", &s);
-    println!("{send}");
+    // let send =
+    //     r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
+    // let send = send.replace("%s%", &s);
+    // println!("{send}");
+    //
+    // let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
+    // stream
+    //     .write_all(send.as_bytes())
+    //     .expect("failed to write all");
 
-    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
-    stream
-        .write_all(send.as_bytes())
-        .expect("failed to write all");
+    let mut lexer = Lexer::new(
+        r#"
+playerEvent.join()
+{
+    player.sendMessage("Hello world!");
+    
+    // by default, it is local
+    var x = 10;
+
+    // make it global or saved
+    var game.y = 30;
+    var save.z = 40;
+
+    // %var() syntax works like normal
+    player.sendMessage("x is %var(x) | y is %var(y) | z is %var(z)");
+}"#
+        .to_string(),
+    );
+    let mut c = 0;
+    loop {
+        c += 1;
+        let tok = lexer.read_token();
+        println!("{tok:?}");
+        if let TokenType::EOF = tok {
+            break;
+        }
+        if c > 100 {
+            break;
+        }
+    }
 }
 
 fn help_message() {

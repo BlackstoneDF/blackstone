@@ -1,9 +1,11 @@
+#[derive(Debug)]
 pub struct Token {
     pub at_line: u32,
     pub at_char: u32,
     pub token: TokenType,
 }
 
+#[derive(Debug)]
 pub enum TokenType {
     Identifier(String),
     Text(String),
@@ -22,6 +24,8 @@ pub enum TokenType {
     Slash,
     Star,
     NoType,
+    EOF,
+    Comma,
 }
 
 /*
