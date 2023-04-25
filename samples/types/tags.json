@@ -1,0 +1,124 @@
+{
+    "blocks": [
+        {
+            "id": "block",
+            "block": "func",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "False",
+                                "tag": "Is Hidden",
+                                "action": "dynamic",
+                                "block": "func"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "data": "test"
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "list",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "Current Health",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 1
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "Damage Event Cause",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 2
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "CPU Usage",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 3
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "Armor Items",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 4
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "Entity Item",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 5
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "UUID",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 6
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "Direction",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 7
+                    },
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "Yaw",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 8
+                    }
+                ]
+            },
+            "action": "="
+        }
+    ]
+}

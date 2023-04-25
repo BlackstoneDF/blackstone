@@ -1,0 +1,201 @@
+{
+    "blocks": [
+        {
+            "id": "block",
+            "block": "func",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "True",
+                                "tag": "Is Hidden",
+                                "action": "dynamic",
+                                "block": "func"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "data": "test"
+        },
+        {
+            "id": "block",
+            "block": "if_player",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "norm"
+        },
+        {
+            "id": "block",
+            "block": "player_action",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "block",
+            "block": "call_func",
+            "args": {
+                "items": []
+            },
+            "data": ""
+        },
+        {
+            "id": "block",
+            "block": "start_process",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "Don't copy",
+                                "tag": "Local Variables",
+                                "action": "dynamic",
+                                "block": "start_process"
+                            }
+                        },
+                        "slot": 25
+                    },
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "With current targets",
+                                "tag": "Target Mode",
+                                "action": "dynamic",
+                                "block": "start_process"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "data": ""
+        },
+        {
+            "id": "block",
+            "block": "if_entity",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "norm"
+        },
+        {
+            "id": "block",
+            "block": "entity_action",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": []
+            },
+            "action": "="
+        },
+        {
+            "id": "block",
+            "block": "if_var",
+            "args": {
+                "items": []
+            },
+            "action": "="
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "norm"
+        },
+        {
+            "id": "block",
+            "block": "game_action",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "block",
+            "block": "if_game",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "norm"
+        },
+        {
+            "id": "block",
+            "block": "control",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "Ticks",
+                                "tag": "Time Unit",
+                                "action": "Wait",
+                                "block": "control"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "action": "Wait"
+        },
+        {
+            "id": "block",
+            "block": "select_obj",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "block",
+            "block": "repeat",
+            "args": {
+                "items": []
+            },
+            "action": ""
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "repeat"
+        },
+        {
+            "id": "block",
+            "block": "else"
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "norm"
+        }
+    ]
+}

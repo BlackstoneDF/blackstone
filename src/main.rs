@@ -1,6 +1,9 @@
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
+use crate::ir::actions::*;
+use crate::ir::values::*;
 use crate::{
+    ir::values::Text,
     lexer::{
         lex::Lexer,
         tokens::{Token, TokenType},
@@ -21,7 +24,7 @@ fn main() {
             block: "event",
             action: "Join",
         },
-        Block::Code {
+        Block::CodeBlock {
             block: "player_action",
             items: vec![Item {
                 id: "txt".to_string(),
@@ -34,7 +37,7 @@ fn main() {
             data: "",
         },
     ]);
-    println!("{s}");
+    // println!("{s}");
     /* let send =
         r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
     let send = send.replace("%s%", &s);
@@ -56,7 +59,7 @@ fn main() {
     loop {
         c += 1;
         let tok = lexer.read_token();
-        let _line = 0;
+        let line = 0;
         let at_char = lexer.position;
         tokens.push(Token {
             at_char: at_char as u32,
@@ -70,8 +73,13 @@ fn main() {
             break;
         }
     }
-    println!("tokens: {tokens:#?}");
-    let _ast = transform_to_ast(tokens);
+    // println!("tokens: {tokens:#?}");
+    let ast = transform_to_ast(tokens);
+
+    println!(
+        "{:#?}",
+        ast
+    );
     // println!("{ast:#?}");
 }
 
