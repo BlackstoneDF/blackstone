@@ -4,7 +4,8 @@ use crate::lexer::{lex::Lexer, tokens::TokenType};
 
 mod codegen;
 mod lexer;
-mod parser;
+mod ir;
+mod tokengrouper;
 
 fn main() {
     help_message();
