@@ -1,8 +1,7 @@
-#[allow(unused_imports)]
+use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
+
 use crate::ir::actions::*;
-#[allow(unused_imports)]
 use crate::ir::values::*;
-#[allow(unused_imports)]
 use crate::{
     ir::values::Text,
     lexer::{
@@ -11,7 +10,6 @@ use crate::{
     },
     tokengrouper::grouper::transform_to_ast,
 };
-use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
 mod codegen;
 mod ir;
@@ -21,7 +19,7 @@ mod tokengrouper;
 fn main() {
     help_message();
 
-    let _s = process_block_vec(vec![
+    let s = process_block_vec(vec![
         Block::EventDefinition {
             block: "event",
             action: "Join",
@@ -61,7 +59,7 @@ fn main() {
     loop {
         c += 1;
         let tok = lexer.read_token();
-        let _line = 0;
+        let line = 0;
         let at_char = lexer.position;
         tokens.push(Token {
             at_char: at_char as u32,
@@ -78,7 +76,7 @@ fn main() {
     // println!("tokens: {tokens:#?}");
     let ast = transform_to_ast(tokens);
 
-    println!("{ast:#?}");
+    println!("{:#?}", ast);
     // println!("{ast:#?}");
 }
 

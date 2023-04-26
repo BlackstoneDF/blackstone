@@ -12,8 +12,8 @@ pub enum TokenType {
     Text(String),
     Number(String), // this is actually a string because %math, %var, etc. exist'
     Location(i32, i32, i32, i32, i32),
-    Block(Vec<Token>),
-    Tuple(Vec<Token>),
+    Block { tokens: Vec<Token> },
+    Tuple { tokens: Vec<Token> },
     PercentExpr((String, String)),
     OpenParen,
     CloseParen,
