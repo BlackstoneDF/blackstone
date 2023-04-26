@@ -1,5 +1,3 @@
-
-
 use super::tokens::{Token, TokenType};
 
 pub struct Lexer {

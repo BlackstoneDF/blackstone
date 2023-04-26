@@ -337,7 +337,7 @@ pub enum IREntityAction {
     ),
     ShearSheep,
     SetCustomTag(Text, OptionalNumber),
-    GetCustomTag(/*Variable,*/ Text), // requires Variable
+    GetCustomTag(Variable, Text),
     RemoveCustomTag(Text),
     SetEntityItem(Item),
     SetWardenDigging(), // 1 tag

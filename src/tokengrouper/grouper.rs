@@ -1,7 +1,9 @@
-use crate::lexer::tokens::{Token, TokenType};
+use itertools::Itertools;
+
+use crate::{lexer::tokens::{Token, TokenType}, ir::IRCodeBlock};
 
 #[allow(unused_variables, unused_assignments)]
-pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
+/* pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
     let mut output: Vec<Token> = vec![];
     let mut adding_to_block = 0;
     let mut last_adding_to_block = 0;
@@ -76,4 +78,32 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
         }
     }
     output
+} */
+#[allow(unused_variables, unused_assignments)]
+pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
+    let mut output: Vec<Token> = vec![];
+    let mut input_iter = input.into_iter();
+    // ignore old ast function, this is a new one
+    // valid code: parse_event(&input_iter);
+    // step 1, parse each code block
+    
+    // step 2, if you get a successful block, don't continue parsing that and insert the IR variant
+    // step 3, if it's an action or anything, check the arguments to make sure it's valid
+    // step 4, do custom processing for others
+
+    output
+}
+
+pub fn parse_event(iter: &mut dyn Iterator<Item = Token>) -> Option<IRCodeBlock> {
+    let mut iter = iter.multipeek();
+
+    if let Some(token_1) = iter.peek() {
+        if let TokenType::Identifier(ident) = &token_1.token {
+            if let Some(token_2) = iter.peek() {
+
+            }
+        }
+    }
+
+    None
 }

@@ -3,6 +3,8 @@ use crate::codegen;
 #[derive(PartialEq, Default)]
 pub struct Text(String);
 #[derive(PartialEq, Default)]
+pub struct Variable(String);
+#[derive(PartialEq, Default)]
 pub struct Number(f32);
 #[derive(PartialEq, Default)]
 pub struct Location(f32, f32, f32, f32, f32);
@@ -33,6 +35,8 @@ pub struct Item(codegen::item::Item);
 #[derive(PartialEq, Default)]
 pub struct Texts(Vec<Text>);
 #[derive(PartialEq, Default)]
+pub struct Variables(Vec<Variable>);
+#[derive(PartialEq, Default)]
 pub struct Numbers(Vec<Number>);
 #[derive(PartialEq, Default)]
 pub struct Locations(Vec<Location>);
@@ -49,6 +53,8 @@ pub struct Potions(Vec<Potion>);
 #[derive(PartialEq, Default)]
 pub struct OptionalText(Option<Text>);
 #[derive(PartialEq, Default)]
+pub struct OptionalVariable(Option<Variable>);
+#[derive(PartialEq, Default)]
 pub struct OptionalNumber(Option<Number>);
 #[derive(PartialEq, Default)]
 pub struct OptionalLocation(Option<Location>);
@@ -64,6 +70,8 @@ pub struct OptionalSound(Option<Sound>);
 pub struct OptionalPotion(Option<Potion>);
 #[derive(PartialEq, Default)]
 pub struct OptionalTexts(Option<Texts>);
+#[derive(PartialEq, Default)]
+pub struct OptionalVariables(Option<Variables>);
 #[derive(PartialEq, Default)]
 pub struct OptionalNumbers(Option<Numbers>);
 #[derive(PartialEq, Default)]
