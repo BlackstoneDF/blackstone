@@ -1,0 +1,390 @@
+{
+    "blocks": [
+        {
+            "id": "block",
+            "block": "process",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "False",
+                                "tag": "Is Hidden",
+                                "action": "dynamic",
+                                "block": "process"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "data": "SuperBoom"
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "pigsBlownUp",
+                                "scope": "saved"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "1"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "+"
+        },
+        {
+            "id": "block",
+            "block": "entity_action",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "Enable",
+                                "tag": "Invulnerable",
+                                "action": "SetInvulnerable",
+                                "block": "entity_action"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "action": "SetInvulnerable"
+        },
+        {
+            "id": "block",
+            "block": "select_obj",
+            "args": {
+                "items": []
+            },
+            "action": "AllEntities"
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "list",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "1"
+                            }
+                        },
+                        "slot": 1
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "3"
+                            }
+                        },
+                        "slot": 2
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "2"
+                            }
+                        },
+                        "slot": 3
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "4"
+                            }
+                        },
+                        "slot": 4
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "1"
+                            }
+                        },
+                        "slot": 5
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "2"
+                            }
+                        },
+                        "slot": 6
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "4"
+                            }
+                        },
+                        "slot": 7
+                    }
+                ]
+            },
+            "action": "CreateList"
+        },
+        {
+            "id": "block",
+            "block": "repeat",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "it",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "list",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 1
+                    },
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "False (copy list)",
+                                "tag": "Allow List Changes",
+                                "action": "ForEach",
+                                "block": "repeat"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "action": "ForEach"
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "repeat"
+        },
+        {
+            "id": "block",
+            "block": "if_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "it",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "1"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "!="
+        },
+        {
+            "id": "bracket",
+            "direct": "open",
+            "type": "norm"
+        },
+        {
+            "id": "block",
+            "block": "game_action",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "g_val",
+                            "data": {
+                                "type": "Location",
+                                "target": "Default"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "it",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "Explosion"
+        },
+        {
+            "id": "bracket",
+            "direct": "close",
+            "type": "norm"
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "it",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "20"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "+"
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "explosions",
+                                "scope": "unsaved"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "1"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "+"
+        },
+        {
+            "id": "block",
+            "block": "control",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "it",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "Ticks",
+                                "tag": "Time Unit",
+                                "action": "Wait",
+                                "block": "control"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "action": "Wait"
+        },
+        {
+            "id": "bracket",
+            "direct": "close",
+            "type": "repeat"
+        },
+        {
+            "id": "block",
+            "block": "entity_action",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "Disable",
+                                "tag": "Invulnerable",
+                                "action": "SetInvulnerable",
+                                "block": "entity_action"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "action": "SetInvulnerable"
+        }
+    ]
+}

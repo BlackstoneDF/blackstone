@@ -1,0 +1,163 @@
+{
+    "blocks": [
+        {
+            "id": "block",
+            "block": "func",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "txt",
+                            "data": {
+                                "name": "add"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "False",
+                                "tag": "Is Hidden",
+                                "action": "dynamic",
+                                "block": "func"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "data": "add"
+        },
+        {
+            "id": "block",
+            "block": "player_action",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "a",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "Add spaces",
+                                "tag": "Text Value Merging",
+                                "action": "SendMessage",
+                                "block": "player_action"
+                            }
+                        },
+                        "slot": 25
+                    },
+                    {
+                        "item": {
+                            "id": "bl_tag",
+                            "data": {
+                                "option": "Regular",
+                                "tag": "Alignment Mode",
+                                "action": "SendMessage",
+                                "block": "player_action"
+                            }
+                        },
+                        "slot": 26
+                    }
+                ]
+            },
+            "action": "SendMessage"
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "out",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "a",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "="
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "out",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "b",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "+"
+        },
+        {
+            "id": "block",
+            "block": "set_var",
+            "args": {
+                "items": [
+                    {
+                        "item": {
+                            "id": "var",
+                            "data": {
+                                "name": "out",
+                                "scope": "local"
+                            }
+                        },
+                        "slot": 0
+                    },
+                    {
+                        "item": {
+                            "id": "num",
+                            "data": {
+                                "name": "190"
+                            }
+                        },
+                        "slot": 1
+                    }
+                ]
+            },
+            "action": "="
+        }
+    ]
+}
