@@ -1,12 +1,13 @@
 use crate::lexer::tokens::{Token, TokenType};
 
+#[allow(unused_variables, unused_assignments)]
 pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
     let mut output: Vec<Token> = vec![];
     let mut adding_to_block = 0;
     let mut last_adding_to_block = 0;
     let mut adding_to_tuple = 0;
     let mut last_adding_to_tuple = 0;
-    for (count, mut token) in input.into_iter().enumerate() {
+    for (_count, mut token) in input.into_iter().enumerate() {
         match &token.token {
             TokenType::OpenBraces => {
                 token.token = TokenType::Block(vec![]);
@@ -27,8 +28,7 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
             _ => {
                 if adding_to_block == 0 && adding_to_tuple == 0 {
                     println!(
-                        "will add normally ({adding_to_block}/{adding_to_tuple}), {:#?}",
-                        token
+                        "will add normally ({adding_to_block}/{adding_to_tuple}), {token:#?}"
                     );
                     output.push(token);
 
@@ -37,8 +37,7 @@ pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
                     last_adding_to_block = adding_to_block;
                 } else {
                     println!(
-                        "will print abnormally ({adding_to_block}/{adding_to_tuple}), {:#?}",
-                        token
+                        "will print abnormally ({adding_to_block}/{adding_to_tuple}), {token:#?}"
                     );
 
                     // do this after
