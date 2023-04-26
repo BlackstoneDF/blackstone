@@ -1,3 +1,5 @@
+use std::iter::Peekable;
+
 use super::tokens::{Token, TokenType};
 
 pub struct Lexer {
@@ -32,16 +34,10 @@ impl Lexer {
         }
     }
 
-    pub fn read_char(&mut self) -> char {
-        self.position += 1;
-        self.ch = self.input.chars().nth(self.position).unwrap_or('\0');
-        self.input.chars().nth(self.position).unwrap_or('\0')
-    }
-
     pub fn read_number(&mut self) -> String {
         let pos = self.position;
         while self.position < self.input.len() && is_digit(self.ch) || self.ch == '.' {
-            self.read_char();
+            self.next();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         chars.into()
@@ -50,7 +46,7 @@ impl Lexer {
     pub fn read_identifier(&mut self) -> String {
         let pos = self.position;
         while self.position < self.input.len() && is_identifiable(self.ch) {
-            self.read_char();
+            self.next();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         chars.into()
@@ -58,9 +54,9 @@ impl Lexer {
 
     pub fn read_text(&mut self) -> String {
         let pos = self.position;
-        self.read_char();
+        self.next();
         while self.position < self.input.len() && self.ch != '"' {
-            self.read_char();
+            self.next();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         let ret: String = chars.into();
@@ -69,9 +65,9 @@ impl Lexer {
 
     pub fn read_percent_expression(&mut self) -> (String, String) {
         let pos = self.position;
-        self.read_char();
+        self.next();
         while self.position < self.input.len() && self.ch != ')' {
-            self.read_char();
+            self.next();
         }
         let chars = self.input.get(pos..self.position).expect("failed to slice");
         let chars = chars.trim_start_matches('%');
@@ -83,7 +79,7 @@ impl Lexer {
 
     pub fn read_whitespace(&mut self) {
         while self.ch.is_whitespace() {
-            self.read_char();
+            self.next();
         }
     }
 
@@ -116,7 +112,17 @@ impl Lexer {
             }
         }
 
-        self.read_char();
+        self.next();
         token
+    }
+}
+
+impl Iterator for Lexer {
+    type Item = char;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.position += 1;
+        self.ch = self.input.chars().nth(self.position).unwrap_or('\0');
+        Some(self.input.chars().nth(self.position).unwrap_or('\0'))
     }
 }
