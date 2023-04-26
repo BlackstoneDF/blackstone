@@ -5,7 +5,6 @@ use crate::{
     lexer::tokens::{Token, TokenType},
 };
 
-#[allow(unused_variables, unused_assignments)]
 /* pub fn transform_to_ast(input: Vec<Token>) -> Vec<Token> {
     let mut output: Vec<Token> = vec![];
     let mut adding_to_block = 0;
