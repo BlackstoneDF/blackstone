@@ -86,3 +86,7 @@ pub struct OptionalItems(Option<Items>);
 pub struct OptionalSounds(Option<Sounds>);
 #[derive(PartialEq, Default)]
 pub struct OptionalPotions(Option<Potions>);
+#[derive(PartialEq, Default)]
+pub struct BoolTag(bool);
+#[derive(PartialEq, Default)]
+pub struct StringTag(String);

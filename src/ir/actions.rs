@@ -7,7 +7,7 @@ pub enum IRPlayerAction {
     SetHotbarItems(Items),
     SetInventoryItems(Items),
     SetItemInSlot(OptionalItem, Number),
-    SetEquipmentItem(OptionalItem), // tag
+    SetEquipmentItem(OptionalItem, StringTag),
     SetArmorItems(Items),
     ReplaceItems(OptionalItems, Item, OptionalNumber),
     RemoveItems(Items),
