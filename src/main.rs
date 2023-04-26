@@ -1,9 +1,8 @@
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use crate::ir::actions::*;
-use crate::ir::values::*;
+
+
 use crate::{
-    ir::values::Text,
     lexer::{
         lex::Lexer,
         tokens::{Token, TokenType},
@@ -19,7 +18,7 @@ mod tokengrouper;
 fn main() {
     help_message();
 
-    let s = process_block_vec(vec![
+    let _s = process_block_vec(vec![
         Block::EventDefinition {
             block: "event",
             action: "Join",
@@ -59,7 +58,7 @@ fn main() {
     loop {
         c += 1;
         let tok = lexer.read_token();
-        let line = 0;
+        let _line = 0;
         let at_char = lexer.position;
         tokens.push(Token {
             at_char: at_char as u32,
@@ -76,7 +75,7 @@ fn main() {
     // println!("tokens: {tokens:#?}");
     let ast = transform_to_ast(tokens);
 
-    println!("{:#?}", ast);
+    println!("{ast:#?}");
     // println!("{ast:#?}");
 }
 
