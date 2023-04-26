@@ -45,7 +45,7 @@ pub enum IRPlayerAction {
     CloseInventory,
     OpenContainerInventory(Location),
     SetScoreboardObjectiveName(Text),
-    SetSidebarVisible(), // 1 tag
+    SetSidebarVisible(BoolTag),
     SetScoreboardScore(Text, OptionalNumber),
     RemoveScoreboardScore(Text),
     ClearScoreboard,
@@ -73,22 +73,22 @@ pub enum IRPlayerAction {
     SetAdventureMode,
     SetCreativeMode,
     SetSpectatorMode,
-    SetAllowFlight(),       // 1 tag
-    SetPVPAllowed(),        // 1 tag
-    SetDeathDropsEnabled(), // 1 tag
-    SetInventoryKept(),     // 1 tag
-    SetCollidable(),        // 1 tag
+    SetAllowFlight(BoolTag),       
+    SetPVPAllowed(BoolTag),       
+    SetDeathDropsEnabled(BoolTag), 
+    SetInventoryKept(BoolTag),     
+    SetCollidable(BoolTag),        
     AllowPlaceBreakBlocks(OptionalItems),
     DisallowPlaceBreakBlocks(OptionalItems),
-    SetInstantRespawn(),                            // 1 tag
-    SetReducedDebugInfo(),                          // 1 tag
+    SetInstantRespawn(BoolTag),                            
+    SetReducedDebugInfo(BoolTag),                          
     Teleport(Location),                             // 2 tags
     LaunchUp(Number),                               // 1 tag
     LaunchForward(Number),                          // 2 tags
     LaunchTowardLocation(Location, OptionalNumber), // 2 tags
     RideEntity(OptionalText),
-    SetFlying(),  // 1 tag
-    SetGliding(), // 1 tag
+    SetFlying(BoolTag),
+    SetGliding(BoolTag),
     BoostElytra(Item),
     SetRotation(Number, Number),
     FaceLocation(Location),
@@ -103,7 +103,7 @@ pub enum IRPlayerAction {
         OptionalNumber,
     ),
     SetPlayerTime(OptionalNumber),
-    SetPlayerWeather(), // 1 tag
+    SetPlayerWeather(BoolTag),
     SetCompassTarget(Location),
     DisplayBlock(Item, Location, OptionalLocation, OptionalTexts),
     DisplayBlockFracture(Locations, OptionalNumber),
@@ -123,7 +123,7 @@ pub enum IRPlayerAction {
     DisplayParticleCircle(Particle, Location, OptionalNumber),
     DisplayAnimatedParticleCircle(Particle, Location, OptionalNumber, OptionalNumber),
     DisplayParticleCuboid(Particle, Location, Location, OptionalNumber), // 1 tag
-    DisplayAnimatedParticleCuboi(Particle, Location, Location, OptionalNumber, OptionalNumber), // 1 tag
+    DisplayAnimatedParticleCuboid(Particle, Location, Location, OptionalNumber, OptionalNumber), // 1 tag
     DisplayParticleSpiral(
         Particle,
         Location,
@@ -148,14 +148,14 @@ pub enum IRPlayerAction {
     DisguiseAsMob(Item, OptionalText),
     DisguiseAsPlayer(Text, OptionalItem),
     DisguiseAsBlock(Item, OptionalText),
-    SetOwnDisguiseVisibility(), // 1 tag
+    SetOwnDisguiseVisibility(BoolTag),
     Undisguide,
     SetChatTag(OptionalTexts),
     SetChatColor(OptionalText),
     SetNameColor(OptionalText),
     SetArrowsStuck(OptionalNumber),
     SetBeeStingsStuck(OptionalNumber),
-    SetVisualFire(),             // 1 tag
+    SetVisualFire(BoolTag),
     SendPlayerAttackAnimation(), // 1 tag
     SendPlayerHurtAnimation(OptionalLocation),
     SendWakeUpAnimation,
@@ -218,40 +218,40 @@ pub enum IREntityAction {
     DisguiseAsPlayer(Text, OptionalItem),
     DisguiseAsBlock(Item, OptionalText),
     Undisguide,
-    SetGlowing(),             // 1 tag
-    SetDyeColor(),            // 1 tag
-    SetTropicalFishPattern(), // 3 tags
-    SetRabbitType(),          // 1 tag
-    SetCatType(),             // 1 tag
-    SetMooshroomType(),       // 1 tag
-    SetFoxType(),             // 1 tag
-    SetParrotColor(),         // 1 tag
-    SetHorsePattern(),        // 2 tags
-    SetAxolotlPattern(),      // 1 tag
-    SetLlamaColor(),          // 1 tag
-    SetFrogType(),            // 1 tag
-    SetVillagerBiome(),       // 1 tag
-    SetSnowGolemPumpkin(),    // 1 tag
+    SetGlowing(BoolTag),
+    SetDyeColor(StringTag),
+    SetTropicalFishPattern(StringTag, StringTag, StringTag), 
+    SetRabbitType(StringTag),          
+    SetCatType(StringTag),             
+    SetMooshroomType(StringTag),       
+    SetFoxType(StringTag),             
+    SetParrotColor(StringTag),         
+    SetHorsePattern(StringTag),        
+    SetAxolotlPattern(StringTag),      
+    SetLlamaColor(StringTag),          
+    SetFrogType(StringTag),            
+    SetVillagerBiome(StringTag),       
+    SetSnowGolemPumpkin(BoolTag),    
     SetEndermanHeldBlock(Item),
     SetMinecartBlock(Item, OptionalNumber),
     SetArmorStandParts(), // 2 tags
     SetBeeHasNectar(),    // 2 tags
     SetProjectileDisplayItem(Item),
-    SetVisualFire(),           // 1 tag
+    SetVisualFire(BoolTag),           
     SendMobAnimation(),        // 1 tag
     SendMobAttackAnimation(),  // 1 tag
     SetArmorStandPose(Vector), // 1 tag
     SetPose(),                 // 1 tag
-    SetFoxLeaping(),           // 1 tag
-    SetArmsRaised(),           // 1 tag
-    SetCatResting(),           // 1 tag
+    SetFoxLeaping(BoolTag),           
+    SetArmsRaised(BoolTag),           
+    SetCatResting(BoolTag),           
     SetGlowSquidDarkTicks(Number),
     Teleport(Location),                             // 1 tag
     LaunchUp(Number),                               // 1 tag
     LaunchForward(Number),                          // 2 tags
     LaunchTowardLocation(Location, OptionalNumber), // 2 tags
-    SetGliding(),                                   // 1 tag
-    SetGravity(),                                   // 1 tag
+    SetGliding(BoolTag),
+    SetGravity(BoolTag),
     RideEntity(OptionalText),
     AttachLead(Text),
     // Not a DF command but represents the second option for AttachLead
@@ -262,34 +262,34 @@ pub enum IREntityAction {
     SetNameVisible(),            // 1 tag
     SetNameColor(OptionalText),
     SetAI(),                // 1 tag
-    SetSilenced(),          // 1 tag
-    SetDeathDropsEnabled(), // 1 tag
-    SetCollidable(),        // 1 tag
-    SetInvulnerable(),      // 1 tag
-    SetSitting(),           // 1 tag
-    SetBaby(),              // 1 tag
+    SetSilenced(BoolTag),          
+    SetDeathDropsEnabled(BoolTag),
+    SetCollidable(BoolTag),        
+    SetInvulnerable(BoolTag),      
+    SetSitting(BoolTag),           
+    SetBaby(BoolTag),              
     SetSize(Number),
-    SetSheepSheared(),               // 1 tag
-    SetWearingSaddle(),              // 1 tag
-    SetCarryingChest(),              // 1 tag
+    SetSheepSheared(BoolTag),               
+    SetWearingSaddle(BoolTag),              
+    SetCarryingChest(BoolTag),              
     SetArmorStandSlotInteractions(), // 2 tags
-    SetMarker(),                     // 1 tag
-    SetAngry(),                      // 1 tag
-    SetRearing(),                    // 1 tag
-    SetRiptiding(),                  // 1 tag
-    SetCreeperCharged(),             // 1 tag
-    SetInvisible(),                  // 1 tag
-    SetGoatScreaming(),              // 1 tag
+    SetMarker(BoolTag),                     
+    SetAngry(BoolTag),                      
+    SetRearing(BoolTag),                    
+    SetRiptiding(BoolTag),                  
+    SetCreeperCharged(BoolTag),             
+    SetInvisible(BoolTag),                  
+    SetGoatScreaming(BoolTag),              
     SetGoatHorns(),                  // 2 tags
     Tame(OptionalText),
     SetEndCrystalBeam(OptionalLocation),
     SetPandaGene(),          // 2 tags
-    SetVillagerProfession(), // 1 tag
+    SetVillagerProfession(StringTag),
     SetProjectileShooter(OptionalText),
-    SetPersistent(), // 1 tag
+    SetPersistent(BoolTag),
     SetInteractionSize(OptionalNumber, OptionalNumber),
-    SetInteractionResponsive(), // 1 tag
-    SetCelebrating(),           // 1 tag
+    SetInteractionResponsive(BoolTag),
+    SetCelebrating(BoolTag),
     SetTarget(OptionalText),
     MoveToLocation(Location, OptionalNumber),
     Jump,
@@ -298,13 +298,13 @@ pub enum IREntityAction {
     EatGrass,
     IgniteCreeper,
     Explode,
-    SetFoxSleeping(), // 1 tag
-    SetDragonPhase(), // 1 tag
+    SetFoxSleeping(BoolTag),
+    SetDragonPhase(StringTag),
     SetShulkerBulletTarget(OptionalText),
     UseItem(),         // 2 tags
-    SetAllayDancing(), // 1 tag
+    SetAllayDancing(BoolTag),
     SetDisplayViewRange(OptionalNumber),
-    SetDisplayBillboard(), // 1 tag
+    SetDisplayBillboard(BoolTag),
     SetDisplayShadow(OptionalNumber, OptionalNumber),
     SetDisplayBrightness(OptionalNumber, OptionalNumber),
     SetDisplayInterpolation(OptionalNumber, OptionalNumber),
@@ -313,15 +313,15 @@ pub enum IREntityAction {
     SetTextDisplayLineWidth(OptionalNumber),
     SetTextDisplayTextOpacity(OptionalNumber),
     SetTextDisplayTextAlignment(), // 1 tag
-    SetTextDisplayTextShadow(),    // 1 tag
-    SetTextDisplaySeeThrough(),    // 1 tag
+    SetTextDisplayTextShadow(BoolTag),
+    SetTextDisplaySeeThrough(BoolTag),
     SetTextDisplayBackground(OptionalText, OptionalNumber),
     SetDisplayGlowColor(OptionalText),
     SetItemDisplayItem(Item),
     SetItemDisplayModelType(), // 1 tag
     SetBlockDisplayBlock(Item, OptionalTexts),
     SetDisplayTransformationMatrix(Numbers),
-    SetDisplayROtationFromEulerAngles(Number, Number, Number), // 1 tag
+    SetDisplayRotationFromEulerAngles(Number, Number, Number), // 1 tag
     SetDisplayRotationFromAxisAngle(Vector, Number),           // 1 tag
     SetDisplayTranslation(Vector),
     SetDisplayScale(Vector),
@@ -340,7 +340,7 @@ pub enum IREntityAction {
     GetCustomTag(Variable, Text),
     RemoveCustomTag(Text),
     SetEntityItem(Item),
-    SetWardenDigging(), // 1 tag
+    SetWardenDigging(BoolTag),
 }
 
 #[allow(dead_code)]
