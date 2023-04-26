@@ -153,9 +153,9 @@ pub enum IRPlayerAction {
     SetChatTag(OptionalTexts),
     SetChatColor(OptionalText),
     SetNameColor(OptionalText),
-    SetArrowsStucks(OptionalNumber),
+    SetArrowsStuck(OptionalNumber),
     SetBeeStingsStuck(OptionalNumber),
-    SetVisualVire(),             // 1 tag
+    SetVisualFire(),             // 1 tag
     SendPlayerAttackAnimation(), // 1 tag
     SendPlayerHurtAnimation(OptionalLocation),
     SendWakeUpAnimation,
@@ -191,7 +191,157 @@ impl IRGameAction {
 }
 
 #[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
-pub enum IREntityAction {}
+pub enum IREntityAction {
+    Heal(OptionalNumber),
+    SetCurrentHealth(Number),
+    SetAbsorptionHealth(Number),
+    SetMaximumHealth(Number), // 1 tag
+    Damage(Number),
+    SetFireTicks(Number),
+    SetFreezeTicks(OptionalNumber), // 1 tag
+    SetInvulnerabilityTicks(Number),
+    GivePotionEffect(Potions), // 2 tags
+    RemovePotionEffect(Potions),
+    ClearPotionEffects,
+    SetAnimalAge(Number), // 1 tag
+    SetFallDistance(Number),
+    SetCreeperFuse(Number),
+    SetCreeperExplosionPower(Number),
+    SetPotionCloudRadius(Number, OptionalNumber),
+    SetVillagerExperience(Number),
+    SetWitherInvulnerabilityTicks(Number),
+    SetHorseJumpStrength(Number),
+    SetPickupDelay(Number),
+    SetFishingWaitTime(Number),
+    SetWardenAngerLevel(Text, Number),
+    DisguiseAsMob(Item, OptionalText),
+    DisguiseAsPlayer(Text, OptionalItem),
+    DisguiseAsBlock(Item, OptionalText),
+    Undisguide,
+    SetGlowing(),             // 1 tag
+    SetDyeColor(),            // 1 tag
+    SetTropicalFishPattern(), // 3 tags
+    SetRabbitType(),          // 1 tag
+    SetCatType(),             // 1 tag
+    SetMooshroomType(),       // 1 tag
+    SetFoxType(),             // 1 tag
+    SetParrotColor(),         // 1 tag
+    SetHorsePattern(),        // 2 tags
+    SetAxolotlPattern(),      // 1 tag
+    SetLlamaColor(),          // 1 tag
+    SetFrogType(),            // 1 tag
+    SetVillagerBiome(),       // 1 tag
+    SetSnowGolemPumpkin(),    // 1 tag
+    SetEndermanHeldBlock(Item),
+    SetMinecartBlock(Item, OptionalNumber),
+    SetArmorStandParts(), // 2 tags
+    SetBeeHasNectar(),    // 2 tags
+    SetProjectileDisplayItem(Item),
+    SetVisualFire(),           // 1 tag
+    SendMobAnimation(),        // 1 tag
+    SendMobAttackAnimation(),  // 1 tag
+    SetArmorStandPose(Vector), // 1 tag
+    SetPose(),                 // 1 tag
+    SetFoxLeaping(),           // 1 tag
+    SetArmsRaised(),           // 1 tag
+    SetCatResting(),           // 1 tag
+    SetGlowSquidDarkTicks(Number),
+    Teleport(Location),                             // 1 tag
+    LaunchUp(Number),                               // 1 tag
+    LaunchForward(Number),                          // 2 tags
+    LaunchTowardLocation(Location, OptionalNumber), // 2 tags
+    SetGliding(),                                   // 1 tag
+    SetGravity(),                                   // 1 tag
+    RideEntity(OptionalText),
+    AttachLead(Text),
+    // Not a DF command but represents the second option for AttachLead
+    AttachLeadToFence(Location),
+    SetRotation(Number, Number),
+    SetVelocity(Vector),         // 1 tag
+    SetCustomName(OptionalText), // 1 tag
+    SetNameVisible(),            // 1 tag
+    SetNameColor(OptionalText),
+    SetAI(),                // 1 tag
+    SetSilenced(),          // 1 tag
+    SetDeathDropsEnabled(), // 1 tag
+    SetCollidable(),        // 1 tag
+    SetInvulnerable(),      // 1 tag
+    SetSitting(),           // 1 tag
+    SetBaby(),              // 1 tag
+    SetSize(Number),
+    SetSheepSheared(),               // 1 tag
+    SetWearingSaddle(),              // 1 tag
+    SetCarryingChest(),              // 1 tag
+    SetArmorStandSlotInteractions(), // 2 tags
+    SetMarker(),                     // 1 tag
+    SetAngry(),                      // 1 tag
+    SetRearing(),                    // 1 tag
+    SetRiptiding(),                  // 1 tag
+    SetCreeperCharged(),             // 1 tag
+    SetInvisible(),                  // 1 tag
+    SetGoatScreaming(),              // 1 tag
+    SetGoatHorns(),                  // 2 tags
+    Tame(OptionalText),
+    SetEndCrystalBeam(OptionalLocation),
+    SetPandaGene(),          // 2 tags
+    SetVillagerProfession(), // 1 tag
+    SetProjectileShooter(OptionalText),
+    SetPersistent(), // 1 tag
+    SetInteractionSize(OptionalNumber, OptionalNumber),
+    SetInteractionResponsive(), // 1 tag
+    SetCelebrating(),           // 1 tag
+    SetTarget(OptionalText),
+    MoveToLocation(Location, OptionalNumber),
+    Jump,
+    RamTarget(Text),
+    EatTarget(Text),
+    EatGrass,
+    IgniteCreeper,
+    Explode,
+    SetFoxSleeping(), // 1 tag
+    SetDragonPhase(), // 1 tag
+    SetShulkerBulletTarget(OptionalText),
+    UseItem(),         // 2 tags
+    SetAllayDancing(), // 1 tag
+    SetDisplayViewRange(OptionalNumber),
+    SetDisplayBillboard(), // 1 tag
+    SetDisplayShadow(OptionalNumber, OptionalNumber),
+    SetDisplayBrightness(OptionalNumber, OptionalNumber),
+    SetDisplayInterpolation(OptionalNumber, OptionalNumber),
+    SetDisplayCullingSize(OptionalNumber, OptionalNumber),
+    SetTextDisplayText(Texts),
+    SetTextDisplayLineWidth(OptionalNumber),
+    SetTextDisplayTextOpacity(OptionalNumber),
+    SetTextDisplayTextAlignment(), // 1 tag
+    SetTextDisplayTextShadow(),    // 1 tag
+    SetTextDisplaySeeThrough(),    // 1 tag
+    SetTextDisplayBackground(OptionalText, OptionalNumber),
+    SetDisplayGlowColor(OptionalText),
+    SetItemDisplayItem(Item),
+    SetItemDisplayModelType(), // 1 tag
+    SetBlockDisplayBlock(Item, OptionalTexts),
+    SetDisplayTransformationMatrix(Numbers),
+    SetDisplayROtationFromEulerAngles(Number, Number, Number), // 1 tag
+    SetDisplayRotationFromAxisAngle(Vector, Number),           // 1 tag
+    SetDisplayTranslation(Vector),
+    SetDisplayScale(Vector),
+    Remove,
+    SetEquipmentItem(OptionalItem),
+    SetArmorItems(Items),
+    LaunchProjectile(
+        Item,
+        OptionalLocation,
+        OptionalText,
+        OptionalNumber,
+        OptionalNumber,
+    ),
+    ShearSheep,
+    SetCustomTag(Text, OptionalNumber),
+    GetCustomTag(/*Variable,*/ Text), // requires Variable
+    RemoveCustomTag(Text),
+    SetEntityItem(Item),
+    SetWardenDigging(), // 1 tag
+}
 
 #[allow(dead_code)]
 impl IREntityAction {
