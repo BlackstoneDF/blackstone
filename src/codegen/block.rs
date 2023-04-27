@@ -17,21 +17,21 @@ pub enum Block<'a> {
     Code {
         block: &'a str,
         items: Vec<Item>,
-        action: &'a str,
+        action: String,
         data: &'a str,
     },
     /// Defines the definition of an event (either PlayerEvent or EntityEvent)
     ///   - &'a str `block`: The associated block (Diamond Block for PlayerEvent, Gold Block for EntityEvent)
     ///   - &'a str `action`: The associated action (e.g. join or killPlayer)
-    EventDefinition { block: &'a str, action: &'a str },
+    EventDefinition { block: &'a str, action: String },
     /// Defines a function definition
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
-    FunctionDefinition { block: &'a str, data: &'a str },
+    FunctionDefinition { block: &'a str, data: String },
     /// Defines a call to a given function
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
-    FunctionCall { block: &'a str, data: &'a str },
+    FunctionCall { block: &'a str, data: String },
     /// Defines a bracket block (piston)
     ///   - BracketDirection `direct` - the direction of the bracket (opening or closing)
     ///   - BracketType `type` - the type of the bracket (Normal/Piston or Repeat/Sticky Piston)

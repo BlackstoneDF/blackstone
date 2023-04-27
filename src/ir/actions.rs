@@ -1,7 +1,7 @@
 use crate::ir::values::*;
 use strum::IntoEnumIterator;
 
-#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
+#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq, Debug)]
 pub enum IRPlayerAction {
     GiveItems(Items, OptionalNumber),
     SetHotbarItems(Items),
@@ -191,7 +191,7 @@ impl IRPlayerAction {
     }
 }
 
-#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
+#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq, Debug)]
 pub enum IRGameAction {}
 
 #[allow(dead_code)]
@@ -205,7 +205,7 @@ impl IRGameAction {
     }
 }
 
-#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
+#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq, Debug)]
 pub enum IREntityAction {
     Heal(OptionalNumber),
     SetCurrentHealth(Number),

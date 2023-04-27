@@ -1,7 +1,7 @@
 use strum::IntoEnumIterator;
 use strum_macros;
 
-#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
+#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq, Debug)]
 pub enum IRPlayerEvent {
     Join,
     Leave,
@@ -62,7 +62,7 @@ impl IRPlayerEvent {
     }
 }
 
-#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq)]
+#[derive(strum_macros::EnumIter, strum_macros::Display, PartialEq, Debug)]
 pub enum IREntityEvent {
     EntityDamageEntity,
     EntityKillEntity,

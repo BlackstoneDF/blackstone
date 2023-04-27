@@ -1,11 +1,12 @@
+use chumsky::Parser;
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
 use crate::{
+    codegen::parse::parser,
     lexer::{
         lex::Lexer,
         tokens::{Token, TokenType},
     },
-    tokengrouper::grouper::transform_to_ast,
 };
 
 mod codegen;
@@ -19,7 +20,7 @@ fn main() {
     let _s = process_block_vec(vec![
         Block::EventDefinition {
             block: "event",
-            action: "Join",
+            action: "Join".to_string(),
         },
         Block::Code {
             block: "player_action",
@@ -30,7 +31,7 @@ fn main() {
                     data: "Hello world!".to_string(),
                 },
             }],
-            action: "SendMessage",
+            action: "SendMessage".to_string(),
             data: "",
         },
     ]);
@@ -45,11 +46,34 @@ fn main() {
         .write_all(send.as_bytes())
         .expect("failed to write all"); */
 
-    let input = r#"
-    playerEvent.join()
-    {
-        player.sendMessage("Hello world!");
-    }"#;
+    let input = r#"playerAction.SendMessage()"#;
+    // println!("tokens: {tokens:#?}");
+    println!("{:?}", parser().parse(input));
+
+    use ariadne::*;
+
+    match parser().parse(input) {
+        Ok(v) => println!("block: {v:#?}"),
+        Err(v) => {
+            for err in v {
+                Report::build(ReportKind::Error, (), err.span().start)
+                    .with_message(err.label().unwrap_or(""))
+                    .with_label(Label::new(err.span()).with_message(format!(
+                        "expected {}, found {}",
+                        err.expected().nth(0).unwrap_or(&Some('?')).unwrap_or('!'),
+                        err.found().unwrap_or(&'?')
+                    )))
+                    .finish()
+                    .print(Source::from(input))
+                    .unwrap();
+            }
+        }
+    }
+    // println!("{ast:#?}");
+
+    /*
+
+
     let mut lexer = Lexer::new(input.to_string());
     let mut c = 0;
     let mut tokens = vec![];
@@ -70,11 +94,7 @@ fn main() {
             break;
         }
     }
-    // println!("tokens: {tokens:#?}");
-    let ast = transform_to_ast(tokens);
-
-    println!("{ast:#?}");
-    // println!("{ast:#?}");
+     */
 }
 
 fn help_message() {
