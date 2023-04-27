@@ -1,69 +1,33 @@
+use std::sync::{Arc, Mutex};
+
 use chumsky::prelude::*;
 
-use crate::codegen::{block::Block, item_data::ItemData};
+use crate::codegen::{block::Block, item_data::ItemData, item::Item};
 
-pub fn parser() -> impl Parser<char, Vec<Block<'static>>, Error = Simple<char>> {
+pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
+    let player_default: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![]));
+
     let ident = text::ident();
 
-    let actions = recursive(|actions| {
-        let player_action = text::keyword("player")
-            .ignore_then(just('.'))
-            .ignore_then(ident)
-            .then_ignore(just('('))
-            .then_ignore(just(')'))
-            .padded()
-            .map(|f: String| Block::Code {
-                block: "player_action",
-                items: vec![],
-                action: f,
-                data: "",
-            });
-        let game_action = text::keyword("game")
-            .ignore_then(just('.'))
-            .ignore_then(ident)
-            .then_ignore(just('('))
-            .then_ignore(just(')'))
-            .padded()
-            .map(|f: String| Block::Code {
-                block: "game_action",
-                items: vec![],
-                action: f,
-                data: "",
-            });
-        player_action.or(game_action)
-    });
-
-    let events = {
-        let player_event = text::keyword("player")
-            .ignore_then(just('.'))
+    let internal_commands = {
+        let type_command = text::keyword("type")
+            .ignore_then(just(' '))
             .ignore_then(ident)
             .padded()
-            .then(
-                actions
-                    .clone()
-                    .separated_by(just(';'))
-                    .allow_trailing()
-                    .padded()
-                    .collect::<Vec<_>>()
-                    .padded()
-                    .delimited_by(just('{'), just('}'))
-                    .padded(),
-            )
+            .then_ignore(just('='))
             .padded()
-            .map(|(name, args): (String, Vec<Block>)| {
-                let mut out = args;
-                out.insert(
-                    0,
-                    Block::EventDefinition {
-                        block: "event",
-                        action: name,
-                    },
-                );
-                println!("{out:#?}");
-                out
+            .then_ignore(ident)
+            .padded()
+            .ignore_then(just(""))
+            .map(move |varn: &str| {
+                let cl = Arc::clone(&player_default);
+                cl.lock()
+                    .expect("poisoned lock, immediately panic")
+                    .push(varn.to_string());
+                None
             });
 
-        player_event
+        type_command
     };
 
     let arguments = {
@@ -76,10 +40,109 @@ pub fn parser() -> impl Parser<char, Vec<Block<'static>>, Error = Simple<char>> 
         let text = just::<char, char, Simple<char>>('"')
             .ignore_then(none_of('"').repeated())
             .then_ignore(just('"'))
-            .map(|f| ItemData::Text { data: f.iter().collect() });
+            .map(|f| ItemData::Text {
+                data: f.iter().collect(),
+            });
 
         text.or(number)
     };
+
+    let actions = {
+        let player_action = text::keyword("player")
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .then(
+                arguments
+                    .clone()
+                    .separated_by(just(','))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded()
+            )
+            .padded()
+            .map(|(f, datas): (String, Vec<ItemData>)| {
+                let mut items: Vec<Item> = vec![];
+                for (slot, data) in datas.into_iter().enumerate() {
+                    let mut id = "".to_string();
+                    if let ItemData::Number { data: _ } = data { id = "num".to_string(); }
+                    if let ItemData::Text { data: _ } = data { id = "txt".to_string(); }
+                    items.push(Item { id, slot: slot.try_into().expect("failed ot convert to usize"), item: data })
+                }
+                Some(Block::Code {
+                    block: "player_action",
+                    items,
+                    action: f,
+                    data: "",
+                })
+            });
+        let game_action = text::keyword("plot")
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .then(
+                arguments
+                    .clone()
+                    .separated_by(just(','))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded()
+            )
+            .padded()
+            .map(|(f, datas): (String, Vec<ItemData>)| {
+                let mut items: Vec<Item> = vec![];
+                for (slot, data) in datas.into_iter().enumerate() {
+                    items.push(Item { id: "item".to_string(), slot: slot.try_into().expect("failed ot convert to usize"), item: data })
+                }
+                Some(Block::Code {
+                    block: "game_action",
+                    items,
+                    action: f,
+                    data: "",
+                })
+            });
+        player_action.or(game_action).or(internal_commands)
+    };
+
+    let events = {
+        let player_event = text::keyword("plot")
+            .ignore_then(just('.'))
+            .ignore_then(text::keyword("playerEvent"))
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .padded()
+            .then(
+                actions
+                    .separated_by(just(';'))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('{'), just('}'))
+                    .padded(),
+            )
+            .padded()
+            .map(|(name, args): (String, Vec<Option<Block>>)| {
+                let mut out = args;
+                out.insert(
+                    0,
+                    Some(Block::EventDefinition {
+                        block: "event",
+                        action: name,
+                    }),
+                );
+                println!("{out:#?}");
+                out
+            });
+
+        player_event
+    };
+
+    
 
     events
 }

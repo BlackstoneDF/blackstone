@@ -1,11 +1,11 @@
-use std::{io::Write, net::TcpStream};
 use ariadne::*;
 use chumsky::Parser;
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
+use itertools::Itertools;
+use std::{io::Write, net::TcpStream};
 
 mod codegen;
 mod parse;
-
 
 fn main() {
     help_message();
@@ -35,7 +35,13 @@ fn main() {
 
     match parse::parser().parse(input) {
         Ok(vector) => {
-            compile_with_codeclient(vector);
+            let vector = vector
+                .into_iter()
+                .filter(|f| f.is_some())
+                .map(|f| f.expect("impossible to fail"))
+                .collect::<Vec<_>>();
+
+            compile_with_recode(vector);
         }
         Err(v) => {
             for err in v {

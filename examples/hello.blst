@@ -1,4 +1,4 @@
-player.Join {
-    player.SendMessage();
-    game.SetBlock();
+plot.playerEvent.Join {
+    type player = default;
+    player.SendMessage("Hello!");
 }
