@@ -1,18 +1,11 @@
+use std::{io::Write, net::TcpStream};
+use ariadne::*;
 use chumsky::Parser;
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use crate::{
-    codegen::parse::parser,
-    lexer::{
-        lex::Lexer,
-        tokens::{Token, TokenType},
-    },
-};
-
 mod codegen;
-mod ir;
-mod lexer;
-mod tokengrouper;
+mod parse;
+
 
 fn main() {
     help_message();
@@ -36,24 +29,14 @@ fn main() {
         },
     ]);
     // println!("{s}");
-    /* let send =
-        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
-    let send = send.replace("%s%", &s);
-    println!("{send}");
-
-    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
-    stream
-        .write_all(send.as_bytes())
-        .expect("failed to write all"); */
+    /*  */
 
     let input = include_str!("../examples/hello.blst");
-    // println!("tokens: {tokens:#?}");
-    println!("{:?}", parser().parse(input));
 
-    use ariadne::*;
-
-    match parser().parse(input) {
-        Ok(v) => println!("block: {v:#?}"),
+    match parse::parser().parse(input) {
+        Ok(vector) => {
+            compile_with_codeclient(vector);
+        }
         Err(v) => {
             for err in v {
                 Report::build(ReportKind::Error, (), err.span().start)
@@ -69,32 +52,22 @@ fn main() {
             }
         }
     }
-    // println!("{ast:#?}");
+}
 
-    /*
-
-
-    let mut lexer = Lexer::new(input.to_string());
-    let mut c = 0;
-    let mut tokens = vec![];
-    loop {
-        c += 1;
-        let tok = lexer.read_token();
-        let _line = 0;
-        let at_char = lexer.position;
-        tokens.push(Token {
-            at_char: at_char as u32,
-            at_line: 0,
-            token: tok.clone(),
-        });
-        if let TokenType::Eof = tok {
-            break;
-        }
-        if c > 100 {
-            break;
-        }
-    }
-     */
+fn compile_with_recode(vector: Vec<Block>) {
+    let s = process_block_vec(vector);
+    let send =
+        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
+    let send = send.replace("%s%", &s);
+    println!("{send}");
+    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
+    stream
+        .write_all(send.as_bytes())
+        .expect("failed to write all");
+}
+fn compile_with_codeclient(vector: Vec<Block>) {
+    let mut stream = TcpStream::connect("localhost:31375").expect("failed to connect");
+    println!("Readying! Please type `/auth` ingame to continue.");
 }
 
 fn help_message() {
