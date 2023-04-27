@@ -46,7 +46,7 @@ fn main() {
         .write_all(send.as_bytes())
         .expect("failed to write all"); */
 
-    let input = r#"playerAction.SendMessage()"#;
+    let input = r#"playerEvent::join {}"#;
     // println!("tokens: {tokens:#?}");
     println!("{:?}", parser().parse(input));
 
@@ -57,11 +57,11 @@ fn main() {
         Err(v) => {
             for err in v {
                 Report::build(ReportKind::Error, (), err.span().start)
-                    .with_message(err.label().unwrap_or(""))
+                    .with_message(format!("{:#?}", err.reason()))
                     .with_label(Label::new(err.span()).with_message(format!(
-                        "expected {}, found {}",
+                        "expected '{}', found '{}'",
                         err.expected().nth(0).unwrap_or(&Some('?')).unwrap_or('!'),
-                        err.found().unwrap_or(&'?')
+                        err.found().unwrap_or(&'✗')
                     )))
                     .finish()
                     .print(Source::from(input))
