@@ -46,7 +46,7 @@ fn main() {
         .write_all(send.as_bytes())
         .expect("failed to write all"); */
 
-    let input = r#"playerEvent::join {}"#;
+    let input = include_str!("../examples/hello.blst");
     // println!("tokens: {tokens:#?}");
     println!("{:?}", parser().parse(input));
 
