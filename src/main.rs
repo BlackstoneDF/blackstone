@@ -1,39 +1,67 @@
 use ariadne::*;
 use chumsky::Parser;
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
-use itertools::Itertools;
-use std::{io::Write, net::TcpStream};
+
+use std::{io::Write, net::TcpStream, env};
 
 mod codegen;
-mod parse;
+mod parser;
 
-fn main() {
+fn main() -> std::io::Result<()> {
     help_message();
 
-    let _s = process_block_vec(vec![
-        Block::EventDefinition {
-            block: "event",
-            action: "Join".to_string(),
-        },
-        Block::Code {
-            block: "player_action",
-            items: vec![Item {
-                id: "txt".to_string(),
-                slot: 0,
-                item: ItemData::Text {
-                    data: "Hello world!".to_string(),
-                },
-            }],
-            action: "SendMessage".to_string(),
-            data: "",
-        },
-    ]);
-    // println!("{s}");
-    /*  */
+    let args = env::args().collect::<Vec<_>>();
 
-    let input = include_str!("../examples/hello.blst");
+    let input = "";
 
-    match parse::parser().parse(input) {
+    let start = std::time::Instant::now();
+
+    if let Some(arg) = args.get(1) {
+        if arg.contains("build-all") {
+            let paths = std::fs::read_dir("./scripts")?;
+
+            for path in paths {
+                let handle = std::thread::spawn(move || {
+                    let display = path.expect("somehow doesnt exist").path().display().to_string();
+                    let file = std::fs::read_to_string(display).expect("somehow doesnt exist");
+                    process_inputs(&file);
+                });
+                handle.join().expect("failed to start thread");
+                std::thread::sleep(std::time::Duration::from_millis(50));
+            }
+        } else if arg.contains("build") {
+            if let Some(arg2) = args.get(1) {
+                let file = std::fs::read_to_string(arg2)?;
+                process_inputs(&file);
+            }
+        } 
+        
+    } else {
+        help_message();
+        return Ok(());
+    }
+
+    Ok(())
+}
+
+fn compile_with_recode(vector: Vec<Block>) {
+    let s = process_block_vec(vector);
+    let send =
+        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
+    let send = send.replace("%s%", &s);
+    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
+    stream
+        .write_all(send.as_bytes())
+        .expect("failed to write all");
+}
+#[allow(dead_code, unused_variables, unused_mut)]
+fn compile_with_codeclient(vector: Vec<Block>) {
+    let mut stream = TcpStream::connect("localhost:31375").expect("failed to connect");
+    println!("Readying! Please type `/auth` ingame to continue.");
+}
+
+fn process_inputs(input: &str) {
+    match parser::parse::parser().parse(input) {
         Ok(vector) => {
             let vector = vector
                 .into_iter()
@@ -59,23 +87,6 @@ fn main() {
         }
     }
 }
-
-fn compile_with_recode(vector: Vec<Block>) {
-    let s = process_block_vec(vector);
-    let send =
-        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
-    let send = send.replace("%s%", &s);
-    println!("{send}");
-    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
-    stream
-        .write_all(send.as_bytes())
-        .expect("failed to write all");
-}
-fn compile_with_codeclient(vector: Vec<Block>) {
-    let mut stream = TcpStream::connect("localhost:31375").expect("failed to connect");
-    println!("Readying! Please type `/auth` ingame to continue.");
-}
-
 fn help_message() {
     println!(
         r#"

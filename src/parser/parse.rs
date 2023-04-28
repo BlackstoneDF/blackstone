@@ -26,7 +26,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     .push(varn.to_string());
                 None
             });
-
+    
         type_command
     };
 
@@ -43,6 +43,21 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .map(|f| ItemData::Text {
                 data: f.iter().collect(),
             });
+        let _location = text::keyword("loc")
+            .ignore_then(
+                number
+                    .clone()
+                    .separated_by(just(','))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+            ).map(|f| {
+                if f.len() != 3 && f.len() != 5 {
+                    
+                }
+            });
 
         text.or(number)
     };
@@ -54,7 +69,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .then(
                 arguments
                     .clone()
-                    .separated_by(just(','))
+                    .separated_by(just(", "))
                     .allow_trailing()
                     .padded()
                     .collect::<Vec<_>>()
@@ -84,7 +99,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .then(
                 arguments
                     .clone()
-                    .separated_by(just(','))
+                    .separated_by(just(',').padded())
                     .allow_trailing()
                     .padded()
                     .collect::<Vec<_>>()
@@ -135,7 +150,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         action: name,
                     }),
                 );
-                println!("{out:#?}");
                 out
             });
 

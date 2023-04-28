@@ -1,4 +1,0 @@
-plot.playerEvent.Join {
-    type player = default;
-    player.SendMessage("Hello!");
-}
