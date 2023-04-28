@@ -1,6 +1,4 @@
-PlayerEvent(event: Join) {
-    player.SendMessage("Wow!");
-    if player.IsGrounded {
-        player.Teleport(loc(25,51,25));
-    }
+PlayerEvent(Join) {
+    player.SendMessage("Hello world!");
+    player.Teleport()
 }

@@ -258,8 +258,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 
     let player_event = text::keyword("PlayerEvent")
         .ignore_then(just('('))
-        .ignore_then(text::keyword("event"))
-        .ignore_then(just(':'))
         .padded()
         .ignore_then(ident)
         .then_ignore(just(')'))
