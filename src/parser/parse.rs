@@ -2,6 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use crate::codegen::misc::{BracketDirection, BracketType};
 use crate::codegen::{block::Block, item::Item, item_data::ItemData};
+#[allow(unused_imports)]
 use crate::parser::actions::*;
 use chumsky::prelude::*;
 
@@ -29,7 +30,8 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 .push(varn.to_string());
             vec![None::<Block>]
         });
-
+    
+    #[allow(unused_variables)]
     let internal_commands = { type_command };
 
     // Number
@@ -187,7 +189,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 
                     items.push(Item {
                         id,
-                        slot: slot.try_into().expect("failed ot convert to usize"),
+                        slot: slot.try_into().expect("failed to convert to usize"),
                         item: data,
                     })
                 }

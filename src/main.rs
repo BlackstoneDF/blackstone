@@ -1,5 +1,7 @@
 use ariadne::*;
-use chumsky::Parser;
+#[allow(unused_imports)]
+use chumsky::{chain::Chain, Parser};
+#[allow(unused_imports)]
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
 use std::{env, io::Write, net::TcpStream};
@@ -10,11 +12,12 @@ mod parser;
 fn main() -> std::io::Result<()> {
     let args = env::args().collect::<Vec<_>>();
 
-    let input = "";
+    let _input = "";
 
     let start = std::time::Instant::now();
 
     if let Some(arg) = args.get(1) {
+        // command line commands
         if arg.contains("build-all") {
             println!("\t\x1b[32;1mBuilding\x1b[0m from `./scripts` directory.");
             let paths = std::fs::read_dir("./scripts")?;
@@ -42,10 +45,31 @@ fn main() -> std::io::Result<()> {
                 let file = std::fs::read_to_string(arg2)?;
                 process_inputs(&file, &arg2);
             }
+        } else if arg.contains("version") {
+            //find the toml file - that has the version
+            //3rd line has version as `version = "[version]"
+            match std::fs::read_to_string("Cargo.toml")?.lines().nth(2) {
+                Some(line) => {
+                    let line = line.strip_prefix("version = ").unwrap_or("");
+                    if line.is_empty() {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "Did not find the correct version line.",
+                        ));
+                    }
+                    let vers = line.trim_matches('"');
+                    println!("Current version: {vers}")
+                }
+                None => {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "Could not find a valid `Cargo.toml` file",
+                    ))
+                }
+            }
         }
     } else {
         help_message();
-        return Ok(());
     }
 
     Ok(())
@@ -72,8 +96,7 @@ fn process_inputs(input: &str, path: &str) {
         Ok(vector) => {
             let vector = vector
                 .into_iter()
-                .filter(|f| f.is_some())
-                .map(|f| f.expect("impossible to fail"))
+                .flatten()
                 .collect::<Vec<_>>();
             
             println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
@@ -85,7 +108,7 @@ fn process_inputs(input: &str, path: &str) {
                     .with_message(format!("{:#?}", err.reason()))
                     .with_label(Label::new(err.span()).with_message(format!(
                         "expected '{}', found '{}'",
-                        err.expected().nth(0).unwrap_or(&Some('?')).unwrap_or('!'),
+                        err.expected().next().unwrap_or(&Some('?')).unwrap_or('!'),
                         err.found().unwrap_or(&'✗')
                     )))
                     .finish()
@@ -100,7 +123,7 @@ fn help_message() {
         r#"
 Blackstone's compiler & build tooling
 
-Usage: bls [commands]
+Usage: shulker [commands]
 
 Built-in commands:
     version                 Get the current version of Blackstone.
@@ -111,6 +134,7 @@ Built-in commands:
                             Useful if you don't have `recode` installed.
     build_test              Run the tests in the code.
     add [package]           Add an external package to your scripts.
+    help                    Shows this message!
     "#
     );
 }

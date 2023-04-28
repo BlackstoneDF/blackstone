@@ -10,7 +10,7 @@ Discord: [https://discord.gg/c7qzkNAURV](https://discord.gg/c7qzkNAURV)
 
 ### Building from Source
 
-You can install this using the cargo toolchain.
+You can install this using the Cargo toolchain.
 
 ```text
 cargo install blackstone-df
@@ -23,7 +23,9 @@ It will automatically handle building from source for you.
 You can also install it through our `Releases` page on the sidebar. During official releases, we will compile binaries for Windows & Linux.
 
 ## Features
+
 ### Code Blocks
+
 - [x] Player Event
 - [x] Player Action
 - [x] If Player
@@ -44,6 +46,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [ ] NOT Functionality
 
 ### Values
+
 - [ ] Items
 - [x] Text
 - [x] Number
@@ -56,12 +59,50 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [ ] Potion
 - [ ] Game Value
 
-### Bonus Features
+### Bonus / Planned Features
+
 - [ ] Function Parameters
 - [ ] Object-Oriented Programming
+- [ ] Compiler-Enforced Strong Typing
+- [ ] Tests
+
+Note that none of the bonus features are *guaranteed* to be implemented.
+We do think they would be useful, though.
+
+### Shulker / Compiler Commands
+
+- [x] version
+- [ ] init
+- [x] build (script)
+- [x] build-all
+- [ ] build-stdout (script)
+- [ ] build_test
+- [ ] add (package)
 
 ### DFS Suggestions
-None yet! Let us know if there's some cool ones you'd like to see.
-## Documentation
+
+None yet! Let us know if there's some cool ones you'd like to see in our Discord!
+
+## Special Thanks
 
 `todo!()`
+
+## Documentation
+
+All code must be inside an Event, Function, or Procedure. Here's some basic examples:
+
+```rs
+playerEvent(Join) {
+    //supports comments too!
+    default.sendMessage("Hello world!");
+}
+
+func FunnyFunction {
+    // variables must be manually scoped - local, game, or save
+    var game.joke = "Among us";
+    // defaults to local
+    var list = ["a", "b", "c"];
+    // default.sendMessage(...) == print(...)
+    default.sendMessage(joke);
+}
+```
