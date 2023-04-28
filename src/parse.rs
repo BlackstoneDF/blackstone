@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex};
 
+use ariadne::{ReportBuilder, Report, Label};
 use chumsky::prelude::*;
 
 use crate::codegen::{block::Block, item_data::ItemData, item::Item};
@@ -42,6 +43,22 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .then_ignore(just('"'))
             .map(|f| ItemData::Text {
                 data: f.iter().collect(),
+            });
+
+        let location = text::keyword("loc")
+            .ignore_then(
+                number
+                    .clone()
+                    .separated_by(just(','))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+            ).map(|f| {
+                if f.len() != 3 && f.len() != 5 {
+                    
+                }
             });
 
         text.or(number)
