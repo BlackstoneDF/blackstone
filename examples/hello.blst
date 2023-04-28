@@ -1,14 +1,4 @@
-playerEvent.join()
-{
-    player.sendMessage("Hello world!");
-    
-    // by default, it is local
-    var x = 10;
-
-    // make it global or saved
-    var game.y = 30;
-    var save.z = 40;
-
-    // %var() syntax works like normal
-    player.sendMessage("x is %var(x) | y is %var(y) | z is %var(z)");
+plot.playerEvent.Join {
+    type player = default;
+    player.SendMessage("Hello!");
 }
