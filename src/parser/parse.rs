@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex};
 
+use crate::codegen::misc::{BracketDirection, BracketType};
 use crate::codegen::{block::Block, item::Item, item_data::ItemData};
 use crate::parser::actions::*;
 use chumsky::prelude::*;
@@ -26,7 +27,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             cl.lock()
                 .expect("poisoned lock, immediately panic")
                 .push(varn.to_string());
-            None
+            vec![None::<Block>]
         });
 
     let internal_commands = { type_command };
@@ -127,78 +128,133 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 
     let arguments = text.or(number).or(location);
 
-    let player_action = text::keyword("player")
-        .ignore_then(just('.'))
-        .ignore_then(ident)
-        .then(
-            arguments
-                .clone()
-                .separated_by(just(", "))
-                .allow_trailing()
-                .padded()
-                .collect::<Vec<_>>()
-                .padded()
-                .delimited_by(just('('), just(')'))
-                .padded(),
-        )
-        .padded()
-        .map(|(f, datas): (String, Vec<ItemData>)| {
-            let mut items: Vec<Item> = vec![];
-            for (slot, data) in datas.into_iter().enumerate() {
-                let id = data_to_id(&data);
+    let actions = recursive(|actions| {
+        let player_action = text::keyword("player")
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .then(
+                arguments
+                    .clone()
+                    .separated_by(just(", "))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded(),
+            )
+            .padded()
+            .map(|(f, datas): (String, Vec<ItemData>)| {
+                let mut items: Vec<Item> = vec![];
+                for (slot, data) in datas.into_iter().enumerate() {
+                    let id = data_to_id(&data);
 
-                items.push(Item {
-                    id,
-                    slot: slot.try_into().expect("failed ot convert to usize"),
-                    item: data,
-                })
-            }
-            Some(Block::Code {
-                block: "player_action",
-                items,
-                action: f,
-                data: "",
-                target: "Default",
-                inverted: "",
-            })
-        });
+                    items.push(Item {
+                        id,
+                        slot: slot.try_into().expect("failed ot convert to usize"),
+                        item: data,
+                    })
+                }
+                vec![Some(Block::Code {
+                    block: "player_action",
+                    items,
+                    action: f,
+                    data: "",
+                    target: "Default",
+                    inverted: "",
+                })]
+            });
 
-    let game_action = text::keyword("plot")
-        .ignore_then(just('.'))
-        .ignore_then(ident)
-        .then(
-            arguments
-                .clone()
-                .separated_by(just(',').padded())
-                .allow_trailing()
-                .padded()
-                .collect::<Vec<_>>()
-                .padded()
-                .delimited_by(just('('), just(')'))
-                .padded(),
-        )
-        .padded()
-        .map(|(f, datas): (String, Vec<ItemData>)| {
-            let mut items: Vec<Item> = vec![];
-            for (slot, data) in datas.into_iter().enumerate() {
-                let id = data_to_id(&data);
+        let game_action = text::keyword("plot")
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .then(
+                arguments
+                    .clone()
+                    .separated_by(just(',').padded())
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded(),
+            )
+            .padded()
+            .map(|(f, datas): (String, Vec<ItemData>)| {
+                let mut items: Vec<Item> = vec![];
+                for (slot, data) in datas.into_iter().enumerate() {
+                    let id = data_to_id(&data);
 
-                items.push(Item {
-                    id,
-                    slot: slot.try_into().expect("failed ot convert to usize"),
-                    item: data,
-                })
-            }
-            Some(Block::Code {
-                block: "game_action",
-                items,
-                action: f,
-                data: "",
-                target: "Default",
-                inverted: "",
-            })
-        });
-    let actions = { player_action.or(game_action).or(internal_commands) };
+                    items.push(Item {
+                        id,
+                        slot: slot.try_into().expect("failed ot convert to usize"),
+                        item: data,
+                    })
+                }
+                vec![Some(Block::Code {
+                    block: "game_action",
+                    items,
+                    action: f,
+                    data: "",
+                    target: "Default",
+                    inverted: "",
+                })]
+            });
+
+
+        let if_player = text::keyword("if")
+            .ignore_then(just(' '))
+            .ignore_then(text::keyword("player"))
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .then(
+                actions
+                    .clone()
+                    .separated_by(just(';'))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('{'), just('}'))
+                    .padded(),
+            )
+            .padded()
+            .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+                let mut out = vec![];
+                for block in args {
+                    for sub_block in block {
+                        if let Some(bl) = sub_block {
+                            out.append(&mut vec![Some(bl)]);
+                        }
+                    }
+                }
+                out.insert(
+                    0,
+                    Some(Block::Code {
+                        block: "if_player",
+                        items: vec![],
+                        action: name,
+                        data: "",
+                        target: "Default",
+                        inverted: "",
+                    }),
+                );
+                out.insert(
+                    1,
+                    Some(Block::Bracket {
+                        direct: BracketDirection::Open,
+                        typ: BracketType::Norm,
+                    }),
+                );
+                out.push(Some(Block::Bracket {
+                    direct: BracketDirection::Close,
+                    typ: BracketType::Norm,
+                }));
+                out
+            });
+
+        player_action.or(game_action).or(if_player)
+    });
 
     let player_event = text::keyword("PlayerEvent")
         .ignore_then(just('('))
@@ -219,8 +275,15 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 .padded(),
         )
         .padded()
-        .map(|(name, args): (String, Vec<Option<Block>>)| {
-            let mut out = args;
+        .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+            let mut out = vec![];
+            for block in args {
+                for sub_block in block {
+                    if let Some(bl) = sub_block {
+                        out.append(&mut vec![Some(bl)]);
+                    }
+                }
+            }
             out.insert(
                 0,
                 Some(Block::EventDefinition {
