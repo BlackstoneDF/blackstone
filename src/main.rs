@@ -1,8 +1,10 @@
 use ariadne::*;
-use chumsky::Parser;
+#[allow(unused_imports)]
+use chumsky::{chain::Chain, Parser};
+#[allow(unused_imports)]
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use std::{io::Write, net::TcpStream, env};
+use std::{env, io::Write, net::TcpStream};
 
 mod codegen;
 mod parser;
@@ -12,17 +14,22 @@ fn main() -> std::io::Result<()> {
 
     let args = env::args().collect::<Vec<_>>();
 
-    let input = "";
+    let _input = "";
 
-    let start = std::time::Instant::now();
+    let _start = std::time::Instant::now();
 
     if let Some(arg) = args.get(1) {
+        // command line commands
         if arg.contains("build-all") {
             let paths = std::fs::read_dir("./scripts")?;
 
             for path in paths {
                 let handle = std::thread::spawn(move || {
-                    let display = path.expect("somehow doesnt exist").path().display().to_string();
+                    let display = path
+                        .expect("somehow doesnt exist")
+                        .path()
+                        .display()
+                        .to_string();
                     let file = std::fs::read_to_string(display).expect("somehow doesnt exist");
                     process_inputs(&file);
                 });
@@ -34,11 +41,31 @@ fn main() -> std::io::Result<()> {
                 let file = std::fs::read_to_string(arg2)?;
                 process_inputs(&file);
             }
-        } 
-        
+        } else if arg.contains("version") {
+            //find the toml file - that has the version
+            //3rd line has version as `version = "[version]"
+            match std::fs::read_to_string("Cargo.toml")?.lines().nth(2) {
+                Some(line) => {
+                    let line = line.strip_prefix("version = ").unwrap_or("");
+                    if line.is_empty() {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "Did not find the correct version line.",
+                        ));
+                    }
+                    let vers = line.trim_matches('"');
+                    println!("Current version: {vers}")
+                }
+                None => {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "Could not find a valid `Cargo.toml` file",
+                    ))
+                }
+            }
+        }
     } else {
         help_message();
-        return Ok(());
     }
 
     Ok(())
@@ -65,8 +92,7 @@ fn process_inputs(input: &str) {
         Ok(vector) => {
             let vector = vector
                 .into_iter()
-                .filter(|f| f.is_some())
-                .map(|f| f.expect("impossible to fail"))
+                .flatten()
                 .collect::<Vec<_>>();
 
             compile_with_recode(vector);
@@ -77,7 +103,7 @@ fn process_inputs(input: &str) {
                     .with_message(format!("{:#?}", err.reason()))
                     .with_label(Label::new(err.span()).with_message(format!(
                         "expected '{}', found '{}'",
-                        err.expected().nth(0).unwrap_or(&Some('?')).unwrap_or('!'),
+                        err.expected().next().unwrap_or(&Some('?')).unwrap_or('!'),
                         err.found().unwrap_or(&'✗')
                     )))
                     .finish()
