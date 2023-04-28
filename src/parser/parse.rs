@@ -1,6 +1,5 @@
 use std::sync::{Arc, Mutex};
 
-use ariadne::{ReportBuilder, Report, Label};
 use chumsky::prelude::*;
 
 use crate::codegen::{block::Block, item_data::ItemData, item::Item};
@@ -27,7 +26,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     .push(varn.to_string());
                 None
             });
-
+    
         type_command
     };
 
@@ -44,8 +43,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .map(|f| ItemData::Text {
                 data: f.iter().collect(),
             });
-
-        let location = text::keyword("loc")
+        let _location = text::keyword("loc")
             .ignore_then(
                 number
                     .clone()
@@ -71,7 +69,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .then(
                 arguments
                     .clone()
-                    .separated_by(just(','))
+                    .separated_by(just(", "))
                     .allow_trailing()
                     .padded()
                     .collect::<Vec<_>>()
@@ -101,7 +99,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .then(
                 arguments
                     .clone()
-                    .separated_by(just(','))
+                    .separated_by(just(',').padded())
                     .allow_trailing()
                     .padded()
                     .collect::<Vec<_>>()
@@ -152,7 +150,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         action: name,
                     }),
                 );
-                println!("{out:#?}");
                 out
             });
 

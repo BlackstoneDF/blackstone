@@ -60,6 +60,8 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [ ] Function Parameters
 - [ ] Object-Oriented Programming
 
+### DFS Suggestions
+None yet! Let us know if there's some cool ones you'd like to see.
 ## Documentation
 
 `todo!()`
