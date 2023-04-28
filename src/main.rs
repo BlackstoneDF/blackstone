@@ -14,7 +14,7 @@ fn main() -> std::io::Result<()> {
 
     let _input = "";
 
-    let _start = std::time::Instant::now();
+    let start = std::time::Instant::now();
 
     if let Some(arg) = args.get(1) {
         // command line commands
