@@ -123,7 +123,7 @@ fn help_message() {
         r#"
 Blackstone's compiler & build tooling
 
-Usage: bls [commands]
+Usage: shulker [commands]
 
 Built-in commands:
     version                 Get the current version of Blackstone.
@@ -134,6 +134,7 @@ Built-in commands:
                             Useful if you don't have `recode` installed.
     build_test              Run the tests in the code.
     add [package]           Add an external package to your scripts.
+    help                    Shows this message!
     "#
     );
 }

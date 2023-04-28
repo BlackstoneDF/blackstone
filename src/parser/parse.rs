@@ -189,7 +189,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 
                     items.push(Item {
                         id,
-                        slot: slot.try_into().expect("failed ot convert to usize"),
+                        slot: slot.try_into().expect("failed to convert to usize"),
                         item: data,
                     })
                 }
