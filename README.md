@@ -26,7 +26,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 ### Code Blocks
 - [x] Player Event
 - [x] Player Action
-- [ ] If Player
+- [x] If Player
 - [x] Entity Event
 - [x] Entity Action
 - [ ] If Entity
@@ -48,7 +48,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [x] Text
 - [x] Number
 - [ ] Variable
-- [ ] Location
+- [x] Location
 - [ ] Sound
 - [ ] Vector
 - [ ] Sound
