@@ -2,7 +2,7 @@ use ariadne::*;
 use chumsky::Parser;
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use std::{io::Write, net::TcpStream, env};
+use std::{env, io::Write, net::TcpStream};
 
 mod codegen;
 mod parser;
@@ -22,7 +22,11 @@ fn main() -> std::io::Result<()> {
 
             for path in paths {
                 let handle = std::thread::spawn(move || {
-                    let display = path.expect("somehow doesnt exist").path().display().to_string();
+                    let display = path
+                        .expect("somehow doesnt exist")
+                        .path()
+                        .display()
+                        .to_string();
                     let file = std::fs::read_to_string(display).expect("somehow doesnt exist");
                     process_inputs(&file);
                 });
@@ -34,8 +38,7 @@ fn main() -> std::io::Result<()> {
                 let file = std::fs::read_to_string(arg2)?;
                 process_inputs(&file);
             }
-        } 
-        
+        }
     } else {
         help_message();
         return Ok(());

@@ -91,7 +91,7 @@ impl ItemData {
                 yaw,
             } => {
                 format!(
-                    r#""data":{{"x":"{x}","y":"{y}","z":"{z}", "pitch":"{pitch}", "yaw":"{yaw}"}}"#
+                    r#""data":{{"isBlock":false,"loc":{{"x":"{x}","y":"{y}","z":"{z}","pitch":"{pitch}","yaw":"{yaw}"}}}}"#
                 )
             }
             Self::Potion { effect, dur, amp } => {
