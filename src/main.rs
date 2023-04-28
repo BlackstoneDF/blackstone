@@ -152,6 +152,7 @@ fn shulker_header() {
     "#);
 }
 
+#[allow(dead_code)]
 fn blackstone_header() {
     println!(r#"
     88""Yb 88        db     dP""b8 88  dP .dP"Y8 888888  dP"Yb  88b 88 888888 
