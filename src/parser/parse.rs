@@ -158,6 +158,8 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 items,
                 action: f,
                 data: "",
+                target: "Default",
+                inverted: "",
             })
         });
 
@@ -192,6 +194,8 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 items,
                 action: f,
                 data: "",
+                target: "Default",
+                inverted: "",
             })
         });
     let actions = { player_action.or(game_action).or(internal_commands) };
