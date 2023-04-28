@@ -1,4 +1,0 @@
-plot.playerEvent.Quit {
-    player.SendMessage("Goodbye!", 10, 20, 30, 40);
-    player.Damage(10);
-}

@@ -10,8 +10,6 @@ mod codegen;
 mod parser;
 
 fn main() -> std::io::Result<()> {
-    help_message();
-
     let args = env::args().collect::<Vec<_>>();
 
     let _input = "";
@@ -21,25 +19,31 @@ fn main() -> std::io::Result<()> {
     if let Some(arg) = args.get(1) {
         // command line commands
         if arg.contains("build-all") {
+            println!("\t\x1b[32;1mBuilding\x1b[0m from `./scripts` directory.");
             let paths = std::fs::read_dir("./scripts")?;
-
+            let mut handles = vec![];
             for path in paths {
-                let handle = std::thread::spawn(move || {
+                handles.push(std::thread::spawn(move || {
                     let display = path
                         .expect("somehow doesnt exist")
                         .path()
                         .display()
                         .to_string();
-                    let file = std::fs::read_to_string(display).expect("somehow doesnt exist");
-                    process_inputs(&file);
-                });
-                handle.join().expect("failed to start thread");
-                std::thread::sleep(std::time::Duration::from_millis(50));
+                    println!("\t\x1b[32;1mBuilding\x1b[0m `{display}`.");
+                    let file = std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
+                    process_inputs(&file, &display);
+                }));
             }
+            for handle in handles {
+                handle.join().expect("failed to join");
+            }
+
+            let dur = start.elapsed();
+            println!("time taken: {}ms", dur.as_millis());
         } else if arg.contains("build") {
             if let Some(arg2) = args.get(1) {
                 let file = std::fs::read_to_string(arg2)?;
-                process_inputs(&file);
+                process_inputs(&file, &arg2);
             }
         } else if arg.contains("version") {
             //find the toml file - that has the version
@@ -87,14 +91,15 @@ fn compile_with_codeclient(vector: Vec<Block>) {
     println!("Readying! Please type `/auth` ingame to continue.");
 }
 
-fn process_inputs(input: &str) {
+fn process_inputs(input: &str, path: &str) {
     match parser::parse::parser().parse(input) {
         Ok(vector) => {
             let vector = vector
                 .into_iter()
                 .flatten()
                 .collect::<Vec<_>>();
-
+            
+            println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
             compile_with_recode(vector);
         }
         Err(v) => {

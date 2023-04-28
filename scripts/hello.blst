@@ -1,4 +1,4 @@
-plot.playerEvent.Join {
-    player.SendMessage("Hello!", 10, 20, 30, 40);
-    player.Damage(10);
+PlayerEvent(Join) {
+    player.SendMessage("Hello world!");
+    player.Teleport()
 }

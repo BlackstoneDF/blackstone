@@ -1,0 +1,118 @@
+{
+    "blocks": [
+      {
+        "id": "block",
+        "block": "event",
+        "args": {
+          "items": []
+        },
+        "action": "Join"
+      },
+      {
+        "id": "block",
+        "block": "player_action",
+        "args": {
+          "items": [
+            {
+              "item": {
+                "id": "loc",
+                "data": {
+                  "isBlock": false,
+                  "loc": {
+                    "x": 2.2759650773125486,
+                    "y": 50.121296840539195,
+                    "z": 7.431969257425635,
+                    "pitch": 8.137114,
+                    "yaw": -141.53772
+                  }
+                }
+              },
+              "slot": 0
+            },
+            {
+              "item": {
+                "id": "bl_tag",
+                "data": {
+                  "option": "False",
+                  "tag": "Keep Velocity",
+                  "action": "Teleport",
+                  "block": "player_action"
+                }
+              },
+              "slot": 25
+            },
+            {
+              "item": {
+                "id": "bl_tag",
+                "data": {
+                  "option": "False",
+                  "tag": "Keep Current Rotation",
+                  "action": "Teleport",
+                  "block": "player_action"
+                }
+              },
+              "slot": 26
+            }
+          ]
+        },
+        "action": "Teleport"
+      }
+    ]
+  }
+
+
+  {
+    "blocks": [
+      {
+        "id": "block",
+        "block": "event",
+        "action": "Join",
+        "args": {
+          "items": []
+        }
+      },
+      {
+        "id": "block",
+        "block": "player_action",
+        "args": {
+          "items": [
+            {
+              "item": {
+                "id": "txt",
+                "data": {
+                  "name": "Wow!"
+                }
+              },
+              "slot": 0
+            }
+          ]
+        },
+        "action": "SendMessage",
+        "data": ""
+      },
+      {
+        "id": "block",
+        "block": "player_action",
+        "args": {
+          "items": [
+            {
+              "item": {
+                "id": "loc",
+                "data": {
+                  "isBlock": false,
+                  "x": "25",
+                  "y": "51",
+                  "z": "25",
+                  "pitch": "0",
+                  "yaw": "0"
+                }
+              },
+              "slot": 0
+            }
+          ]
+        },
+        "action": "Teleport",
+        "data": ""
+      }
+    ]
+  }
