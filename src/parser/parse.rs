@@ -30,7 +30,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 .push(varn.to_string());
             vec![None::<Block>]
         });
-    
+
     #[allow(unused_variables)]
     let internal_commands = { type_command };
 
@@ -60,7 +60,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
     let location = text::keyword("loc")
         .ignore_then(
             number
-                .clone()
                 .separated_by(just(','))
                 .allow_trailing()
                 .padded()
@@ -119,13 +118,13 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 };
             }
             // TODO: throw ariadne error
-            return ItemData::Location {
+            ItemData::Location {
                 x: 0.0,
                 y: 0.0,
                 z: 0.0,
                 pitch: 0.0,
                 yaw: 0.0,
-            };
+            }
         });
 
     let arguments = text.or(number).or(location);
@@ -203,7 +202,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 })]
             });
 
-
         let if_player = text::keyword("if")
             .ignore_then(just(' '))
             .ignore_then(text::keyword("player"))
@@ -224,10 +222,8 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
                 let mut out = vec![];
                 for block in args {
-                    for sub_block in block {
-                        if let Some(bl) = sub_block {
-                            out.append(&mut vec![Some(bl)]);
-                        }
+                    for sub_block in block.into_iter().flatten() {
+                        out.append(&mut vec![Some(sub_block)]);
                     }
                 }
                 out.insert(
@@ -278,10 +274,8 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
         .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
             let mut out = vec![];
             for block in args {
-                for sub_block in block {
-                    if let Some(bl) = sub_block {
-                        out.append(&mut vec![Some(bl)]);
-                    }
+                for sub_block in block.into_iter().flatten() {
+                    out.append(&mut vec![Some(sub_block)]);
                 }
             }
             out.insert(
@@ -293,10 +287,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             );
             out
         });
-
-    let events = { player_event };
-
-    events
+    player_event
 }
 
 fn data_to_id(data: &ItemData) -> String {

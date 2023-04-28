@@ -30,7 +30,8 @@ fn main() -> std::io::Result<()> {
                         .display()
                         .to_string();
                     println!("\t\x1b[32;1mBuilding\x1b[0m `{display}`.");
-                    let file = std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
+                    let file =
+                        std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
                     process_inputs(&file, &display);
                 }));
             }
@@ -43,7 +44,7 @@ fn main() -> std::io::Result<()> {
         } else if arg.contains("build") {
             if let Some(arg2) = args.get(1) {
                 let file = std::fs::read_to_string(arg2)?;
-                process_inputs(&file, &arg2);
+                process_inputs(&file, arg2);
             }
         } else if arg.contains("version") {
             //find the toml file - that has the version
@@ -58,7 +59,12 @@ fn main() -> std::io::Result<()> {
                         ));
                     }
                     let vers = line.trim_matches('"');
-                    println!("Current version: {vers}")
+                    println!(
+                        r#"
+                    Current version: {vers}
+                    Repository: https://github.com/BlackstoneDF/blackstone
+                    "#
+                    )
                 }
                 None => {
                     return Err(std::io::Error::new(
@@ -94,11 +100,8 @@ fn compile_with_codeclient(vector: Vec<Block>) {
 fn process_inputs(input: &str, path: &str) {
     match parser::parse::parser().parse(input) {
         Ok(vector) => {
-            let vector = vector
-                .into_iter()
-                .flatten()
-                .collect::<Vec<_>>();
-            
+            let vector = vector.into_iter().flatten().collect::<Vec<_>>();
+
             println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
             compile_with_recode(vector);
         }
