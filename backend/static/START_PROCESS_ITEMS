@@ -1,1 +1,26 @@
-{"item":{"id": "bl_tag","data":{"option":"Share","tag":"Local Variables","action":"dynamic","block":"start_process"}},"slot": 25},{"item":{"id":"bl_tag","data":{"option":"With current selection","tag":"Target Mode","action": "dynamic","block": "start_process"}},"slot": 26}
+[
+    {
+        "item": {
+            "id": "bl_tag",
+            "data": {
+                "option": "Share",
+                "tag": "Local Variables",
+                "action": "dynamic",
+                "block": "start_process"
+            }
+        },
+        "slot": 25
+    },
+    {
+        "item": {
+            "id": "bl_tag",
+            "data": {
+                "option": "With current selection",
+                "tag": "Target Mode",
+                "action": "dynamic",
+                "block": "start_process"
+            }
+        },
+        "slot": 26
+    }
+]
