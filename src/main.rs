@@ -23,7 +23,7 @@ fn main() -> std::io::Result<()> {
 
     if let Some(arg) = args.get(1) {
         match arg.as_str() {
-            "build_all" => {
+            "build-all" => {
                 println!("\t\x1b[32;1mBuilding\x1b[0m from `./scripts` directory.");
                 let paths = std::fs::read_dir("./scripts")?;
                 for path in paths {
@@ -36,6 +36,7 @@ fn main() -> std::io::Result<()> {
                     let file =
                         std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
                     process_inputs(&file, &display);
+                    std::thread::sleep(std::time::Duration::from_millis(100));
                 }
 
                 let dur = start.elapsed();

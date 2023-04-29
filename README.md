@@ -34,15 +34,15 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [ ] If Entity
 - [x] Game Action
 - [x] If Game
-- [ ] Set Variable
+- [x] Set Variable
 - [ ] If Variable
 - [ ] Repeat
-- [ ] Function
-- [ ] Call Function
-- [ ] Process
-- [ ] Start Process
+- [x] Function
+- [x] Call Function
+- [x] Process
+- [x] Start Process
 - [ ] Else
-- [ ] Select Object
+- [x] Select Object
 - [ ] NOT Functionality
 
 ### Values
@@ -50,7 +50,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [ ] Items
 - [x] Text
 - [x] Number
-- [ ] Variable
+- [x] Variable
 - [x] Location
 - [ ] Sound
 - [ ] Vector

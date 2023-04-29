@@ -6,6 +6,7 @@ use crate::codegen::{block::Block, item::Item, item_data::ItemData};
 use crate::parser::actions::*;
 use ariadne::{Report, ReportKind};
 use chumsky::prelude::*;
+use chumsky::text::Character;
 
 pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
     let player_default: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![]));
@@ -121,8 +122,26 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             };
         });
 
+    let item_stack = text::keyword("items")
+        .ignore_then(text.clone().padded().delimited_by(just('('), just(')')))
+        .try_map(|f, f2| {
+            if let ItemData::Text { data } = f {
+                let split = data.split(":").collect::<Vec<_>>();
+                let id = split.get(0).expect("somehow failed");
+                if let Some(count) = split.get(1) {
+                    return Ok(ItemData::VanillaItem {
+                        data: format!("{{Count:{count}b,DF_NBT:3337,id:\\\"minecraft:{id}\\\"}}"),
+                    });
+                } else {
+                    return Err(Simple::custom(f2, "Item Stacks must have an ID followed by a count. Example: `coal:3` makes 3 coals in a singular stack."))
+                };
+            }
+            unreachable!();
+        });
+
     let variable = ident.clone().map(|f| ident_to_var(f.as_str()));
-    let arguments = text.or(number).or(location).or(item);
+
+    let arguments = text.or(number).or(location).or(item).or(item_stack).or(variable);
 
     let actions = recursive(|actions| {
         let operation = just::<char, &str, Simple<char>>("=")
@@ -208,7 +227,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 
         let set_variable = text::keyword("var")
             .padded()
-            .ignore_then(ident)
+            .ignore_then(variable)
             .padded()
             .then(operation)
             .padded()
@@ -226,7 +245,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     .padded(),
             )
             .map(
-                |((((var, op), effect), args)): ((((String, &str), String), Vec<ItemData>))| {
+                |(((var, op), effect), args): (((ItemData, &str), String), Vec<ItemData>)| {
                     let mut items: Vec<Item> = vec![];
                     for (slot, data) in args.into_iter().enumerate() {
                         let id = data_to_id(&data);
@@ -242,7 +261,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         Item {
                             slot: 0,
                             id: "var".to_string(),
-                            item: ident_to_var(var.as_str()),
+                            item: var,
                         },
                     );
                     let mut tmp_effect = effect;
@@ -628,19 +647,19 @@ fn ident_to_var(input: &str) -> ItemData {
     if input.starts_with("local.") {
         return ItemData::Variable {
             scope: VariableScope::Local,
-            name: input.replace("local.", ""),
+            name: input.replace("local.", "").replace("pct.", "%"),
         };
     }
     if input.starts_with("save.") {
         return ItemData::Variable {
             scope: VariableScope::Saved,
-            name: input.replace("save.", ""),
+            name: input.replace("save.", "").replace("pct.", "%"),
         };
     }
     if input.starts_with("game.") {
         return ItemData::Variable {
             scope: VariableScope::Unsaved,
-            name: input.replace("game.", ""),
+            name: input.replace("game.", "").replace("pct.", "%"),
         };
     }
     return ItemData::Variable {

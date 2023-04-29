@@ -1,0 +1,3 @@
+PlayerEvent(Quit) {
+    player.SaveInv();
+}
