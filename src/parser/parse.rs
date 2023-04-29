@@ -11,7 +11,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
     let player_default: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![]));
 
     let ident = text::ident();
-
     // Type Command
     // This command represents creating a type that references a selector.
     // You can use these to call different actions.
@@ -69,18 +68,18 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 .padded()
                 .delimited_by(just('('), just(')')),
         )
-        .map(|f| {
+        .try_map(|f, f2| {
             if f.len() == 3 {
                 if let Some(ItemData::Number { data: n1 }) = f.get(0) {
                     if let Some(ItemData::Number { data: n2 }) = f.get(1) {
                         if let Some(ItemData::Number { data: n3 }) = f.get(2) {
-                            return ItemData::Location {
+                            return Ok(ItemData::Location {
                                 x: *n1,
                                 y: *n2,
                                 z: *n3,
                                 pitch: 0.0,
                                 yaw: 0.0,
-                            };
+                            });
                         }
                     }
                 }
@@ -90,13 +89,13 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         if let Some(ItemData::Number { data: n3 }) = f.get(2) {
                             if let Some(ItemData::Number { data: n4 }) = f.get(3) {
                                 if let Some(ItemData::Number { data: n5 }) = f.get(4) {
-                                    return ItemData::Location {
+                                    return Ok(ItemData::Location {
                                         x: *n1,
                                         y: *n2,
                                         z: *n3,
                                         pitch: *n4,
                                         yaw: *n5,
-                                    };
+                                    });
                                 }
                             }
                         }
@@ -106,15 +105,9 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 
             // Report::build(ReportKind::Warning, (), 5);
             // TODO: throw ariadne error
-            return ItemData::Location {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                pitch: 0.0,
-                yaw: 0.0,
-            };
+            Err(Simple::custom(f2, "Locations need 3 or 5 fields."))
         });
-
+    
     let item = text::keyword("item")
         .ignore_then(text.clone().padded().delimited_by(just('('), just(')')))
         .map(|f| {
@@ -127,16 +120,17 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 data: "".to_string(),
             };
         });
-
+    
+    let variable = ident.clone().map(|f| ident_to_var(f.as_str()));
     let arguments = text.or(number).or(location).or(item);
 
     let actions = recursive(|actions| {
         let operation = just::<char, &str, Simple<char>>("=")
-            .or(just("+="))
-            .or(just("-="))
-            .or(just("*="))
-            .or(just("/="))
-            .or(just("%="));
+            .or(just("+"))
+            .or(just("-"))
+            .or(just("*"))
+            .or(just("/"))
+            .or(just("%"));
 
         let repeat = text::keyword("loop")
             .ignore_then(just(' '))
@@ -248,10 +242,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         Item {
                             slot: 0,
                             id: "var".to_string(),
-                            item: ItemData::Variable {
-                                scope: VariableScope::Local,
-                                name: var,
-                            },
+                            item: ident_to_var(var.as_str()),
                         },
                     );
                     let mut tmp_effect = effect;
@@ -430,7 +421,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 out
             });
 
-        let call_function = text::keyword("sfunc")
+        let call_function = text::keyword("func")
             .padded()
             .ignore_then(ident)
             .padded()
@@ -460,7 +451,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 ]
             });
 
-        let start_process = text::keyword("sproc")
+        let start_process = text::keyword("proc")
             .padded()
             .ignore_then(ident)
             .padded()
@@ -631,4 +622,17 @@ fn data_to_id(data: &ItemData) -> String {
         return "item".to_string();
     }
     "".to_string()
+}
+
+fn ident_to_var(input: &str) -> ItemData {
+    if input.starts_with("local.") {
+        return ItemData::Variable { scope: VariableScope::Local, name: input.replace("local.", "") }
+    }
+    if input.starts_with("save.") {
+        return ItemData::Variable { scope: VariableScope::Saved, name: input.replace("save.", "") }
+    }
+    if input.starts_with("game.") {
+        return ItemData::Variable { scope: VariableScope::Unsaved, name: input.replace("game.", "") }
+    }
+    return ItemData::Variable { scope: VariableScope::Local, name: input.to_string() }
 }

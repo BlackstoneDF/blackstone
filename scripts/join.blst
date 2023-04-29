@@ -1,5 +1,6 @@
 PlayerEvent(Join) {
-    loop Multiple::Multiple(10) {
+    loop Multiple::Qwertyuiop(10) {
         player.SendMessage("awesome");
+        player.Teleport(loc(5,12,6));
     }
 }

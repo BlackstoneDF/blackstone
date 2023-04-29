@@ -1,4 +1,5 @@
 use ariadne::*;
+use chumsky::{prelude::Simple, error::SimpleReason};
 #[allow(unused_imports)]
 use chumsky::{chain::Chain, Parser};
 #[allow(unused_imports)]
@@ -109,8 +110,9 @@ fn process_inputs(input: &str, path: &str) {
         }
         Err(v) => {
             for err in v {
-                Report::build(ReportKind::Error, (), err.span().start)
-                    .with_message(format!("{:#?}", err.reason()))
+                if let SimpleReason::Unexpected = err.reason() {
+                    Report::build(ReportKind::Error, (), err.span().start)
+                    .with_message("Unexpected tokens")
                     .with_label(Label::new(err.span()).with_message({
                         let mut out = String::new();
                         for expected in err.expected() {
@@ -123,6 +125,15 @@ fn process_inputs(input: &str, path: &str) {
                     .finish()
                     .print(Source::from(input))
                     .unwrap();
+                }
+                if let SimpleReason::Custom(msg) = err.reason() {
+                    Report::build(ReportKind::Error, (), err.span().start)
+                    .with_message(msg)
+                    .with_label(Label::new(err.span()).with_message("Error occured here"))
+                    .finish()
+                    .print(Source::from(input))
+                    .unwrap();
+                }
             }
         }
     }
