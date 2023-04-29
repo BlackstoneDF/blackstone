@@ -75,7 +75,7 @@ impl Block<'_> {
                 typ.to_json()
             ),
             Block::FunctionDefinition { block, data } => {
-                format!(r#"{{"id":"block","block":"{block}","data:{data}"}}"#)
+                format!(r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#)
             }
             Block::FunctionCall { block, data } => {
                 format!(r#"{{"id":"block","block":"{block}",}}"#)

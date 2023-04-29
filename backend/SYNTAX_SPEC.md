@@ -102,3 +102,11 @@ func funnyFunction {
 }
 ```
 
+
+# Select Object?
+```ts
+selection my_selection as select {
+     AllPlayers().FilterCondition::IsLookingAt() 
+    };
+selection player as select {default};
+```

@@ -10,7 +10,7 @@ description = "A programming language designed for the DiamondFire Minecraft ser
 
 # Compile for shorthand `bls`, as to not exhaust the hands when typing
 [[bin]]
-name = "bls"
+name = "shulker"
 path = "src/main.rs"
 
 # Please try to minimize dependencies.

@@ -64,6 +64,8 @@ pub fn process_block_vec(input: Vec<Block>) -> String {
     out_str.pop();
     out_str.push_str(r#"]}"#);
 
+    println!("{}", out_str);
+
     let mut data_as_bytes = out_str.as_bytes();
     let mut encoder = libflate::gzip::Encoder::new(Vec::new()).unwrap();
     std::io::copy(&mut data_as_bytes, &mut encoder).unwrap();

@@ -1,0 +1,3 @@
+func hello() {
+    player.SendMessage("bruh");
+}
