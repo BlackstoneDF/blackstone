@@ -51,6 +51,8 @@ pub enum Block<'a> {
     },
 }
 
+static START_PROCESS_DEFAULT: &str = include_str!("../../backend/static/START_PROCESS_ITEMS");
+
 #[allow(dead_code, unused)]
 impl Block<'_> {
     /// converts self to a workable json String
@@ -93,7 +95,7 @@ impl Block<'_> {
             Block::ProcessDefinition { block, data } => format!(
                 r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#
             ),
-            Block::ProcessCall { block, data } => format!(r#"{{"id":"block","block":"{block}","data":"{data}","args":{{"items":[]}}}}"#),
+            Block::ProcessCall { block, data } => format!(r#"{{"id":"block","block":"{block}","data":"{data}","args":{{"items":[{START_PROCESS_DEFAULT}]}}}}"#),
         }
     }
 }
