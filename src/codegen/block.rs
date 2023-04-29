@@ -97,7 +97,9 @@ impl Block<'_> {
             Block::ProcessDefinition { block, data } => format!(
                 r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#
             ),
-            Block::ProcessCall { block, data } => format!(r#"{{"id":"block","block":"{block}","data":"{data}","args":{{"items":[{START_PROCESS_DEFAULT}]}}}}"#),
+            Block::ProcessCall { block, data } => format!(
+                r#"{{"id":"block","block":"{block}","data":"{data}","args":{{"items":[{START_PROCESS_DEFAULT}]}}}}"#
+            ),
         }
     }
 }

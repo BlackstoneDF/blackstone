@@ -1,1 +1,5 @@
-func hello(){player.SendMessage("bruh");sproc my_process();}
+PlayerEvent(Join) {
+    loop Multiple::Multiple(10) {
+        player.SendMessage("awesome");
+    }
+}

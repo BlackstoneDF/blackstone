@@ -11,7 +11,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
     let player_default: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![]));
 
     let ident = text::ident();
-    
+
     // Type Command
     // This command represents creating a type that references a selector.
     // You can use these to call different actions.
@@ -103,7 +103,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     }
                 }
             }
-            
+
             // Report::build(ReportKind::Warning, (), 5);
             // TODO: throw ariadne error
             return ItemData::Location {
@@ -131,6 +131,144 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
     let arguments = text.or(number).or(location).or(item);
 
     let actions = recursive(|actions| {
+        let operation = just::<char, &str, Simple<char>>("=")
+            .or(just("+="))
+            .or(just("-="))
+            .or(just("*="))
+            .or(just("/="))
+            .or(just("%="));
+
+        let repeat = text::keyword("loop")
+            .ignore_then(just(' '))
+            .ignore_then(ident)
+            .then_ignore(just("::"))
+            .then_ignore(ident)
+            .padded()
+            .then(
+                arguments
+                    .clone()
+                    .separated_by(just(", "))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded(),
+            )
+            .padded()
+            .then(
+                actions
+                    .clone()
+                    .separated_by(just(';'))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('{'), just('}'))
+                    .padded(),
+            )
+            .padded()
+            .map(|((label, args), codes)| {
+                let mut out = vec![];
+                for block in codes {
+                    for sub_block in block {
+                        if let Some(bl) = sub_block {
+                            out.append(&mut vec![Some(bl)]);
+                        }
+                    }
+                }
+                let mut items: Vec<Item> = vec![];
+                for (slot, data) in args.into_iter().enumerate() {
+                    let id = data_to_id(&data);
+                    items.push(Item {
+                        id,
+                        slot: slot.try_into().expect("failed ot convert to usize"),
+                        item: data,
+                    })
+                }
+                out.insert(
+                    0,
+                    Some(Block::Code {
+                        block: "repeat",
+                        items: items,
+                        action: label,
+                        data: "",
+                        target: "",
+                        inverted: "",
+                        sub_action: String::new(),
+                    }),
+                );
+                out.insert(
+                    1,
+                    Some(Block::Bracket {
+                        direct: BracketDirection::Open,
+                        typ: BracketType::Repeat,
+                    }),
+                );
+                out.push(Some(Block::Bracket {
+                    direct: BracketDirection::Close,
+                    typ: BracketType::Repeat,
+                }));
+                out
+            });
+
+        let set_variable = text::keyword("var")
+            .padded()
+            .ignore_then(ident)
+            .padded()
+            .then(operation)
+            .padded()
+            .then(ident)
+            .padded()
+            .then(
+                arguments
+                    .clone()
+                    .separated_by(just(", "))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded(),
+            )
+            .map(
+                |((((var, op), effect), args)): ((((String, &str), String), Vec<ItemData>))| {
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, data) in args.into_iter().enumerate() {
+                        let id = data_to_id(&data);
+                        let slot = slot + 1;
+                        items.push(Item {
+                            id,
+                            slot: slot.try_into().expect("failed ot convert to usize"),
+                            item: data,
+                        })
+                    }
+                    items.insert(
+                        0,
+                        Item {
+                            slot: 0,
+                            id: "var".to_string(),
+                            item: ItemData::Variable {
+                                scope: VariableScope::Local,
+                                name: var,
+                            },
+                        },
+                    );
+                    let mut tmp_effect = effect;
+                    if tmp_effect == "with" {
+                        tmp_effect = op.to_string();
+                    }
+                    vec![Some(Block::Code {
+                        block: "set_var",
+                        items,
+                        action: tmp_effect,
+                        data: "",
+                        target: "",
+                        inverted: "",
+                        sub_action: String::new(),
+                    })]
+                },
+            );
         let player_action = text::keyword("player")
             .ignore_then(just('.'))
             .ignore_then(ident)
@@ -358,6 +496,8 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .or(game_action)
             .or(if_player)
             .or(select_object)
+            .or(set_variable)
+            .or(repeat)
     });
 
     let player_event = text::keyword("PlayerEvent")

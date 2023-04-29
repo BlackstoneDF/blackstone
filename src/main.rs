@@ -4,7 +4,11 @@ use chumsky::{chain::Chain, Parser};
 #[allow(unused_imports)]
 use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
 
-use std::{env, io::Write, net::TcpStream};
+use std::{
+    env,
+    io::{Read, Write},
+    net::TcpStream,
+};
 
 mod codegen;
 mod parser;
@@ -88,6 +92,11 @@ fn compile_with_recode(vector: Vec<Block>) {
 fn compile_with_codeclient(vector: Vec<Block>) {
     let mut stream = TcpStream::connect("localhost:31375").expect("failed to connect");
     println!("Readying! Please type `/auth` ingame to continue.");
+    let mut buf = String::new();
+    stream
+        .read_to_string(&mut buf)
+        .expect("failed to read to buffer");
+    println!("{}", buf);
 }
 
 fn process_inputs(input: &str, path: &str) {
