@@ -1,4 +1,0 @@
-PlayerEvent(Join) {
-    player.SendMessage("Hello world!");
-    player.Teleport()
-}

@@ -30,7 +30,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 .push(varn.to_string());
             vec![None::<Block>]
         });
-    
+
     #[allow(unused_variables)]
     let internal_commands = { type_command };
 
@@ -128,7 +128,20 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             };
         });
 
-    let arguments = text.or(number).or(location);
+    let item = text::keyword("item")
+    .ignore_then(
+        text
+            .clone()
+            .padded()
+            .delimited_by(just('('), just(')')))
+        .map(|f| {
+            if let ItemData::Text { data } = f {
+                return ItemData::VanillaItem { data: format!("{{Count:1b,DF_NBT:3337,id:\\\"minecraft:{data}\\\"}}") };
+            }
+            return ItemData::VanillaItem { data: "".to_string() };
+        });
+
+    let arguments = text.or(number).or(location).or(item);
 
     let actions = recursive(|actions| {
         let player_action = text::keyword("player")
@@ -162,7 +175,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     items,
                     action: f,
                     data: "",
-                    target: "Default",
+                    target: "Selection",
                     inverted: "",
                 })]
             });
@@ -198,12 +211,44 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     items,
                     action: f,
                     data: "",
-                    target: "Default",
+                    target: "Selection",
                     inverted: "",
                 })]
             });
 
+        let select_object = text::keyword("select")
+            .padded()
+            .ignore_then(ident)
+            .then(
+                arguments
+                .clone()
+                .separated_by(just(',').padded())
+                .allow_trailing()
+                .padded()
+                .collect::<Vec<_>>()
+                .padded()
+                .delimited_by(just('('), just(')'))
+                .padded(),
+            ).map(|(identifier, datas)| {
+                let mut items: Vec<Item> = vec![];
+                for (slot, data) in datas.into_iter().enumerate() {
+                    let id = data_to_id(&data);
 
+                    items.push(Item {
+                        id,
+                        slot: slot.try_into().expect("failed to convert to usize"),
+                        item: data,
+                    })
+                }
+                vec![Some(Block::Code {
+                    block: "select_obj",
+                    items,
+                    action: identifier,
+                    data: "",
+                    target: "",
+                    inverted: "",
+                })]
+            });
         let if_player = text::keyword("if")
             .ignore_then(just(' '))
             .ignore_then(text::keyword("player"))
@@ -237,7 +282,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         items: vec![],
                         action: name,
                         data: "",
-                        target: "Default",
+                        target: "Selection",
                         inverted: "",
                     }),
                 );
@@ -255,7 +300,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 out
             });
 
-        player_action.or(game_action).or(if_player)
+        player_action.or(game_action).or(if_player).or(select_object)
     });
 
     let player_event = text::keyword("PlayerEvent")
@@ -266,6 +311,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
         .padded()
         .then(
             actions
+                .clone()
                 .separated_by(just(';'))
                 .allow_trailing()
                 .padded()
@@ -294,7 +340,41 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             out
         });
 
-    let events = { player_event };
+    let function = text::keyword("func")
+        .padded()
+        .ignore_then(ident)
+        .then_ignore(just('('))
+        .padded()
+        .then_ignore(just(')'))
+        .padded()
+        .then(
+            actions
+                .separated_by(just(';'))
+                .allow_trailing()
+                .padded()
+                .collect::<Vec<_>>()
+                .padded()
+                .delimited_by(just('{'), just('}'))
+                .padded(),
+        )
+        .padded()
+        .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+            let mut out = vec![];
+            for block in args {
+                for sub_block in block {
+                    if let Some(bl) = sub_block {
+                        out.append(&mut vec![Some(bl)]);
+                    }
+                }
+            }
+            out.insert(
+                0,
+                Some(Block::FunctionDefinition { block: "func", data: name }),
+            );
+            out
+        });
+
+    let events = player_event.or(function);
 
     events
 }
@@ -308,6 +388,9 @@ fn data_to_id(data: &ItemData) -> String {
     }
     if let ItemData::Location { .. } = data {
         return "loc".to_string();
+    }
+    if let ItemData::VanillaItem { .. } = data {
+        return "item".to_string();
     }
     "".to_string()
 }
