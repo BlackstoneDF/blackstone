@@ -1,4 +1,1 @@
-func hello() {
-    player.SendMessage("bruh");
-    sproc my_process();
-}
+func hello(){player.SendMessage("bruh");sproc my_process();}

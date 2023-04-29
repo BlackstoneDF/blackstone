@@ -4,13 +4,14 @@ use crate::codegen::misc::{BracketDirection, BracketType, VariableScope};
 use crate::codegen::{block::Block, item::Item, item_data::ItemData};
 #[allow(unused_imports)]
 use crate::parser::actions::*;
+use ariadne::{Report, ReportKind};
 use chumsky::prelude::*;
 
 pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
     let player_default: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![]));
 
     let ident = text::ident();
-
+    
     // Type Command
     // This command represents creating a type that references a selector.
     // You can use these to call different actions.
@@ -83,14 +84,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         }
                     }
                 }
-                // TODO: throw ariadne error
-                return ItemData::Location {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                    pitch: 0.0,
-                    yaw: 0.0,
-                };
             } else if f.len() == 5 {
                 if let Some(ItemData::Number { data: n1 }) = f.get(0) {
                     if let Some(ItemData::Number { data: n2 }) = f.get(1) {
@@ -109,15 +102,9 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         }
                     }
                 }
-                // TODO: throw ariadne error
-                return ItemData::Location {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                    pitch: 0.0,
-                    yaw: 0.0,
-                };
             }
+            
+            // Report::build(ReportKind::Warning, (), 5);
             // TODO: throw ariadne error
             return ItemData::Location {
                 x: 0.0,
@@ -177,6 +164,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     data: "",
                     target: "Selection",
                     inverted: "",
+                    sub_action: String::new(),
                 })]
             });
 
@@ -213,6 +201,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     data: "",
                     target: "Selection",
                     inverted: "",
+                    sub_action: String::new(),
                 })]
             });
 
@@ -248,6 +237,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     data: "",
                     target: "",
                     inverted: "",
+                    sub_action: String::new(),
                 })]
             });
         let if_player = text::keyword("if")
@@ -285,6 +275,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         data: "",
                         target: "Selection",
                         inverted: "",
+                        sub_action: String::new(),
                     }),
                 );
                 out.insert(
@@ -322,6 +313,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         data: "",
                         target: "",
                         inverted: "",
+                        sub_action: String::new(),
                     }),
                     Some(Block::FunctionCall {
                         block: "call_func",
@@ -351,6 +343,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                         data: "",
                         target: "",
                         inverted: "",
+                        sub_action: String::new(),
                     }),
                     Some(Block::ProcessCall {
                         block: "start_process",

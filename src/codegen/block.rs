@@ -21,6 +21,7 @@ pub enum Block<'a> {
         data: &'a str,
         target: &'a str,
         inverted: &'a str,
+        sub_action: String,
     },
     /// Defines the definition of an event (either PlayerEvent or EntityEvent)
     ///   - &'a str `block`: The associated block (Diamond Block for PlayerEvent, Gold Block for EntityEvent)
@@ -65,6 +66,7 @@ impl Block<'_> {
                 data,
                 target,
                 inverted,
+                sub_action,
             } => {
                 let mut items_str = String::new();
                 for item in items {
@@ -73,7 +75,7 @@ impl Block<'_> {
                 }
                 items_str.pop();
                 format!(
-                    r#"{{"id":"block","block":"{block}","args":{{"items":[{items_str}]}},"action":"{action}","target":"{target}","inverted":"{inverted}","data":"{data}"}}"#
+                    r#"{{"id":"block","block":"{block}","args":{{"items":[{items_str}]}},"action":"{action}","target":"{target}","inverted":"{inverted}","data":"{data}","subAction":"{sub_action}"}}"#
                 )
             }
             Block::EventDefinition { block, action } => format!(
