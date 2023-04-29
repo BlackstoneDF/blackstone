@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 
-use crate::codegen::misc::{BracketDirection, BracketType};
+use crate::codegen::misc::{BracketDirection, BracketType, VariableScope};
 use crate::codegen::{block::Block, item::Item, item_data::ItemData};
 #[allow(unused_imports)]
 use crate::parser::actions::*;
@@ -129,16 +129,16 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
         });
 
     let item = text::keyword("item")
-    .ignore_then(
-        text
-            .clone()
-            .padded()
-            .delimited_by(just('('), just(')')))
+        .ignore_then(text.clone().padded().delimited_by(just('('), just(')')))
         .map(|f| {
             if let ItemData::Text { data } = f {
-                return ItemData::VanillaItem { data: format!("{{Count:1b,DF_NBT:3337,id:\\\"minecraft:{data}\\\"}}") };
+                return ItemData::VanillaItem {
+                    data: format!("{{Count:1b,DF_NBT:3337,id:\\\"minecraft:{data}\\\"}}"),
+                };
             }
-            return ItemData::VanillaItem { data: "".to_string() };
+            return ItemData::VanillaItem {
+                data: "".to_string(),
+            };
         });
 
     let arguments = text.or(number).or(location).or(item);
@@ -221,15 +221,16 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .ignore_then(ident)
             .then(
                 arguments
-                .clone()
-                .separated_by(just(',').padded())
-                .allow_trailing()
-                .padded()
-                .collect::<Vec<_>>()
-                .padded()
-                .delimited_by(just('('), just(')'))
-                .padded(),
-            ).map(|(identifier, datas)| {
+                    .clone()
+                    .separated_by(just(',').padded())
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded(),
+            )
+            .map(|(identifier, datas)| {
                 let mut items: Vec<Item> = vec![];
                 for (slot, data) in datas.into_iter().enumerate() {
                     let id = data_to_id(&data);
@@ -300,7 +301,70 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 out
             });
 
-        player_action.or(game_action).or(if_player).or(select_object)
+        let call_function = text::keyword("sfunc")
+            .padded()
+            .ignore_then(ident)
+            .padded()
+            .then_ignore(just("();"))
+            .map(|name| {
+                vec![
+                    Some(Block::Code {
+                        block: "set_var",
+                        items: vec![Item {
+                            id: "var".to_string(),
+                            slot: 0,
+                            item: ItemData::Variable {
+                                scope: VariableScope::Local,
+                                name: "__FUNCTION_PARAMETERS".to_string(),
+                            },
+                        }],
+                        action: "CreateList".to_string(),
+                        data: "",
+                        target: "",
+                        inverted: "",
+                    }),
+                    Some(Block::FunctionCall {
+                        block: "call_func",
+                        data: name,
+                    }),
+                ]
+            });
+
+        let start_process = text::keyword("sproc")
+            .padded()
+            .ignore_then(ident)
+            .padded()
+            .then_ignore(just("();"))
+            .map(|name| {
+                vec![
+                    Some(Block::Code {
+                        block: "set_var",
+                        items: vec![Item {
+                            id: "var".to_string(),
+                            slot: 0,
+                            item: ItemData::Variable {
+                                scope: VariableScope::Local,
+                                name: "__FUNCTION_PARAMETERS".to_string(),
+                            },
+                        }],
+                        action: "CreateList".to_string(),
+                        data: "",
+                        target: "",
+                        inverted: "",
+                    }),
+                    Some(Block::ProcessCall {
+                        block: "start_process",
+                        data: name,
+                    }),
+                ]
+            });
+
+        player_action
+            .or(call_function)
+            .or(start_process)
+            .or(game_action)
+            .or(if_player)
+            .or(select_object)
     });
 
     let player_event = text::keyword("PlayerEvent")
@@ -370,12 +434,15 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             }
             out.insert(
                 0,
-                Some(Block::ProcessDefinition { block: "process", data: name }),
+                Some(Block::ProcessDefinition {
+                    block: "process",
+                    data: name,
+                }),
             );
             out
         });
 
-        let function = text::keyword("func")
+    let function = text::keyword("func")
         .padded()
         .ignore_then(ident)
         .then_ignore(just('('))
@@ -404,7 +471,10 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             }
             out.insert(
                 0,
-                Some(Block::FunctionDefinition { block: "func", data: name }),
+                Some(Block::FunctionDefinition {
+                    block: "func",
+                    data: name,
+                }),
             );
             out
         });

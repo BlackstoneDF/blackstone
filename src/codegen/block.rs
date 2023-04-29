@@ -83,13 +83,17 @@ impl Block<'_> {
                 typ.to_json()
             ),
             Block::FunctionDefinition { block, data } => {
-                format!(r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#)
+                format!(
+                    r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#
+                )
             }
             Block::FunctionCall { block, data } => {
-                format!(r#"{{"id":"block","block":"{block}",}}"#)
+                format!(r#"{{"id":"block","block":"{block}","data":"{data}"}}"#)
             }
-            Block::ProcessDefinition { block, data } => format!(r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#),
-            Block::ProcessCall { block, data } => format!(r#"{{"id":"block","block":"{block}",}}"#),
+            Block::ProcessDefinition { block, data } => format!(
+                r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#
+            ),
+            Block::ProcessCall { block, data } => format!(r#"{{"id":"block","block":"{block}","data":"{data}","args":{{"items":[]}}}}"#),
         }
     }
 }

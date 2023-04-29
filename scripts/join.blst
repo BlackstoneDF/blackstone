@@ -1,3 +1,4 @@
 func hello() {
     player.SendMessage("bruh");
+    sproc my_process();
 }

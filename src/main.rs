@@ -102,11 +102,15 @@ fn process_inputs(input: &str, path: &str) {
             for err in v {
                 Report::build(ReportKind::Error, (), err.span().start)
                     .with_message(format!("{:#?}", err.reason()))
-                    .with_label(Label::new(err.span()).with_message(format!(
-                        "expected '{}', found '{}'",
-                        err.expected().next().unwrap_or(&Some('?')).unwrap_or('!'),
-                        err.found().unwrap_or(&'✗')
-                    )))
+                    .with_label(Label::new(err.span()).with_message({
+                        let mut out = String::new();
+                        for expected in err.expected() {
+                            out.push_str(format!("'{}' |", expected.unwrap_or('!')).as_str());
+                        }
+                        out.pop();
+                        out.pop();
+                        format!("expected {}, found '{}'", out, err.found().unwrap_or(&'✗'))
+                    }))
                     .finish()
                     .print(Source::from(input))
                     .unwrap();
