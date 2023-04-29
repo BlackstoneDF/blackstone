@@ -107,7 +107,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             // TODO: throw ariadne error
             Err(Simple::custom(f2, "Locations need 3 or 5 fields."))
         });
-    
+
     let item = text::keyword("item")
         .ignore_then(text.clone().padded().delimited_by(just('('), just(')')))
         .map(|f| {
@@ -120,7 +120,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 data: "".to_string(),
             };
         });
-    
+
     let variable = ident.clone().map(|f| ident_to_var(f.as_str()));
     let arguments = text.or(number).or(location).or(item);
 
@@ -626,13 +626,25 @@ fn data_to_id(data: &ItemData) -> String {
 
 fn ident_to_var(input: &str) -> ItemData {
     if input.starts_with("local.") {
-        return ItemData::Variable { scope: VariableScope::Local, name: input.replace("local.", "") }
+        return ItemData::Variable {
+            scope: VariableScope::Local,
+            name: input.replace("local.", ""),
+        };
     }
     if input.starts_with("save.") {
-        return ItemData::Variable { scope: VariableScope::Saved, name: input.replace("save.", "") }
+        return ItemData::Variable {
+            scope: VariableScope::Saved,
+            name: input.replace("save.", ""),
+        };
     }
     if input.starts_with("game.") {
-        return ItemData::Variable { scope: VariableScope::Unsaved, name: input.replace("game.", "") }
+        return ItemData::Variable {
+            scope: VariableScope::Unsaved,
+            name: input.replace("game.", ""),
+        };
     }
-    return ItemData::Variable { scope: VariableScope::Local, name: input.to_string() }
+    return ItemData::Variable {
+        scope: VariableScope::Local,
+        name: input.to_string(),
+    };
 }
