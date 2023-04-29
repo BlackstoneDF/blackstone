@@ -340,7 +340,42 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             out
         });
 
-    let function = text::keyword("func")
+    let process = text::keyword("proc")
+        .padded()
+        .ignore_then(ident)
+        .then_ignore(just('('))
+        .padded()
+        .then_ignore(just(')'))
+        .padded()
+        .then(
+            actions
+                .clone()
+                .separated_by(just(';'))
+                .allow_trailing()
+                .padded()
+                .collect::<Vec<_>>()
+                .padded()
+                .delimited_by(just('{'), just('}'))
+                .padded(),
+        )
+        .padded()
+        .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+            let mut out = vec![];
+            for block in args {
+                for sub_block in block {
+                    if let Some(bl) = sub_block {
+                        out.append(&mut vec![Some(bl)]);
+                    }
+                }
+            }
+            out.insert(
+                0,
+                Some(Block::ProcessDefinition { block: "process", data: name }),
+            );
+            out
+        });
+
+        let function = text::keyword("func")
         .padded()
         .ignore_then(ident)
         .then_ignore(just('('))
@@ -374,7 +409,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             out
         });
 
-    let events = player_event.or(function);
+    let events = player_event.or(function).or(process);
 
     events
 }

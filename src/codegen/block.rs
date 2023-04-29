@@ -30,10 +30,18 @@ pub enum Block<'a> {
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
     FunctionDefinition { block: &'a str, data: String },
+    /// Defines a process definition
+    ///   - &'a str `block`: The associated block
+    ///   - &'a str `data`: Associated data (name, etc.)
+    ProcessDefinition { block: &'a str, data: String },
     /// Defines a call to a given function
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
     FunctionCall { block: &'a str, data: String },
+    /// Defines a call to a given function
+    ///   - &'a str `block`: The associated block
+    ///   - &'a str `data`: Associated data (name, etc.)
+    ProcessCall { block: &'a str, data: String },
     /// Defines a bracket block (piston)
     ///   - BracketDirection `direct` - the direction of the bracket (opening or closing)
     ///   - BracketType `type` - the type of the bracket (Normal/Piston or Repeat/Sticky Piston)
@@ -80,6 +88,8 @@ impl Block<'_> {
             Block::FunctionCall { block, data } => {
                 format!(r#"{{"id":"block","block":"{block}",}}"#)
             }
+            Block::ProcessDefinition { block, data } => format!(r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#),
+            Block::ProcessCall { block, data } => format!(r#"{{"id":"block","block":"{block}",}}"#),
         }
     }
 }
