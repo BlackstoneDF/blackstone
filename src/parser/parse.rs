@@ -637,7 +637,7 @@ fn data_to_id(data: &ItemData) -> String {
     if let ItemData::Location { .. } = data {
         return "loc".to_string();
     }
-    if let ItemData::.. } = data {
+    if let ItemData::VanillaItem { .. } = data {
         return "item".to_string();
     }
     "var".to_string()
