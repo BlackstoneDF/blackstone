@@ -141,7 +141,12 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 
     let variable = ident.clone().map(|f| ident_to_var(f.as_str()));
 
-    let arguments = text.or(number).or(location).or(item).or(item_stack).or(variable);
+    let arguments = text
+        .or(number)
+        .or(location)
+        .or(item)
+        .or(item_stack)
+        .or(variable);
 
     let actions = recursive(|actions| {
         let operation = just::<char, &str, Simple<char>>("=")
@@ -440,6 +445,192 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 out
             });
 
+        let if_entity = text::keyword("if")
+            .ignore_then(just(' '))
+            .ignore_then(text::keyword("entity"))
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .then(
+                actions
+                    .clone()
+                    .separated_by(just(';'))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('{'), just('}'))
+                    .padded(),
+            )
+            .padded()
+            .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+                let mut out = vec![];
+                for block in args {
+                    for sub_block in block {
+                        if let Some(bl) = sub_block {
+                            out.append(&mut vec![Some(bl)]);
+                        }
+                    }
+                }
+                out.insert(
+                    0,
+                    Some(Block::Code {
+                        block: "if_entity",
+                        items: vec![],
+                        action: name,
+                        data: "",
+                        target: "Selection",
+                        inverted: "",
+                        sub_action: String::new(),
+                    }),
+                );
+                out.insert(
+                    1,
+                    Some(Block::Bracket {
+                        direct: BracketDirection::Open,
+                        typ: BracketType::Norm,
+                    }),
+                );
+                out.push(Some(Block::Bracket {
+                    direct: BracketDirection::Close,
+                    typ: BracketType::Norm,
+                }));
+                out
+            });
+
+        let if_game = text::keyword("if")
+            .ignore_then(just(' '))
+            .ignore_then(text::keyword("plot"))
+            .ignore_then(just('.'))
+            .ignore_then(ident)
+            .then(
+                actions
+                    .clone()
+                    .separated_by(just(';'))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('{'), just('}'))
+                    .padded(),
+            )
+            .padded()
+            .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+                let mut out = vec![];
+                for block in args {
+                    for sub_block in block {
+                        if let Some(bl) = sub_block {
+                            out.append(&mut vec![Some(bl)]);
+                        }
+                    }
+                }
+                out.insert(
+                    0,
+                    Some(Block::Code {
+                        block: "if_game",
+                        items: vec![],
+                        action: name,
+                        data: "",
+                        target: "Selection",
+                        inverted: "",
+                        sub_action: String::new(),
+                    }),
+                );
+                out.insert(
+                    1,
+                    Some(Block::Bracket {
+                        direct: BracketDirection::Open,
+                        typ: BracketType::Norm,
+                    }),
+                );
+                out.push(Some(Block::Bracket {
+                    direct: BracketDirection::Close,
+                    typ: BracketType::Norm,
+                }));
+                out
+            });
+
+        let if_variable = text::keyword("if")
+            .padded()
+            .ignore_then(text::keyword("var"))
+            .padded()
+            .ignore_then(ident)
+            .padded()
+            .then(operation)
+            .padded()
+            .then(ident)
+            .then(
+                arguments
+                    .clone()
+                    .separated_by(just(", "))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('('), just(')'))
+                    .padded(),
+            )
+            .then(
+                actions
+                    .clone()
+                    .separated_by(just(';'))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('{'), just('}'))
+                    .padded(),
+            )
+            .padded()
+            .map(|((((var_name, var_op), action), arguments), codes): ((((std::string::String, &str), std::string::String), Vec<ItemData>), Vec<Vec<std::option::Option<Block<'_>>>>)| {
+                let mut out = vec![];
+                for block in codes {
+                    for sub_block in block {
+                        if let Some(bl) = sub_block {
+                            out.append(&mut vec![Some(bl)]);
+                        }
+                    }
+                }
+                let mut items: Vec<Item> = vec![];
+                for (slot, item) in arguments.into_iter().enumerate() {
+                    let id = data_to_id(&item);
+
+                    items.push(Item {
+                        id,
+                        slot: slot.try_into().expect("failed to convert to usize"),
+                        item,
+                    })
+                }
+                items.insert(0, Item {
+                    id: "var".to_string(),
+                    slot: 0,
+                    item: ident_to_var(var_name.as_str())
+                });
+                out.insert(
+                    0,
+                    Some(Block::Code {
+                        block: "if_var",
+                        items: items,
+                        action: action,
+                        data: "",
+                        target: "Selection",
+                        inverted: "",
+                        sub_action: String::new(),
+                    }),
+                );
+                out.insert(
+                    1,
+                    Some(Block::Bracket {
+                        direct: BracketDirection::Open,
+                        typ: BracketType::Norm,
+                    }),
+                );
+                out.push(Some(Block::Bracket {
+                    direct: BracketDirection::Close,
+                    typ: BracketType::Norm,
+                }));
+                out
+            });
+
         let call_function = text::keyword("func")
             .padded()
             .ignore_then(ident)
@@ -505,6 +696,9 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             .or(start_process)
             .or(game_action)
             .or(if_player)
+            .or(if_entity)
+            .or(if_game)
+            .or(if_variable)
             .or(select_object)
             .or(set_variable)
             .or(repeat)

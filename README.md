@@ -31,12 +31,12 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [x] If Player
 - [x] Entity Event
 - [x] Entity Action
-- [ ] If Entity
+- [x] If Entity
 - [x] Game Action
 - [x] If Game
 - [x] Set Variable
 - [ ] If Variable
-- [ ] Repeat
+- [x] Repeat
 - [x] Function
 - [x] Call Function
 - [x] Process
@@ -47,7 +47,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 
 ### Values
 
-- [ ] Items
+- [x] Items (Vanilla, not customizable)
 - [x] Text
 - [x] Number
 - [x] Variable

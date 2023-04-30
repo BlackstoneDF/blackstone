@@ -20,7 +20,7 @@ fn main() -> std::io::Result<()> {
     let _input = "";
 
     let start = std::time::Instant::now();
-    
+
     if let Some(arg) = args.get(1) {
         match arg.as_str() {
             "build" => {
