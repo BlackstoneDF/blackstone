@@ -69,7 +69,7 @@ impl ItemData {
         match self {
             Self::Variable { scope, name } => {
                 format!(
-                    r#""data":{{"scope":"{}","name":"{name}"}}"#,
+                    r#""data":{{"name":"{name}","scope":"{}"}}"#,
                     scope.to_json()
                 )
             }
@@ -94,7 +94,7 @@ impl ItemData {
                 yaw,
             } => {
                 format!(
-                    r#""data":{{"isBlock":false,"loc":{{"x":"{x}","y":"{y}","z":"{z}","pitch":"{pitch}","yaw":"{yaw}"}}}}"#
+                    r#""data":{{"isBlock":false,"loc":{{"x":{x},"y":{y},"z":{z},"pitch":{pitch},"yaw":{yaw}}}}}"#
                 )
             }
             Self::Potion { effect, dur, amp } => {

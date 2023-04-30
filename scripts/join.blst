@@ -1,5 +1,3 @@
 PlayerEvent(Join) {
-    player.GiveItems(item("iron_sword"), item("bow"), items("arrow:32"));
-    player.SetArmor(0, item("chainmail_chestplate"), item("iron_leggings"), item("chainmail_boots"));
-    player.LoadInv();
+    func TerrainGen();
 }

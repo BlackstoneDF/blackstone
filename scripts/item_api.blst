@@ -1,6 +1,0 @@
-func ItemAPI() {
-    loop ForEach::ForEach(index, saved_my_list) {
-        var tag = GetItemTag(index, "id");
-        var saved_pct_var = with(index);
-    }
-}

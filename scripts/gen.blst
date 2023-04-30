@@ -1,0 +1,6 @@
+func TerrainGen() {
+    var seed = RandomNumber(1, 100000);
+    loop Grid::Grid(local_index, loc(0,0,0), loc(301,0,301)) {
+
+    }
+}
