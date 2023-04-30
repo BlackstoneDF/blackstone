@@ -637,10 +637,10 @@ fn data_to_id(data: &ItemData) -> String {
     if let ItemData::Location { .. } = data {
         return "loc".to_string();
     }
-    if let ItemData::VanillaItem { .. } = data {
+    if let ItemData::.. } = data {
         return "item".to_string();
     }
-    "".to_string()
+    "var".to_string()
 }
 
 fn ident_to_var(input: &str) -> ItemData {
