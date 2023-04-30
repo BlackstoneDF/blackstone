@@ -1,6 +1,4 @@
 func ItemAPI() {
-    var saved_my_list = CreateList();
-    var saved_my_list = AppendValue();
     loop ForEach::ForEach(index, saved_my_list) {
         var tag = GetItemTag(index, "id");
         var saved_pct_var = with(index);

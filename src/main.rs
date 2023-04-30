@@ -23,7 +23,7 @@ fn main() -> std::io::Result<()> {
 
     if let Some(arg) = args.get(1) {
         match arg.as_str() {
-            "build-all" => {
+            "build" => {
                 println!("\t\x1b[32;1mBuilding\x1b[0m from `./scripts` directory.");
                 let paths = std::fs::read_dir("./scripts")?;
                 for path in paths {
@@ -42,7 +42,7 @@ fn main() -> std::io::Result<()> {
                 let dur = start.elapsed();
                 println!("time taken: {}ms", dur.as_millis());
             }
-            "build" => {
+            "build-one" => {
                 if let Some(arg2) = args.get(1) {
                     let file = std::fs::read_to_string(arg2)?;
                     process_inputs(&file, &arg2);
@@ -150,15 +150,15 @@ Blackstone's compiler & build tooling
 Usage: shulker [commands]
 
 Built-in commands:
-    version                 Get the current version of Blackstone.
-    init                    Initialize a new Blackstone environment in your current directory.
-    build [script]          Builds the code provided & sends it via `recode` mod.
-    build-all               Builds all code in the `scripts` directory & sends it via `recode` mod.
-    build-stdout [script]   Sends the code data to the console instead of to `recode`.
-                            Useful if you don't have `recode` installed.
-    build-test              Run the tests in the code.
-    add [package]           Add an external package to your scripts.
-    help                    Shows this message!
+    version                     Get the current version of Blackstone.
+    init                        Initialize a new Blackstone environment in your current directory.
+    build-one [script]          Builds the code provided & sends it via `recode` mod.
+    build                       Builds all code in the `scripts` directory & sends it via `recode` mod.
+    build-stdout [script]       Sends the code data to the console instead of to `recode`.
+                                Useful if you don't have `recode` installed.
+    build-test                  Run the tests in the code.
+    add [package]               Add an external package to your scripts.
+    help                        Shows this message!
     "#
     );
 }
