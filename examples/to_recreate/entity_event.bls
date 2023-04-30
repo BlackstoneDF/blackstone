@@ -1,0 +1,6 @@
+EntityEvent(event: EntityDamageEvent) {
+    if event.entity.isType(EntityType.Pig) {
+        event.setCanceled(canceled=true /* <- Default true */);
+        SuperBoom();
+    }
+}
