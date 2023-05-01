@@ -2,11 +2,8 @@ use std::sync::{Arc, Mutex};
 
 use crate::codegen::misc::{BracketDirection, BracketType, VariableScope};
 use crate::codegen::{block::Block, item::Item, item_data::ItemData};
-#[allow(unused_imports)]
-use crate::parser::actions::*;
-use ariadne::{Report, ReportKind};
+
 use chumsky::prelude::*;
-use chumsky::text::Character;
 
 pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
     let player_default: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![]));
@@ -61,7 +58,6 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
     let location = text::keyword("loc")
         .ignore_then(
             number
-                .clone()
                 .separated_by(just(','))
                 .allow_trailing()
                 .padded()
@@ -117,17 +113,17 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     data: format!("{{Count:1b,DF_NBT:3337,id:\\\"minecraft:{data}\\\"}}"),
                 };
             }
-            return ItemData::VanillaItem {
+            ItemData::VanillaItem {
                 data: "".to_string(),
-            };
+            }
         });
 
     let item_stack = text::keyword("items")
         .ignore_then(text.clone().padded().delimited_by(just('('), just(')')))
         .try_map(|f, f2| {
             if let ItemData::Text { data } = f {
-                let split = data.split(":").collect::<Vec<_>>();
-                let id = split.get(0).expect("somehow failed");
+                let split = data.split(':').collect::<Vec<_>>();
+                let id = split.first().expect("somehow failed");
                 if let Some(count) = split.get(1) {
                     return Ok(ItemData::VanillaItem {
                         data: format!("{{Count:{count}b,DF_NBT:3337,id:\\\"minecraft:{id}\\\"}}"),
@@ -139,7 +135,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             unreachable!();
         });
 
-    let variable = ident.clone().map(|f| ident_to_var(f.as_str()));
+    let variable = ident.map(|f| ident_to_var(f.as_str()));
 
     let arguments = text
         .or(number)
@@ -208,7 +204,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     0,
                     Some(Block::Code {
                         block: "repeat",
-                        items: items,
+                        items,
                         action: label,
                         data: "",
                         target: "",
@@ -581,55 +577,66 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     .padded(),
             )
             .padded()
-            .map(|((((var_name, var_op), action), arguments), codes): ((((std::string::String, &str), std::string::String), Vec<ItemData>), Vec<Vec<std::option::Option<Block<'_>>>>)| {
-                let mut out = vec![];
-                for block in codes {
-                    for sub_block in block {
-                        if let Some(bl) = sub_block {
-                            out.append(&mut vec![Some(bl)]);
+            .map(
+                |((((var_name, _var_op), action), arguments), codes): (
+                    (
+                        ((std::string::String, &str), std::string::String),
+                        Vec<ItemData>,
+                    ),
+                    Vec<Vec<std::option::Option<Block<'_>>>>,
+                )| {
+                    let mut out = vec![];
+                    for block in codes {
+                        for sub_block in block {
+                            if let Some(bl) = sub_block {
+                                out.append(&mut vec![Some(bl)]);
+                            }
                         }
                     }
-                }
-                let mut items: Vec<Item> = vec![];
-                for (slot, item) in arguments.into_iter().enumerate() {
-                    let id = data_to_id(&item);
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, item) in arguments.into_iter().enumerate() {
+                        let id = data_to_id(&item);
 
-                    items.push(Item {
-                        id,
-                        slot: slot.try_into().expect("failed to convert to usize"),
-                        item,
-                    })
-                }
-                items.insert(0, Item {
-                    id: "var".to_string(),
-                    slot: 0,
-                    item: ident_to_var(var_name.as_str())
-                });
-                out.insert(
-                    0,
-                    Some(Block::Code {
-                        block: "if_var",
-                        items: items,
-                        action: action,
-                        data: "",
-                        target: "Selection",
-                        inverted: "",
-                        sub_action: String::new(),
-                    }),
-                );
-                out.insert(
-                    1,
-                    Some(Block::Bracket {
-                        direct: BracketDirection::Open,
+                        items.push(Item {
+                            id,
+                            slot: slot.try_into().expect("failed to convert to usize"),
+                            item,
+                        })
+                    }
+                    items.insert(
+                        0,
+                        Item {
+                            id: "var".to_string(),
+                            slot: 0,
+                            item: ident_to_var(var_name.as_str()),
+                        },
+                    );
+                    out.insert(
+                        0,
+                        Some(Block::Code {
+                            block: "if_var",
+                            items,
+                            action,
+                            data: "",
+                            target: "Selection",
+                            inverted: "",
+                            sub_action: String::new(),
+                        }),
+                    );
+                    out.insert(
+                        1,
+                        Some(Block::Bracket {
+                            direct: BracketDirection::Open,
+                            typ: BracketType::Norm,
+                        }),
+                    );
+                    out.push(Some(Block::Bracket {
+                        direct: BracketDirection::Close,
                         typ: BracketType::Norm,
-                    }),
-                );
-                out.push(Some(Block::Bracket {
-                    direct: BracketDirection::Close,
-                    typ: BracketType::Norm,
-                }));
-                out
-            });
+                    }));
+                    out
+                },
+            );
 
         let call_function = text::keyword("func")
             .padded()
@@ -816,9 +823,9 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
             out
         });
 
-    let events = player_event.or(function).or(process);
+    
 
-    events
+    player_event.or(function).or(process)
 }
 
 fn data_to_id(data: &ItemData) -> String {
@@ -856,8 +863,8 @@ fn ident_to_var(input: &str) -> ItemData {
             name: input.replace("game.", "").replace("pct.", "%"),
         };
     }
-    return ItemData::Variable {
+    ItemData::Variable {
         scope: VariableScope::Local,
         name: input.to_string(),
-    };
+    }
 }
