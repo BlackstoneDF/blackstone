@@ -21,6 +21,8 @@ fn main() -> std::io::Result<()> {
 
     let start = std::time::Instant::now();
 
+    let prefix = "shulker"; // cmd prefix
+
     if let Some(arg) = args.get(1) {
         match arg.as_str() {
             "build" => {
@@ -46,12 +48,16 @@ fn main() -> std::io::Result<()> {
                 if let Some(arg2) = args.get(1) {
                     let file = std::fs::read_to_string(arg2)?;
                     process_inputs(&file, arg2, CompileTarget::Recode);
+                } else {
+                    println!("\nThere needs to be a string for a file path after the command,\ne.g `{prefix} build-one /foo/bar.bls`\n");
                 }
             }
             "build-stdout" => {
                 if let Some(arg2) = args.get(1) {
                     let file = std::fs::read_to_string(arg2)?;
                     process_inputs(&file, arg2, CompileTarget::Stdout);
+                } else {
+                    println!("\nThere needs to be a string for a file path after the command,\ne.g `{prefix} build-stdout /foo/bar.bls`\n");
                 }
             }
             "version" => {
@@ -78,8 +84,11 @@ fn main() -> std::io::Result<()> {
                     }
                 }
             }
-            "help" => help_message(),
-            _ => help_message(),
+            "recode" => {
+                println!("Recode on modrinth: https://modrinth.com/mod/recode");
+                println!("Recode on github (has beta versions): https://github.com/homchom/recode");
+            }
+            _ => help_message(), //"help" is included in the catch-all
         }
     } else {
         help_message();
@@ -110,6 +119,8 @@ fn compile_with_codeclient(vector: Vec<Block>) {
 }
 fn compile_to_console(vector: Vec<Block>) {
     println!("{}", process_block_vec(vector));
+    println!("--------------");
+    println!("Paste the above into DF to get it as a template.");
 }
 fn process_inputs(input: &str, path: &str, target: CompileTarget) {
     match parser::parse::parser().parse(input) {
@@ -169,6 +180,7 @@ Built-in commands:
                                 Useful if you don't have `recode` installed.
     build-test                  Run the tests in the code.
     add [package]               Add an external package to your scripts.
+    recode                      Gives a link to the `recode` mod, for ease of use with Blackstone
     help                        Shows this message!
     "#
     );
