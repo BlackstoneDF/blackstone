@@ -1,23 +1,15 @@
 use ariadne::*;
 use chumsky::error::SimpleReason;
-#[allow(unused_imports)]
-use chumsky::{chain::Chain, Parser};
-#[allow(unused_imports)]
-use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
+use chumsky::Parser;
+use codegen::{block::Block, misc::process_block_vec};
 
-use std::{
-    env,
-    io::{Read, Write},
-    net::TcpStream,
-};
+use std::{env, io, io::Write, net::TcpStream};
 
 mod codegen;
 mod parser;
 
-fn main() -> std::io::Result<()> {
+fn main() -> io::Result<()> {
     let args = env::args().collect::<Vec<_>>();
-
-    let _input = "";
 
     let start = std::time::Instant::now();
 
@@ -88,10 +80,10 @@ fn main() -> std::io::Result<()> {
                 println!("Recode on modrinth: https://modrinth.com/mod/recode");
                 println!("Recode on github: https://github.com/homchom/recode");
             }
-            _ => help_message(), //"help" is included in the catch-all
+            _ => help_message(prefix), //"help" is included in the catch-all
         }
     } else {
-        help_message();
+        help_message(prefix);
     }
 
     Ok(())
@@ -107,21 +99,13 @@ fn compile_with_recode(vector: Vec<Block>) {
         .write_all(send.as_bytes())
         .expect("failed to write all");
 }
-#[allow(dead_code, unused_variables, unused_mut)]
-fn compile_with_codeclient(vector: Vec<Block>) {
-    let mut stream = TcpStream::connect("localhost:31375").expect("failed to connect");
-    println!("Readying! Please type `/auth` ingame to continue.");
-    let mut buf = String::new();
-    stream
-        .read_to_string(&mut buf)
-        .expect("failed to read to buffer");
-    println!("{}", buf);
-}
+
 fn compile_to_console(vector: Vec<Block>) {
     println!("{}", process_block_vec(vector));
     println!("--------------");
     println!("Paste the above into DF to get it as a template.");
 }
+
 fn process_inputs(input: &str, path: &str, target: CompileTarget) {
     match parser::parse::parser().parse(input) {
         Ok(vector) => {
@@ -163,13 +147,14 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
         }
     }
 }
-fn help_message() {
+
+fn help_message(prefix: &str) {
     shulker_header();
     println!(
         r#"
 Blackstone's compiler & build tooling
 
-Usage: shulker [commands]
+Usage: {prefix} [commands]
 
 Built-in commands:
     version                     Get the current version of Blackstone.
