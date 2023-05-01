@@ -1,0 +1,28 @@
+{
+    "blocks": [
+        {
+            "id": "block",
+            "block": "event",
+            "args": {
+                "items": []
+            },
+            "action": "RightClick"
+        },
+        {
+            "id": "block",
+            "block": "game_action",
+            "args": {
+                "items": []
+            },
+            "action": "CancelEvent"
+        },
+        {
+            "id": "block",
+            "block": "game_action",
+            "args": {
+                "items": []
+            },
+            "action": "UncancelEvent"
+        }
+    ]
+}

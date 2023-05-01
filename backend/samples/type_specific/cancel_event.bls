@@ -1,0 +1,23 @@
+trait Cancelable {
+    func cancelEvent() {
+        ${
+            "id": "block",
+            "block": "game_action",
+            "args": {
+                "items": []
+            },
+            "action": "CancelEvent"
+        }$
+    }
+    
+    func unCancelEvent() {
+        ${
+            "id": "block",
+            "block": "game_action",
+            "args": {
+                "items": []
+            },
+            "action": "UncancelEvent"
+        }$
+    }
+}

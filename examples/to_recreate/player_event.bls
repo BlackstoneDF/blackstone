@@ -1,0 +1,12 @@
+PlayerEvent(event: EntityDamageEvent) {
+    type player = entity.player;
+    if player.isGrounded(EntityType.Pig) {
+        type world = event.world;
+        world.launchProjectile(ItemStack(Material.Arrow), player.eyeLocation);
+        if world.isPowered(Location(2.5, 49.5, 2.5), type='indirect') {
+            player.sendMessage("&4Angry Redstone Noises");
+        }
+    } else {
+        player.sendMessage(add_function::add(game.explosions, saved.pigsBlownUp));
+    }
+}

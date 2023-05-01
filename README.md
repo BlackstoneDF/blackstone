@@ -31,26 +31,26 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [x] If Player
 - [x] Entity Event
 - [x] Entity Action
-- [ ] If Entity
+- [x] If Entity
 - [x] Game Action
 - [x] If Game
-- [ ] Set Variable
+- [x] Set Variable
 - [ ] If Variable
-- [ ] Repeat
-- [ ] Function
-- [ ] Call Function
-- [ ] Process
-- [ ] Start Process
+- [x] Repeat
+- [x] Function
+- [x] Call Function
+- [x] Process
+- [x] Start Process
 - [ ] Else
-- [ ] Select Object
+- [x] Select Object
 - [ ] NOT Functionality
 
 ### Values
 
-- [ ] Items
+- [x] Items (Vanilla, not customizable)
 - [x] Text
 - [x] Number
-- [ ] Variable
+- [x] Variable
 - [x] Location
 - [ ] Sound
 - [ ] Vector

@@ -15,3 +15,5 @@ uncompressed_bytes = gzip.decompress(decoded_bytes)
 decoded_string = uncompressed_bytes.decode('utf-8')
 
 print(decoded_string)
+
+input("Enter to continue...\n")

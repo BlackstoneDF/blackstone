@@ -68,7 +68,10 @@ impl ItemData {
     pub fn to_json(&self) -> String {
         match self {
             Self::Variable { scope, name } => {
-                format!(r#""data":{{"scope":{},"name":"{name}"}}"#, scope.to_json())
+                format!(
+                    r#""data":{{"name":"{name}","scope":"{}"}}"#,
+                    scope.to_json()
+                )
             }
             Self::Number { data } => {
                 format!(r#""data":{{"name":"{data}"}}"#)
@@ -91,7 +94,7 @@ impl ItemData {
                 yaw,
             } => {
                 format!(
-                    r#""data":{{"isBlock":false,"loc":{{"x":"{x}","y":"{y}","z":"{z}","pitch":"{pitch}","yaw":"{yaw}"}}}}"#
+                    r#""data":{{"isBlock":false,"loc":{{"x":{x},"y":{y},"z":{z},"pitch":{pitch},"yaw":{yaw}}}}}"#
                 )
             }
             Self::Potion { effect, dur, amp } => {

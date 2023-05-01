@@ -21,6 +21,7 @@ pub enum Block<'a> {
         data: &'a str,
         target: &'a str,
         inverted: &'a str,
+        sub_action: String,
     },
     /// Defines the definition of an event (either PlayerEvent or EntityEvent)
     ///   - &'a str `block`: The associated block (Diamond Block for PlayerEvent, Gold Block for EntityEvent)
@@ -30,10 +31,18 @@ pub enum Block<'a> {
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
     FunctionDefinition { block: &'a str, data: String },
+    /// Defines a process definition
+    ///   - &'a str `block`: The associated block
+    ///   - &'a str `data`: Associated data (name, etc.)
+    ProcessDefinition { block: &'a str, data: String },
     /// Defines a call to a given function
     ///   - &'a str `block`: The associated block
     ///   - &'a str `data`: Associated data (name, etc.)
     FunctionCall { block: &'a str, data: String },
+    /// Defines a call to a given function
+    ///   - &'a str `block`: The associated block
+    ///   - &'a str `data`: Associated data (name, etc.)
+    ProcessCall { block: &'a str, data: String },
     /// Defines a bracket block (piston)
     ///   - BracketDirection `direct` - the direction of the bracket (opening or closing)
     ///   - BracketType `type` - the type of the bracket (Normal/Piston or Repeat/Sticky Piston)
@@ -42,6 +51,8 @@ pub enum Block<'a> {
         typ: BracketType,
     },
 }
+
+static START_PROCESS_DEFAULT: &str = include_str!("../../backend/static/START_PROCESS_ITEMS");
 
 #[allow(dead_code, unused)]
 impl Block<'_> {
@@ -55,6 +66,7 @@ impl Block<'_> {
                 data,
                 target,
                 inverted,
+                sub_action,
             } => {
                 let mut items_str = String::new();
                 for item in items {
@@ -63,7 +75,7 @@ impl Block<'_> {
                 }
                 items_str.pop();
                 format!(
-                    r#"{{"id":"block","block":"{block}","args":{{"items":[{items_str}]}},"action":"{action}","target":"{target}","inverted":"{inverted}","data":"{data}"}}"#
+                    r#"{{"id":"block","block":"{block}","args":{{"items":[{items_str}]}},"action":"{action}","target":"{target}","inverted":"{inverted}","data":"{data}","subAction":"{sub_action}"}}"#
                 )
             }
             Block::EventDefinition { block, action } => format!(
@@ -75,11 +87,19 @@ impl Block<'_> {
                 typ.to_json()
             ),
             Block::FunctionDefinition { block, data } => {
-                format!(r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#)
+                format!(
+                    r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#
+                )
             }
             Block::FunctionCall { block, data } => {
-                format!(r#"{{"id":"block","block":"{block}",}}"#)
+                format!(r#"{{"id":"block","block":"{block}","data":"{data}"}}"#)
             }
+            Block::ProcessDefinition { block, data } => format!(
+                r#"{{"id":"block","block":"{block}","args":{{"items":[]}},"data":"{data}"}}"#
+            ),
+            Block::ProcessCall { block, data } => format!(
+                r#"{{"id":"block","block":"{block}","data":"{data}","args":{{"items":[{START_PROCESS_DEFAULT}]}}}}"#
+            ),
         }
     }
 }
