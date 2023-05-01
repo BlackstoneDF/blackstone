@@ -49,7 +49,7 @@ fn main() -> std::io::Result<()> {
                     let file = std::fs::read_to_string(arg2)?;
                     process_inputs(&file, arg2, CompileTarget::Recode);
                 } else {
-                    println!("\nThere needs to be a string for a file path after the command,\ne.g `{prefix} build-one /foo/bar.bls`\n");
+                    println!("There needs to be a string for a file path after the command,\ne.g `{prefix} build-one /foo/bar.bls`\n");
                 }
             }
             "build-stdout" => {
@@ -57,7 +57,7 @@ fn main() -> std::io::Result<()> {
                     let file = std::fs::read_to_string(arg2)?;
                     process_inputs(&file, arg2, CompileTarget::Stdout);
                 } else {
-                    println!("\nThere needs to be a string for a file path after the command,\ne.g `{prefix} build-stdout /foo/bar.bls`\n");
+                    println!("There needs to be a string for a file path after the command,\ne.g `{prefix} build-stdout /foo/bar.bls`\n");
                 }
             }
             "version" => {
@@ -86,7 +86,7 @@ fn main() -> std::io::Result<()> {
             }
             "recode" => {
                 println!("Recode on modrinth: https://modrinth.com/mod/recode");
-                println!("Recode on github (has beta versions): https://github.com/homchom/recode");
+                println!("Recode on github: https://github.com/homchom/recode");
             }
             _ => help_message(), //"help" is included in the catch-all
         }
@@ -211,5 +211,5 @@ fn blackstone_header() {
 
 enum CompileTarget {
     Recode,
-    Stdout
+    Stdout,
 }
