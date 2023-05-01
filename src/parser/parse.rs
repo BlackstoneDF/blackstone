@@ -814,42 +814,42 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
 }
 
 fn data_to_id(data: &ItemData) -> String {
-    return match data {
+    match data {
         ItemData::Number { .. } => "num".to_string(),
         ItemData::Text { .. } => "txt".to_string(),
         ItemData::VanillaItem { .. } => "item".to_string(),
         ItemData::Location { .. } => "loc".to_string(),
         _ => "var".to_string(),
-    };
+    }
 }
 
 fn ident_to_var(input: &str) -> ItemData {
-    let mut words = input.split(".");
+    let mut words = input.split('.');
     if let Some(scope) = words.next() {
-        return match scope {
+        match scope {
             "local" => {
                 ItemData::Variable {
                     scope: VariableScope::Local,
-                    name: words.next().unwrap_or("NULL").to_string(),
+                    name: words.next().unwrap_or("_NULL").to_string()
                 }
             }
             "save" => {
                 ItemData::Variable {
                     scope: VariableScope::Saved,
-                    name: words.next().unwrap_or("NULL").to_string(),
+                    name: words.next().unwrap_or("_NULL").to_string()
                 }
             }
             _ => {
                 ItemData::Variable {
                     scope: VariableScope::Unsaved,
-                    name: words.next().unwrap_or("NULL").to_string(),
+                    name: words.next().unwrap_or("_NULL").to_string()
                 }
             }
         }
     } else {
-        return ItemData::Variable {
+        ItemData::Variable {
             scope: VariableScope::Unsaved,
-            name: words.next().unwrap_or("NULL").to_string(),
+            name: words.next().unwrap_or("_NULL").to_string()
         }
     }
 }
