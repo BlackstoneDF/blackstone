@@ -1,25 +1,19 @@
 use ariadne::*;
-#[allow(unused_imports)]
-use chumsky::{chain::Chain, Parser};
-use chumsky::{error::SimpleReason, prelude::Simple};
-#[allow(unused_imports)]
-use codegen::{block::Block, item::Item, item_data::ItemData, misc::process_block_vec};
+use chumsky::error::SimpleReason;
+use chumsky::Parser;
+use codegen::{block::Block, misc::process_block_vec};
 
-use std::{
-    env,
-    io::{Read, Write},
-    net::TcpStream,
-};
+use std::{env, io, io::Write, net::TcpStream};
 
 mod codegen;
 mod parser;
 
-fn main() -> std::io::Result<()> {
+fn main() -> io::Result<()> {
     let args = env::args().collect::<Vec<_>>();
 
-    let _input = "";
-
     let start = std::time::Instant::now();
+
+    let prefix = "shulker"; // cmd prefix
 
     if let Some(arg) = args.get(1) {
         match arg.as_str() {
@@ -35,7 +29,7 @@ fn main() -> std::io::Result<()> {
                     println!("\t\x1b[32;1mBuilding\x1b[0m `{display}`.");
                     let file =
                         std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
-                    process_inputs(&file, &display);
+                    process_inputs(&file, &display, CompileTarget::Recode);
                     std::thread::sleep(std::time::Duration::from_millis(100));
                 }
 
@@ -45,7 +39,17 @@ fn main() -> std::io::Result<()> {
             "build-one" => {
                 if let Some(arg2) = args.get(1) {
                     let file = std::fs::read_to_string(arg2)?;
-                    process_inputs(&file, &arg2);
+                    process_inputs(&file, arg2, CompileTarget::Recode);
+                } else {
+                    println!("There needs to be a string for a file path after the command,\ne.g `{prefix} build-one /foo/bar.bls`\n");
+                }
+            }
+            "build-stdout" => {
+                if let Some(arg2) = args.get(1) {
+                    let file = std::fs::read_to_string(arg2)?;
+                    process_inputs(&file, arg2, CompileTarget::Stdout);
+                } else {
+                    println!("There needs to be a string for a file path after the command,\ne.g `{prefix} build-stdout /foo/bar.bls`\n");
                 }
             }
             "version" => {
@@ -72,11 +76,14 @@ fn main() -> std::io::Result<()> {
                     }
                 }
             }
-            "help" => help_message(),
-            _ => help_message(),
+            "recode" => {
+                println!("Recode on modrinth: https://modrinth.com/mod/recode");
+                println!("Recode on github: https://github.com/homchom/recode");
+            }
+            _ => help_message(prefix), //"help" is included in the catch-all
         }
     } else {
-        help_message();
+        help_message(prefix);
     }
 
     Ok(())
@@ -92,24 +99,23 @@ fn compile_with_recode(vector: Vec<Block>) {
         .write_all(send.as_bytes())
         .expect("failed to write all");
 }
-#[allow(dead_code, unused_variables, unused_mut)]
-fn compile_with_codeclient(vector: Vec<Block>) {
-    let mut stream = TcpStream::connect("localhost:31375").expect("failed to connect");
-    println!("Readying! Please type `/auth` ingame to continue.");
-    let mut buf = String::new();
-    stream
-        .read_to_string(&mut buf)
-        .expect("failed to read to buffer");
-    println!("{}", buf);
+
+fn compile_to_console(vector: Vec<Block>) {
+    println!("{}", process_block_vec(vector));
+    println!("--------------");
+    println!("Paste the above into DF to get it as a template.");
 }
 
-fn process_inputs(input: &str, path: &str) {
+fn process_inputs(input: &str, path: &str, target: CompileTarget) {
     match parser::parse::parser().parse(input) {
         Ok(vector) => {
             let vector = vector.into_iter().flatten().collect::<Vec<_>>();
 
             println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
-            compile_with_recode(vector);
+            match target {
+                CompileTarget::Recode => compile_with_recode(vector),
+                CompileTarget::Stdout => compile_to_console(vector),
+            }
         }
         Err(v) => {
             for err in v {
@@ -141,13 +147,14 @@ fn process_inputs(input: &str, path: &str) {
         }
     }
 }
-fn help_message() {
+
+fn help_message(prefix: &str) {
     shulker_header();
     println!(
         r#"
 Blackstone's compiler & build tooling
 
-Usage: shulker [commands]
+Usage: {prefix} [commands]
 
 Built-in commands:
     version                     Get the current version of Blackstone.
@@ -158,6 +165,7 @@ Built-in commands:
                                 Useful if you don't have `recode` installed.
     build-test                  Run the tests in the code.
     add [package]               Add an external package to your scripts.
+    recode                      Gives a link to the `recode` mod, for ease of use with Blackstone
     help                        Shows this message!
     "#
     );
@@ -184,4 +192,9 @@ fn blackstone_header() {
     88oodP 88ood8 dP""""Yb  YboodP 88  Yb 8bodP'   88    YbodP  88  Y8 888888 
     "#
     );
+}
+
+enum CompileTarget {
+    Recode,
+    Stdout,
 }

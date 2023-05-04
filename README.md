@@ -4,7 +4,9 @@ Blackstone is a programming language designed to help create plots on the MCDiam
 
 ## Community Links
 
-Discord: [https://discord.gg/c7qzkNAURV](https://discord.gg/c7qzkNAURV)
+[Discord](https://discord.gg/c7qzkNAURV)
+[DF Website](https://mcdiamondfire.com)
+For ease of use with Blackstone, we recommend downloading the [Recode Mod](https://github.com/homchom/recode).
 
 ## Installation
 
@@ -65,6 +67,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [ ] Object-Oriented Programming
 - [ ] Compiler-Enforced Strong Typing
 - [ ] Tests
+- [ ] Customizable Items
 
 Note that none of the bonus features are *guaranteed* to be implemented.
 We do think they would be useful, though.
@@ -75,7 +78,7 @@ We do think they would be useful, though.
 - [ ] init
 - [x] build (script)
 - [x] build-all
-- [ ] build-stdout (script)
+- [x] build-stdout (script)
 - [ ] build_test
 - [ ] add (package)
 
