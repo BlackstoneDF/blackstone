@@ -1,3 +1,4 @@
+// This example scripts will be for the Unnamed Game.
 PlayerEvent(Join) {
     func TerrainGen();
 }

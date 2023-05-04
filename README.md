@@ -37,13 +37,13 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [x] Game Action
 - [x] If Game
 - [x] Set Variable
-- [ ] If Variable
+- [x] If Variable
 - [x] Repeat
 - [x] Function
 - [x] Call Function
 - [x] Process
 - [x] Start Process
-- [ ] Else
+- [x] Else
 - [x] Select Object
 - [ ] NOT Functionality
 
