@@ -82,11 +82,12 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-fn compile_with_recode(vector: Vec<Block>) {
+fn compile_with_recode(vector: Vec<Block>, name: String) {
     let s = process_block_vec(vector);
     let send =
-        r#"{"type": "template","source": "Blackstone","data":"{'name':'Test','data':'%s%'}"}"#;
+        r#"{"type": "template","source": "Blackstone","data":"{'name':'%n%','data':'%s%'}"}"#;
     let send = send.replace("%s%", &s);
+    let send = send.replace("%n%", &name);
     let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
     stream
         .write_all(send.as_bytes())
@@ -108,8 +109,11 @@ fn process_inputs(input: &str, path: &str) {
         Ok(vector) => {
             let vector = vector.into_iter().flatten().collect::<Vec<_>>();
 
+            let first = vector.get(0).expect("codeless?");
+
+            let name = path.to_string();
             println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
-            compile_with_recode(vector);
+            compile_with_recode(vector, name);
         }
         Err(v) => {
             for err in v {

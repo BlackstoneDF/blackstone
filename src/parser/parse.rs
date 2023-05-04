@@ -549,6 +549,53 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                 out
             });
 
+        let if_else = text::keyword("if")
+            .padded()
+            .ignore_then(
+                actions
+                    .clone()
+                    .separated_by(just(';'))
+                    .allow_trailing()
+                    .padded()
+                    .collect::<Vec<_>>()
+                    .padded()
+                    .delimited_by(just('{'), just('}'))
+                    .padded(),
+            )
+            .map(|args| {
+                let mut out = vec![];
+                for block in args {
+                    for sub_block in block {
+                        if let Some(bl) = sub_block {
+                            out.append(&mut vec![Some(bl)]);
+                        }
+                    }
+                }
+                out.insert(
+                    0,
+                    Some(Block::Code {
+                        block: "else",
+                        items: vec![],
+                        action: "".to_string(),
+                        data: "",
+                        target: "",
+                        inverted: "",
+                        sub_action: String::new(),
+                    }),
+                );
+                out.insert(
+                    1,
+                    Some(Block::Bracket {
+                        direct: BracketDirection::Open,
+                        typ: BracketType::Norm,
+                    }),
+                );
+                out.push(Some(Block::Bracket {
+                    direct: BracketDirection::Close,
+                    typ: BracketType::Norm,
+                }));
+                out
+            });
         let if_variable = text::keyword("if")
             .padded()
             .ignore_then(text::keyword("var"))
@@ -581,55 +628,66 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     .padded(),
             )
             .padded()
-            .map(|((((var_name, var_op), action), arguments), codes): ((((std::string::String, &str), std::string::String), Vec<ItemData>), Vec<Vec<std::option::Option<Block<'_>>>>)| {
-                let mut out = vec![];
-                for block in codes {
-                    for sub_block in block {
-                        if let Some(bl) = sub_block {
-                            out.append(&mut vec![Some(bl)]);
+            .map(
+                |((((var_name, var_op), action), arguments), codes): (
+                    (
+                        ((std::string::String, &str), std::string::String),
+                        Vec<ItemData>,
+                    ),
+                    Vec<Vec<std::option::Option<Block<'_>>>>,
+                )| {
+                    let mut out = vec![];
+                    for block in codes {
+                        for sub_block in block {
+                            if let Some(bl) = sub_block {
+                                out.append(&mut vec![Some(bl)]);
+                            }
                         }
                     }
-                }
-                let mut items: Vec<Item> = vec![];
-                for (slot, item) in arguments.into_iter().enumerate() {
-                    let id = data_to_id(&item);
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, item) in arguments.into_iter().enumerate() {
+                        let id = data_to_id(&item);
 
-                    items.push(Item {
-                        id,
-                        slot: slot.try_into().expect("failed to convert to usize"),
-                        item,
-                    })
-                }
-                items.insert(0, Item {
-                    id: "var".to_string(),
-                    slot: 0,
-                    item: ident_to_var(var_name.as_str())
-                });
-                out.insert(
-                    0,
-                    Some(Block::Code {
-                        block: "if_var",
-                        items: items,
-                        action: action,
-                        data: "",
-                        target: "Selection",
-                        inverted: "",
-                        sub_action: String::new(),
-                    }),
-                );
-                out.insert(
-                    1,
-                    Some(Block::Bracket {
-                        direct: BracketDirection::Open,
+                        items.push(Item {
+                            id,
+                            slot: slot.try_into().expect("failed to convert to usize"),
+                            item,
+                        })
+                    }
+                    items.insert(
+                        0,
+                        Item {
+                            id: "var".to_string(),
+                            slot: 0,
+                            item: ident_to_var(var_name.as_str()),
+                        },
+                    );
+                    out.insert(
+                        0,
+                        Some(Block::Code {
+                            block: "if_var",
+                            items: items,
+                            action: action,
+                            data: "",
+                            target: "Selection",
+                            inverted: "",
+                            sub_action: String::new(),
+                        }),
+                    );
+                    out.insert(
+                        1,
+                        Some(Block::Bracket {
+                            direct: BracketDirection::Open,
+                            typ: BracketType::Norm,
+                        }),
+                    );
+                    out.push(Some(Block::Bracket {
+                        direct: BracketDirection::Close,
                         typ: BracketType::Norm,
-                    }),
-                );
-                out.push(Some(Block::Bracket {
-                    direct: BracketDirection::Close,
-                    typ: BracketType::Norm,
-                }));
-                out
-            });
+                    }));
+                    out
+                },
+            );
 
         let call_function = text::keyword("func")
             .padded()
