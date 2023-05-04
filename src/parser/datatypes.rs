@@ -1,6 +1,13 @@
-use chumsky::{prelude::Simple, text::{self, TextParser}, Parser, primitive::{just, none_of}};
+use chumsky::{
+    prelude::Simple,
+    primitive::{just, none_of},
+    text::{self, ident, TextParser},
+    Parser,
+};
 
 use crate::codegen::item_data::ItemData;
+
+use super::ident_to_var;
 
 pub fn parse_number() -> impl Parser<char, ItemData, Error = Simple<char>> {
     // Number
@@ -81,6 +88,11 @@ pub fn parse_location() -> impl Parser<char, ItemData, Error = Simple<char>> {
     location
 }
 
+pub fn variable_parser() -> impl Parser<char, ItemData, Error = Simple<char>> {
+    let variable = ident().map(|f: String| ident_to_var(f.as_str()));
+    variable
+}
+
 pub fn parse_item_stack() -> impl Parser<char, ItemData, Error = Simple<char>> {
     let item = text::keyword("item")
         .ignore_then(parse_text().padded().delimited_by(just('('), just(')')))
@@ -120,4 +132,5 @@ pub fn arguments_parser() -> impl Parser<char, ItemData, Error = Simple<char>> {
         .or(parse_text())
         .or(parse_location())
         .or(parse_item_stack())
+        .or(variable_parser())
 }

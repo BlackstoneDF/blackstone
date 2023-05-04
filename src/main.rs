@@ -112,7 +112,7 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
         Ok(vector) => {
             let vector = vector.into_iter().flatten().collect::<Vec<_>>();
 
-            let first = vector.get(0).expect("codeless?");
+            let _ = vector.get(0).expect("codeless?");
 
             let name = path.to_string();
             println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
