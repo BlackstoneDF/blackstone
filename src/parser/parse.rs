@@ -40,9 +40,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                     .then_ignore(just("::"))
                     .then_ignore(ident())
                     .padded()
-                    .then(
-                        argument_list()
-                    )
+                    .then(argument_list())
                     .padded()
                     .then(
                         actions
@@ -103,9 +101,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                 text::keyword("player")
                     .ignore_then(just('.'))
                     .ignore_then(ident())
-                    .then(
-                        argument_list()
-                    )
+                    .then(argument_list())
                     .padded()
                     .map(|(f, datas): (String, Vec<ItemData>)| {
                         let mut items: Vec<Item> = vec![];
@@ -133,9 +129,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                 text::keyword("plot")
                     .ignore_then(just('.'))
                     .ignore_then(ident())
-                    .then(
-                        argument_list()
-                    )
+                    .then(argument_list())
                     .padded()
                     .map(|(f, datas): (String, Vec<ItemData>)| {
                         let mut items: Vec<Item> = vec![];
@@ -164,9 +158,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                 text::keyword("select")
                     .padded()
                     .ignore_then(ident())
-                    .then(
-                        argument_list()
-                    )
+                    .then(argument_list())
                     .map(|(identifier, datas)| {
                         let mut items: Vec<Item> = vec![];
                         for (slot, data) in datas.into_iter().enumerate() {
@@ -346,7 +338,13 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                     })
             };
 
-            player_action.or(game_action).or(repeat).or(select_object).or(if_player).or(if_entity).or(if_game)
+            player_action
+                .or(game_action)
+                .or(repeat)
+                .or(select_object)
+                .or(if_player)
+                .or(if_entity)
+                .or(if_game)
         },
     );
     actions
@@ -364,11 +362,11 @@ fn data_to_id(data: &ItemData) -> String {
 
 pub fn argument_list() -> impl Parser<char, Vec<ItemData>, Error = Simple<char>> {
     arguments_parser()
-                            .separated_by(just(", "))
-                            .allow_trailing()
-                            .padded()
-                            .collect::<Vec<_>>()
-                            .padded()
-                            .delimited_by(just('('), just(')'))
-                            .padded()
+        .separated_by(just(", "))
+        .allow_trailing()
+        .padded()
+        .collect::<Vec<_>>()
+        .padded()
+        .delimited_by(just('('), just(')'))
+        .padded()
 }
