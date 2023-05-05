@@ -41,14 +41,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                     .then_ignore(ident())
                     .padded()
                     .then(
-                        arguments_parser()
-                            .separated_by(just(", "))
-                            .allow_trailing()
-                            .padded()
-                            .collect::<Vec<_>>()
-                            .padded()
-                            .delimited_by(just('('), just(')'))
-                            .padded(),
+                        argument_list()
                     )
                     .padded()
                     .then(
@@ -111,14 +104,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                     .ignore_then(just('.'))
                     .ignore_then(ident())
                     .then(
-                        arguments_parser()
-                            .separated_by(just(", "))
-                            .allow_trailing()
-                            .padded()
-                            .collect::<Vec<_>>()
-                            .padded()
-                            .delimited_by(just('('), just(')'))
-                            .padded(),
+                        argument_list()
                     )
                     .padded()
                     .map(|(f, datas): (String, Vec<ItemData>)| {
@@ -148,14 +134,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                     .ignore_then(just('.'))
                     .ignore_then(ident())
                     .then(
-                        arguments_parser()
-                            .separated_by(just(',').padded())
-                            .allow_trailing()
-                            .padded()
-                            .collect::<Vec<_>>()
-                            .padded()
-                            .delimited_by(just('('), just(')'))
-                            .padded(),
+                        argument_list()
                     )
                     .padded()
                     .map(|(f, datas): (String, Vec<ItemData>)| {
@@ -186,14 +165,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                     .padded()
                     .ignore_then(ident())
                     .then(
-                        arguments_parser()
-                            .separated_by(just(',').padded())
-                            .allow_trailing()
-                            .padded()
-                            .collect::<Vec<_>>()
-                            .padded()
-                            .delimited_by(just('('), just(')'))
-                            .padded(),
+                        argument_list()
                     )
                     .map(|(identifier, datas)| {
                         let mut items: Vec<Item> = vec![];
@@ -388,4 +360,15 @@ fn data_to_id(data: &ItemData) -> String {
         ItemData::Location { .. } => "loc".to_string(),
         _ => "var".to_string(),
     }
+}
+
+pub fn argument_list() -> impl Parser<char, Vec<ItemData>, Error = Simple<char>> {
+    arguments_parser()
+                            .separated_by(just(", "))
+                            .allow_trailing()
+                            .padded()
+                            .collect::<Vec<_>>()
+                            .padded()
+                            .delimited_by(just('('), just(')'))
+                            .padded()
 }
