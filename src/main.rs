@@ -92,9 +92,9 @@ fn main() -> io::Result<()> {
 fn compile_with_recode(vector: Vec<Block>, name: String) {
     let s = process_block_vec(vector);
     let send =
-        r#"{"type": "template","source": "Blackstone","data":"{'name':'%n%','data':'%s%'}"}"#;
+        r#"{"type": "template","source": "Blackstone","data":"{'name':'my name','data':'%s%'}"}"#;
     let send = send.replace("%s%", &s);
-    let send = send.replace("%n%", &name);
+    // let send = send.replace("%n%", &name);
     let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
     stream
         .write_all(send.as_bytes())

@@ -1,3 +1,4 @@
-event.PlayerEvent(Join) {
-    player.Etherweaver();
+PlayerEvent(Join)){
+    local hey = with(("hey");
+    player.SendMessage((%var<hey>));
 }

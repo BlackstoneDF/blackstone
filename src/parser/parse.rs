@@ -1,10 +1,4 @@
-use chumsky::{
-    prelude::Simple,
-    primitive::just,
-    recursive::{recursive, Recursive},
-    text::{self, ident, TextParser},
-    Parser,
-};
+use chumsky::{prelude::*};
 
 use crate::codegen::{
     block::Block,
@@ -13,7 +7,9 @@ use crate::codegen::{
     misc::{BracketDirection, BracketType},
 };
 
-use super::datatypes::arguments_parser;
+use super::datatypes::{arguments_parser, variable_parser};
+use super::ident;
+
 
 pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
     events_parser()
@@ -340,6 +336,60 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                     })
             };
 
+            let set_variable_local = text::keyword("local")
+                .padded()
+                .ignore_then(variable_parser())
+                .padded()
+                .then(operation)
+                .padded()
+                .then(ident())
+                .padded()
+                .then(
+                    arguments_parser()
+                        .separated_by(just(", "))
+                        .allow_trailing()
+                        .padded()
+                        .collect::<Vec<_>>()
+                        .padded()
+                        .delimited_by(just('('), just(')'))
+                        .padded(),
+                )
+                .map(
+                    |(((var, op), effect), args): (((ItemData, &str), String), Vec<ItemData>)| {
+                        let mut items: Vec<Item> = vec![];
+                        for (slot, data) in args.into_iter().enumerate() {
+                            let id = data_to_id(&data);
+                            let slot = slot + 1;
+                            items.push(Item {
+                                id,
+                                slot: slot.try_into().expect("failed ot convert to usize"),
+                                item: data,
+                            })
+                        }
+                        items.insert(
+                            0,
+                            Item {
+                                slot: 0,
+                                id: "var".to_string(),
+                                item: var,
+                            },
+                        );
+                        let mut tmp_effect = effect;
+                        if tmp_effect == "with" {
+                            tmp_effect = op.to_string();
+                        }
+                        vec![Some(Block::Code {
+                            block: "set_var",
+                            items,
+                            action: tmp_effect,
+                            data: "",
+                            target: "",
+                            inverted: "",
+                            sub_action: String::new(),
+                        })]
+                    },
+                );
+            
             player_action
                 .or(game_action)
                 .or(repeat)
@@ -347,6 +397,7 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
                 .or(if_player)
                 .or(if_entity)
                 .or(if_game)
+                .or(set_variable_local)
         },
     );
     actions

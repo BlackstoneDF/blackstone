@@ -1,3 +1,5 @@
+use chumsky::{primitive::{one_of, end, none_of}, Parser, prelude::Simple};
+
 use crate::codegen::{item_data::ItemData, misc::VariableScope};
 
 pub mod datatypes;
@@ -26,4 +28,16 @@ fn ident_to_var(input: &str) -> ItemData {
             name: words.next().unwrap_or("_NULL").to_string(),
         }
     }
+}
+
+pub fn ident() -> impl Parser<char, String, Error = Simple<char>> {
+    let pt2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%<>";
+    one_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%")
+        .then(one_of(pt2).repeated())
+        .then_ignore(none_of(pt2))
+        .map(|(init_char, second_char)| {
+            let collected = format!("{init_char}{}", second_char.into_iter().collect::<String>());
+            let collected = collected.replace("<", "op").replace(">", "cl");
+            collected
+        })
 }

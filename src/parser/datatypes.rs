@@ -1,9 +1,10 @@
 use chumsky::{
     prelude::Simple,
     primitive::{just, none_of},
-    text::{self, ident, TextParser},
+    text::{self, TextParser},
     Parser,
 };
+use super::ident;
 
 use crate::codegen::item_data::ItemData;
 

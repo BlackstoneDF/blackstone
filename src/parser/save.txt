@@ -116,60 +116,7 @@ pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple
                     out
                 });
 
-            let set_variable = text::keyword("var")
-                .padded()
-                .ignore_then(variable)
-                .padded()
-                .then(operation)
-                .padded()
-                .then(ident)
-                .padded()
-                .then(
-                    arguments
-                        .clone()
-                        .separated_by(just(", "))
-                        .allow_trailing()
-                        .padded()
-                        .collect::<Vec<_>>()
-                        .padded()
-                        .delimited_by(just('('), just(')'))
-                        .padded(),
-                )
-                .map(
-                    |(((var, op), effect), args): (((ItemData, &str), String), Vec<ItemData>)| {
-                        let mut items: Vec<Item> = vec![];
-                        for (slot, data) in args.into_iter().enumerate() {
-                            let id = data_to_id(&data);
-                            let slot = slot + 1;
-                            items.push(Item {
-                                id,
-                                slot: slot.try_into().expect("failed ot convert to usize"),
-                                item: data,
-                            })
-                        }
-                        items.insert(
-                            0,
-                            Item {
-                                slot: 0,
-                                id: "var".to_string(),
-                                item: var,
-                            },
-                        );
-                        let mut tmp_effect = effect;
-                        if tmp_effect == "with" {
-                            tmp_effect = op.to_string();
-                        }
-                        vec![Some(Block::Code {
-                            block: "set_var",
-                            items,
-                            action: tmp_effect,
-                            data: "",
-                            target: "",
-                            inverted: "",
-                            sub_action: String::new(),
-                        })]
-                    },
-                );
+            
 
             
             
