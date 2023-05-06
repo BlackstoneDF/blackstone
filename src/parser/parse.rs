@@ -16,7 +16,7 @@ use crate::codegen::{
 use super::datatypes::arguments_parser;
 
 pub fn parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
-    actions_parser()
+    events_parser()
 }
 
 pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
@@ -185,9 +185,11 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
             let if_player = {
                 text::keyword("if")
                     .ignore_then(just(' '))
+                    .ignore_then(just('!'))
                     .ignore_then(text::keyword("player"))
                     .ignore_then(just('.'))
                     .ignore_then(ident())
+                    .padded()
                     .then(
                         actions
                             .clone()
@@ -348,6 +350,114 @@ pub fn actions_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error 
         },
     );
     actions
+}
+
+pub fn events_parser() -> impl Parser<char, Vec<Option<Block<'static>>>, Error = Simple<char>> {
+    let player_event = text::keyword("PlayerEvent")
+        .ignore_then(just('('))
+        .padded()
+        .ignore_then(ident())
+        .then_ignore(just(')'))
+        .padded()
+        .then(
+            actions_parser()
+                .separated_by(just(';'))
+                .allow_trailing()
+                .padded()
+                .collect::<Vec<_>>()
+                .padded()
+                .delimited_by(just('{'), just('}'))
+                .padded(),
+        )
+        .padded()
+        .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+            let mut out = vec![];
+            for block in args {
+                for sub_block in block.into_iter().flatten() {
+                    out.append(&mut vec![Some(sub_block)]);
+                }
+            }
+            out.insert(
+                0,
+                Some(Block::EventDefinition {
+                    block: "event",
+                    action: name,
+                }),
+            );
+            out
+        });
+
+    let process = text::keyword("proc")
+        .padded()
+        .ignore_then(ident())
+        .then_ignore(just('('))
+        .padded()
+        .then_ignore(just(')'))
+        .padded()
+        .then(
+            actions_parser()
+                .separated_by(just(';'))
+                .allow_trailing()
+                .padded()
+                .collect::<Vec<_>>()
+                .padded()
+                .delimited_by(just('{'), just('}'))
+                .padded(),
+        )
+        .padded()
+        .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+            let mut out = vec![];
+            for block in args {
+                for sub_block in block.into_iter().flatten() {
+                    out.append(&mut vec![Some(sub_block)]);
+                }
+            }
+            out.insert(
+                0,
+                Some(Block::ProcessDefinition {
+                    block: "process",
+                    data: name,
+                }),
+            );
+            out
+        });
+
+    let function = text::keyword("func")
+        .padded()
+        .ignore_then(ident())
+        .then_ignore(just('('))
+        .padded()
+        .then_ignore(just(')'))
+        .padded()
+        .then(
+            actions_parser()
+                .separated_by(just(';'))
+                .allow_trailing()
+                .padded()
+                .collect::<Vec<_>>()
+                .padded()
+                .delimited_by(just('{'), just('}'))
+                .padded(),
+        )
+        .padded()
+        .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+            let mut out = vec![];
+            for block in args {
+                for sub_block in block.into_iter().flatten() {
+                    out.append(&mut vec![Some(sub_block)]);
+                }
+            }
+            out.insert(
+                0,
+                Some(Block::FunctionDefinition {
+                    block: "func",
+                    data: name,
+                }),
+            );
+            out
+        });
+
+    player_event.or(function).or(process)
 }
 
 fn data_to_id(data: &ItemData) -> String {
