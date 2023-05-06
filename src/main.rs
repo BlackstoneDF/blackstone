@@ -1,5 +1,4 @@
 use ariadne::*;
-use chumsky::error::SimpleReason;
 use chumsky::Parser;
 use codegen::{block::Block, misc::process_block_vec};
 
@@ -107,10 +106,10 @@ fn compile_to_console(vector: Vec<Block>) {
     println!("Paste the above into DF to get it as a template.");
 }
 
-fn process_inputs(input: &str, path: &str, target: CompileTarget) {
-    match parser::parse::parser().parse(input) {
-        Ok(vector) => {
-            let vector = vector.into_iter().flatten().collect::<Vec<_>>();
+
+/*
+
+let vector = vector.into_iter().flatten().collect::<Vec<_>>();
 
             let _ = vector.get(0).expect("codeless?");
 
@@ -120,34 +119,42 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
                 CompileTarget::Recode => compile_with_recode(vector, name),
                 CompileTarget::Stdout => compile_to_console(vector),
             }
-        }
-        Err(v) => {
-            for err in v {
-                if let SimpleReason::Unexpected = err.reason() {
-                    Report::build(ReportKind::Error, (), err.span().start)
-                        .with_message("Unexpected tokens")
-                        .with_label(Label::new(err.span()).with_message({
-                            let mut out = String::new();
-                            for expected in err.expected() {
-                                out.push_str(format!("'{}' |", expected.unwrap_or('!')).as_str());
-                            }
-                            out.pop();
-                            out.pop();
-                            format!("expected {}, found '{}'", out, err.found().unwrap_or(&'✗'))
-                        }))
-                        .finish()
-                        .print(Source::from(input))
-                        .unwrap();
-                }
-                if let SimpleReason::Custom(msg) = err.reason() {
-                    Report::build(ReportKind::Error, (), err.span().start)
-                        .with_message(msg)
-                        .with_label(Label::new(err.span()).with_message("Error occured here"))
-                        .finish()
-                        .print(Source::from(input))
-                        .unwrap();
-                }
+ */
+fn process_inputs(input: &str, path: &str, target: CompileTarget) {
+    let result = parser::parse::parser().parse(input);
+
+    // if let Some(vector) = result.clone().into_output() {
+    //     let vector = vector.into_iter().flatten().collect::<Vec<_>>();
+
+    //     let _ = vector.get(0).expect("codeless?");
+
+    //     let name = path.to_string();
+    //     println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
+    //     match target {
+    //         CompileTarget::Recode => compile_with_recode(vector, name),
+    //         CompileTarget::Stdout => compile_to_console(vector),
+    //     }
+    // } else {
+    //     for error in result.errors() {
+    //         println!("err: {}", error.to_string());
+    //     }
+    // }
+
+    match result.clone().into_result() {
+        Ok(vector) => {
+            let vector = vector.into_iter().flatten().collect::<Vec<_>>();
+            let _ = vector.get(0).expect("codeless?");
+            let name = path.to_string();
+            println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
+            match target {
+                CompileTarget::Recode => compile_with_recode(vector, name),
+                CompileTarget::Stdout => compile_to_console(vector),
             }
+        }
+        Err(errors) => {
+            errors
+            .into_iter()
+            .for_each(|e| println!("Parse error: {}", e));
         }
     }
 }

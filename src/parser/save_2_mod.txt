@@ -1,21 +1,9 @@
-use chumsky::{Parser, primitive::{one_of, none_of}, IterParser, regex::regex, prelude::Rich, extra};
+use chumsky::{primitive::{one_of, end, none_of}, Parser, prelude::Simple, regex::regex};
 
 use crate::codegen::{item_data::ItemData, misc::VariableScope};
-use chumsky::extra::Err;
+
 pub mod datatypes;
 pub mod parse;
-
-pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, &'a str>>> {
-    let pt2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%<>";
-    one_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%")
-        .then(one_of(pt2).repeated().collect::<String>())
-        .then_ignore(none_of(pt2))
-        .map(|(init_char, second_char)| {
-            let collected = format!("{init_char}{second_char}");
-            let collected = collected.replace("<", "(").replace(">", ")");
-            collected
-        })
-}
 
 fn ident_to_var(input: &str) -> ItemData {
     let mut words = input.split('.');
@@ -40,4 +28,8 @@ fn ident_to_var(input: &str) -> ItemData {
             name: words.next().unwrap_or("_NULL").to_string(),
         }
     }
+}
+
+pub fn ident() -> impl Parser<'static, char, String, Simple<'static, char>> {
+    regex(r"[a-zA-Z_%][a-zA-Z_%0-9\(\)]")
 }

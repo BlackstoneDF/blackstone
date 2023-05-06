@@ -1,4 +1,2 @@
-PlayerEvent(Join)){
-    local hey = with(("hey");
-    player.SendMessage((%var<hey>));
+PlayerEvent(Join){
 }

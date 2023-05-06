@@ -1,53 +1,54 @@
 use chumsky::{
-    prelude::{Simple, Rich},
-    primitive::{just, none_of, Empty, choice},
+    prelude::Simple,
+    primitive::{just, none_of},
     text,
-    Parser, IterParser, span::SimpleSpan, extra::{ParserExtra, Full}, error::Error,
+    Parser,
 };
-use chumsky::extra::Err;
 use super::ident;
 
 use crate::codegen::item_data::ItemData;
 
 use super::ident_to_var;
 
-pub fn parse_number<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_number() -> impl Parser<'static, char, ItemData, Simple<'static, char>> {
     // Number
     // This argument represents a Number type on DiamondFire.
     // It is parsed from an integer literal to a Number.
-    let number = text::int(10)
-        .then(just('.').then(text::digits(10)).or_not())
-        .slice()
-        .from_str()
-        .unwrapped()
-        .map(|f| {
-            ItemData::Number { data: f }
-        });
+    let number = 
+        text::int::<_, Simple<char>, _>(10).map(|f| ItemData::Number {
+            data: f
+                .parse::<f32>()
+                .expect("failed to f32 somehow - shouldnt be possible"),
+    });
     number
 }
 
-pub fn parse_text<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_text() -> impl Parser<'static, char, ItemData, Simple<'static, char>> {
     // Text
     // This argument represents a Text type on DiamondFire.
     // It is converted from a String literal.
-    let text = just('"')
-        .ignore_then(none_of('"').repeated().collect::<String>())
+    let text = just::<char, char, Simple<char>>('"')
+        .ignore_then(none_of('"').repeated())
         .then_ignore(just('"'))
         .map(|f| ItemData::Text {
-            data: f
+            data: f.iter().collect(),
         });
 
     text
 }
 
-pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_location() -> impl Parser<'static, char, ItemData, Simple<'static, char>> {
     let location = text::keyword("loc")
         .ignore_then(
             parse_number()
-                .repeated()
-                .collect::<Vec<ItemData>>()
+                .separated_by(just(','))
+                .allow_trailing()
+                .padded()
+                .collect::<Vec<_>>()
+                .padded()
+                .delimited_by(just('('), just(')')),
         )
-        .try_map(|f: Vec<ItemData>, f2| {
+        .try_map(|f, f2| {
             if f.len() == 3 {
                 if let Some(ItemData::Number { data: n1 }) = f.get(0) {
                     if let Some(ItemData::Number { data: n2 }) = f.get(1) {
@@ -84,26 +85,28 @@ pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &
 
             // Report::build(ReportKind::Warning, (), 5);
             // TODO: throw ariadne error
-            return Err(Rich::custom(f2, "Locations must have 3 or 5 numbers."))
+            Err(Simple::custom(f2, "Locations need 3 or 5 fields."))
         });
     location
 }
 
-pub fn variable_parser<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn variable_parser() -> impl Parser<'static, char, ItemData, Simple<'static, char>> {
     let variable = ident().map(|f: String| ident_to_var(f.as_str()));
     variable
 }
 
-pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_item_stack() -> impl Parser<'static, char, ItemData, Simple<'static, char>> {
     let item = text::keyword("item")
         .ignore_then(parse_text().padded().delimited_by(just('('), just(')')))
-        .try_map(|f, span| {
+        .map(|f| {
             if let ItemData::Text { data } = f {
-                return Ok(ItemData::VanillaItem {
+                return ItemData::VanillaItem {
                     data: format!("{{Count:1b,DF_NBT:3337,id:\\\"minecraft:{data}\\\"}}"),
-                });
+                };
             }
-            return Err(Rich::custom(span, "Failed to provide valid item."))
+            ItemData::VanillaItem {
+                data: "".to_string(),
+            }
         });
 
     let item_stack = text::keyword("items")
@@ -117,21 +120,19 @@ pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a,
                         data: format!("{{Count:{count}b,DF_NBT:3337,id:\\\"minecraft:{id}\\\"}}"),
                     });
                 } else {
-                    return Err(Rich::custom(f2, "Invalid item stack. Requires an ID and an amount."))
+                    return Err(Simple::custom(f2, "Item Stacks must have an ID followed by a count. Example: `coal:3` makes 3 coals in a singular stack."))
                 };
             }
-            unreachable!("Somehow reached an impossible Item Stack.");
+            unreachable!();
         });
 
-    item.or(item_stack).boxed()
+    item.or(item_stack)
 }
 
-pub fn arguments_parser<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
-    choice((
-        parse_text(),
-        parse_number(),
-        parse_item_stack(),
-        parse_location(),
-        variable_parser(),
-    ))
+pub fn arguments_parser() -> impl Parser<'static, char, ItemData, Simple<'static, char>> {
+    parse_number()
+        .or(parse_text())
+        .or(parse_location())
+        .or(parse_item_stack())
+        .or(variable_parser())
 }
