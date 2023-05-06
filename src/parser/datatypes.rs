@@ -11,7 +11,7 @@ use crate::codegen::item_data::ItemData;
 
 use super::ident_to_var;
 
-pub fn parse_number<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_number<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {
     // Number
     // This argument represents a Number type on DiamondFire.
     // It is parsed from an integer literal to a Number.
@@ -26,7 +26,7 @@ pub fn parse_number<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a
     number
 }
 
-pub fn parse_text<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_text<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {
     // Text
     // This argument represents a Text type on DiamondFire.
     // It is converted from a String literal.
@@ -40,7 +40,7 @@ pub fn parse_text<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a s
     text
 }
 
-pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {
     let location = text::keyword("loc")
         .ignore_then(
             parse_number()
@@ -89,12 +89,12 @@ pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &
     location
 }
 
-pub fn variable_parser<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn variable_parser<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {
     let variable = ident().map(|f: String| ident_to_var(f.as_str()));
     variable
 }
 
-pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {
     let item = text::keyword("item")
         .ignore_then(parse_text().padded().delimited_by(just('('), just(')')))
         .try_map(|f, span| {
@@ -126,7 +126,7 @@ pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a,
     item.or(item_stack).boxed()
 }
 
-pub fn arguments_parser<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, &'a str>>> {
+pub fn arguments_parser<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {
     choice((
         parse_text(),
         parse_number(),

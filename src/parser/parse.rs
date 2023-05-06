@@ -6,11 +6,11 @@ use chumsky::parser::Rich;
 
 use super::{ident, datatypes::arguments_parser};
 
-pub fn parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, &'a str>>> {
+pub fn parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>> {
     events_parser()
 }
 
-pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, &'a str>>> {
+pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>> {
     let player_action = {
         text::keyword("player")
             .ignore_then(just('.'))
@@ -44,7 +44,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
     player_action
 }
 
-pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, &'a str>>> {
+pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>> {
     let player_event = text::keyword("PlayerEvent")
         .ignore_then(just('('))
         .padded()
@@ -80,7 +80,7 @@ pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, E
     player_event
 }
 
-pub fn argument_list<'a>() -> impl Parser<'a, &'a str, Vec<ItemData>> {
+pub fn argument_list<'a>() -> impl Parser<'a, &'a str, Vec<ItemData>, Err<Rich<'a, char>>> {
     arguments_parser()
         .repeated()
         .collect::<Vec<ItemData>>()

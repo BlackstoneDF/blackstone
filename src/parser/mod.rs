@@ -5,7 +5,7 @@ use chumsky::extra::Err;
 pub mod datatypes;
 pub mod parse;
 
-pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, &'a str>>> {
+pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, char>>> {
     let pt2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%<>";
     one_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%")
         .then(one_of(pt2).repeated().collect::<String>())
