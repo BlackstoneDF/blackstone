@@ -45,22 +45,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4a4ddaa51a5bc52a6948f74c06d20aaaddb71924eab79b8c97a8c556e942d6a"
 
 [[package]]
-name = "blackstone-df"
-version = "0.2.0"
-dependencies = [
- "ariadne",
- "base64",
- "chumsky",
- "itertools",
- "lazy_static",
- "libflate",
- "serde",
- "serde_json",
- "strum",
- "strum_macros",
-]
-
-[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -263,6 +247,22 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "shulker"
+version = "0.2.0"
+dependencies = [
+ "ariadne",
+ "base64",
+ "chumsky",
+ "itertools",
+ "lazy_static",
+ "libflate",
+ "serde",
+ "serde_json",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]

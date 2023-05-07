@@ -1,5 +1,5 @@
 [package]
-name = "blackstone-df"
+name = "shulker"
 version = "0.2.0"
 edition = "2021"
 license = "Apache-2.0"
@@ -8,10 +8,6 @@ repository = "https://github.com/BlackstoneDF/blackstone"
 homepage = "https://github.com/BlackstoneDF/blackstone"
 description = "A programming language designed for the DiamondFire Minecraft server."
 
-# Compile for shorthand `bls`, as to not exhaust the hands when typing
-[[bin]]
-name = "shulker"
-path = "src/main.rs"
 
 # Please try to minimize dependencies.
 # I don't want a really long time taken when building.

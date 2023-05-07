@@ -12,12 +12,11 @@ For ease of use with Blackstone, we recommend downloading the [Recode Mod](https
 
 ### Building from Source
 
-You can install this using the Cargo toolchain.
+You can install the compiler using the Cargo toolchain.
 
 ```text
-cargo install blackstone-df
+cargo install shulker
 ```
-
 It will automatically handle building from source for you.
 
 ### Releases Page
