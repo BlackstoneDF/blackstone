@@ -1,12 +1,12 @@
 [package]
 name = "shulker"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/BlackstoneDF/blackstone"
 homepage = "https://github.com/BlackstoneDF/blackstone"
-description = "A programming language designed for the DiamondFire Minecraft server."
+description = "A build tool for the Blackstone programming language."
 
 
 # Please try to minimize dependencies.

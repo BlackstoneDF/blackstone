@@ -28,22 +28,22 @@ You can also install it through our `Releases` page on the sidebar. During offic
 ### Code Blocks
 
 - [x] Player Event
-- [x] Player Action
-- [x] If Player
 - [x] Entity Event
+- [x] Player Action
 - [x] Entity Action
-- [x] If Entity
 - [x] Game Action
+- [x] If Player
+- [x] If Entity
 - [x] If Game
-- [x] Set Variable
-- [x] If Variable
-- [x] Repeat
+- [ ] Set Variable
+- [ ] If Variable
+- [ ] Repeat
 - [x] Function
 - [x] Call Function
 - [x] Process
 - [x] Start Process
-- [x] Else
-- [x] Select Object
+- [ ] Else
+- [ ] Select Object
 - [ ] NOT Functionality
 
 ### Values
