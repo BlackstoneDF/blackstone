@@ -1,2 +1,3 @@
-PlayerEvent(Join){
+PlayerEvent(Join)) {
+    player.SendMessage(("Hey!")
 }

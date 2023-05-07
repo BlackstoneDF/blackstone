@@ -1,11 +1,10 @@
-use chumsky::{
-    prelude::{Simple, Rich},
-    primitive::{just, none_of, Empty, choice},
-    text,
-    Parser, IterParser, span::SimpleSpan, extra::{ParserExtra, Full}, error::Error,
-};
-use chumsky::extra::Err;
 use super::ident;
+use chumsky::extra::Err;
+use chumsky::{
+    prelude::Rich,
+    primitive::{choice, just, none_of},
+    text, IterParser, Parser,
+};
 
 use crate::codegen::item_data::ItemData;
 
@@ -20,9 +19,7 @@ pub fn parse_number<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, cha
         .slice()
         .from_str()
         .unwrapped()
-        .map(|f| {
-            ItemData::Number { data: f }
-        });
+        .map(|f| ItemData::Number { data: f });
     number
 }
 
@@ -33,20 +30,14 @@ pub fn parse_text<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>
     let text = just('"')
         .ignore_then(none_of('"').repeated().collect::<String>())
         .then_ignore(just('"'))
-        .map(|f| ItemData::Text {
-            data: f
-        });
+        .map(|f| ItemData::Text { data: f });
 
     text
 }
 
 pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {
     let location = text::keyword("loc")
-        .ignore_then(
-            parse_number()
-                .repeated()
-                .collect::<Vec<ItemData>>()
-        )
+        .ignore_then(parse_number().repeated().collect::<Vec<ItemData>>())
         .try_map(|f: Vec<ItemData>, f2| {
             if f.len() == 3 {
                 if let Some(ItemData::Number { data: n1 }) = f.get(0) {
@@ -84,7 +75,7 @@ pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, c
 
             // Report::build(ReportKind::Warning, (), 5);
             // TODO: throw ariadne error
-            return Err(Rich::custom(f2, "Locations must have 3 or 5 numbers."))
+            return Err(Rich::custom(f2, "Locations must have 3 or 5 numbers."));
         });
     location
 }
@@ -103,7 +94,7 @@ pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a,
                     data: format!("{{Count:1b,DF_NBT:3337,id:\\\"minecraft:{data}\\\"}}"),
                 });
             }
-            return Err(Rich::custom(span, "Failed to provide valid item."))
+            return Err(Rich::custom(span, "Failed to provide valid item."));
         });
 
     let item_stack = text::keyword("items")
@@ -117,7 +108,10 @@ pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a,
                         data: format!("{{Count:{count}b,DF_NBT:3337,id:\\\"minecraft:{id}\\\"}}"),
                     });
                 } else {
-                    return Err(Rich::custom(f2, "Invalid item stack. Requires an ID and an amount."))
+                    return Err(Rich::custom(
+                        f2,
+                        "Invalid item stack. Requires an ID and an amount.",
+                    ));
                 };
             }
             unreachable!("Somehow reached an impossible Item Stack.");

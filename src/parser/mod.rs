@@ -1,4 +1,8 @@
-use chumsky::{Parser, primitive::{one_of, none_of}, IterParser, regex::regex, prelude::Rich, extra};
+use chumsky::{
+    prelude::Rich,
+    primitive::{none_of, one_of},
+    IterParser, Parser,
+};
 
 use crate::codegen::{item_data::ItemData, misc::VariableScope};
 use chumsky::extra::Err;

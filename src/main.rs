@@ -88,7 +88,7 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn compile_with_recode(vector: Vec<Block>, name: String) {
+fn compile_with_recode(vector: Vec<Block>, _name: String) {
     let s = process_block_vec(vector);
     let send =
         r#"{"type": "template","source": "Blackstone","data":"{'name':'my name','data':'%s%'}"}"#;
@@ -106,7 +106,6 @@ fn compile_to_console(vector: Vec<Block>) {
     println!("Paste the above into DF to get it as a template.");
 }
 
-
 /*
 
 let vector = vector.into_iter().flatten().collect::<Vec<_>>();
@@ -121,27 +120,12 @@ let vector = vector.into_iter().flatten().collect::<Vec<_>>();
             }
  */
 fn process_inputs(input: &str, path: &str, target: CompileTarget) {
+    println!("input: {input}");
     let result = parser::parse::parser().parse(input);
-
-    // if let Some(vector) = result.clone().into_output() {
-    //     let vector = vector.into_iter().flatten().collect::<Vec<_>>();
-
-    //     let _ = vector.get(0).expect("codeless?");
-
-    //     let name = path.to_string();
-    //     println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
-    //     match target {
-    //         CompileTarget::Recode => compile_with_recode(vector, name),
-    //         CompileTarget::Stdout => compile_to_console(vector),
-    //     }
-    // } else {
-    //     for error in result.errors() {
-    //         println!("err: {}", error.to_string());
-    //     }
-    // }
 
     match result.clone().into_result() {
         Ok(vector) => {
+            println!("it's ok");
             let vector = vector.into_iter().flatten().collect::<Vec<_>>();
             let _ = vector.get(0).expect("codeless?");
             let name = path.to_string();
@@ -152,9 +136,15 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
             }
         }
         Err(errors) => {
-            errors
-            .into_iter()
-            .for_each(|e| println!("Parse error: {}", e));
+            println!("it's error");
+            for e in errors {
+                Report::build(ReportKind::Error, (), e.span().start)
+                    .with_message(e.reason().to_string())
+                    .with_label(Label::new(e.span().start..e.span().end).with_color(Color::Red))
+                    .finish()
+                    .print(Source::from(input))
+                    .expect("failed to print?");
+            }
         }
     }
 }
