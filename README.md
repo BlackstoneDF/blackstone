@@ -1,6 +1,8 @@
-# Blackstone
+# Blackstone & Shulker
 
-Blackstone is a programming language designed to help create plots on the MCDiamondFire Minecraft server.
+Blackstone is a programming language designed to help create plots on the MCDiamondFire Minecraft server. Shulker is a build tool that allows you to use the Blackstone programming language.
+
+Shulker also allows you to distribute your code publicly - whether you just want your game to be open-source or you want to make a library others can use.
 
 ## Community Links
 
@@ -84,6 +86,28 @@ We do think they would be useful, though.
 ### DFS Suggestions
 
 None yet! Let us know if there's some cool ones you'd like to see in our Discord!
+
+# Build Utilities
+Shulker will allow you to define your game & library in the `Shulker.toml` file.
+
+## Shulker.toml
+For example, a `Shulker.toml` for a game would be:
+```yaml
+[game]
+name = "Islands 2"
+id = 51025
+```
+And for a library, an example one would be:
+```yaml
+[library]
+name = "Entity Utilities"
+id = "entity_utilities"
+description = "This is a library used to make manipulating entities just better."
+creator = "Endistic"
+```
+
+## Publishing & Creating Libraries
+`todo!()`
 
 ## Special Thanks
 
