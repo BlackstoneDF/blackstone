@@ -13,7 +13,6 @@ pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, char>>> {
     let pt2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%<>";
     one_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%")
         .then(one_of(pt2).repeated().collect::<String>())
-        .then_ignore(none_of(pt2))
         .map(|(init_char, second_char)| {
             let collected = format!("{init_char}{second_char}");
             let collected = collected.replace("<", "(").replace(">", ")");

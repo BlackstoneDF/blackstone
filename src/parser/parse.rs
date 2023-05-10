@@ -178,6 +178,100 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                 )
         }.boxed();
 
+        let set_variable_game = {
+            text::keyword("game")
+                .padded()
+                .ignore_then(variable_parser())
+                .padded()
+                .then(operation)
+                .padded()
+                .then(ident())
+                .padded()
+                .then(argument_list())
+                .map(
+                    |(((var, op), effect), args): (((ItemData, &str), String), Vec<ItemData>)| {
+                        let mut items: Vec<Item> = vec![];
+                        for (slot, data) in args.into_iter().enumerate() {
+                            let id = data_to_id(&data);
+                            let slot = slot + 1;
+                            items.push(Item {
+                                id,
+                                slot: slot.try_into().expect("failed ot convert to usize"),
+                                item: data,
+                            })
+                        }
+                        items.insert(
+                            0,
+                            Item {
+                                slot: 0,
+                                id: "var".to_string(),
+                                item: var,
+                            },
+                        );
+                        let mut tmp_effect = effect;
+                        if tmp_effect == "with" {
+                            tmp_effect = op.to_string();
+                        }
+                        vec![Some(Block::Code {
+                            block: "set_var",
+                            items,
+                            action: tmp_effect,
+                            data: "",
+                            target: "",
+                            inverted: "",
+                            sub_action: String::new(),
+                        })]
+                    },
+                )
+        }.boxed();
+
+        let set_variable_saved = {
+            text::keyword("saved")
+                .padded()
+                .ignore_then(variable_parser())
+                .padded()
+                .then(operation)
+                .padded()
+                .then(ident())
+                .padded()
+                .then(argument_list())
+                .map(
+                    |(((var, op), effect), args): (((ItemData, &str), String), Vec<ItemData>)| {
+                        let mut items: Vec<Item> = vec![];
+                        for (slot, data) in args.into_iter().enumerate() {
+                            let id = data_to_id(&data);
+                            let slot = slot + 1;
+                            items.push(Item {
+                                id,
+                                slot: slot.try_into().expect("failed ot convert to usize"),
+                                item: data,
+                            })
+                        }
+                        items.insert(
+                            0,
+                            Item {
+                                slot: 0,
+                                id: "var".to_string(),
+                                item: var,
+                            },
+                        );
+                        let mut tmp_effect = effect;
+                        if tmp_effect == "with" {
+                            tmp_effect = op.to_string();
+                        }
+                        vec![Some(Block::Code {
+                            block: "set_var",
+                            items,
+                            action: tmp_effect,
+                            data: "",
+                            target: "",
+                            inverted: "",
+                            sub_action: String::new(),
+                        })]
+                    },
+                )
+        }.boxed();
+
         /*
         IFS
          */
@@ -350,6 +444,9 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             if_player,
             if_entity,
             if_game,
+            set_variable_game,
+            set_variable_local,
+            set_variable_saved
         ))
     });
 
@@ -359,10 +456,11 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
 pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>>
 {
     let player_event = text::keyword("PlayerEvent")
-        .ignore_then(just('('))
-        .padded()
-        .ignore_then(ident())
-        .then_ignore(just(')'))
+        .ignore_then(
+            ident()
+                .padded()
+                .delimited_by(just('('), just(')'))
+        )
         .padded()
         .then(
             actions_parser()
@@ -462,7 +560,7 @@ pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, E
 
 pub fn argument_list<'a>() -> impl Parser<'a, &'a str, Vec<ItemData>, Err<Rich<'a, char>>> {
     arguments_parser()
-        .repeated()
+        .separated_by(just(','))
         .collect::<Vec<ItemData>>()
         .padded()
         .delimited_by(just('('), just(')'))
