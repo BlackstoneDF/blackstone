@@ -9,6 +9,7 @@ mod parser;
 
 fn main() -> io::Result<()> {
     let args = env::args().collect::<Vec<_>>();
+    env::set_var("RUST_BACKTRACE", "1");
 
     let start = std::time::Instant::now();
 
