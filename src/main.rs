@@ -126,13 +126,16 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
     match result.clone().into_result() {
         Ok(vector) => {
             println!("it's ok");
-            let vector = vector.into_iter().flatten().collect::<Vec<_>>();
-            let _ = vector.get(0).expect("codeless?");
-            let name = path.to_string();
-            println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
-            match target {
-                CompileTarget::Recode => compile_with_recode(vector, name),
-                CompileTarget::Stdout => compile_to_console(vector),
+            for subvector in vector {
+                let subvector = subvector.into_iter().flatten().collect::<Vec<_>>();
+                let _ = subvector.get(0).expect("codeless?");
+                let name = path.to_string();
+                println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
+
+                match target {
+                    CompileTarget::Recode => compile_with_recode(subvector, name),
+                    CompileTarget::Stdout => compile_to_console(subvector),
+                }
             }
         }
         Err(errors) => {

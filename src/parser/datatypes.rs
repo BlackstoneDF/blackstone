@@ -98,23 +98,22 @@ pub fn parse_item_stack<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a,
         });
 
     let item_stack = text::keyword("items")
-        .ignore_then(parse_text().padded().delimited_by(just('('), just(')')))
-        .try_map(|f, f2| {
-            if let ItemData::Text { data } = f {
-                let split = data.split(':').collect::<Vec<_>>();
-                let id = split.first().expect("somehow failed");
-                if let Some(count) = split.get(1) {
-                    return Ok(ItemData::VanillaItem {
-                        data: format!("{{Count:{count}b,DF_NBT:3337,id:\\\"minecraft:{id}\\\"}}"),
-                    });
-                } else {
-                    return Err(Rich::custom(
-                        f2,
-                        "Invalid item stack. Requires an ID and an amount.",
-                    ));
-                };
+        .ignore_then(
+            ident()
+                .padded()
+                .then_ignore(just(';'))
+                .padded()
+                .then(parse_number())
+                .padded()
+                .delimited_by(just('('), just(')'))
+        )
+        .try_map(|(id, num), f2| {
+            if let ItemData::Number { data } = num {
+                return Ok(ItemData::VanillaItem {
+                    data: format!("{{Count:{data}b,DF_NBT:3337,id:\\\"minecraft:{id}\\\"}}"),
+                });
             }
-            unreachable!("Somehow reached an impossible Item Stack.");
+            return Err(Rich::custom(f2, "Somehow reached an invalid position. If you get this error, please reach out to us."));
         });
 
     item.or(item_stack).boxed()

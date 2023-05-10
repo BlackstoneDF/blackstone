@@ -18,8 +18,8 @@ use super::{
     ident,
 };
 
-pub fn parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>> {
-    events_parser()
+pub fn parser<'a>() -> impl Parser<'a, &'a str, Vec<Vec<Option<Block<'a>>>>, Err<Rich<'a, char>>> {
+    events_parser().repeated().collect::<Vec<_>>()
 }
 
 pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>>
@@ -176,7 +176,8 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         })]
                     },
                 )
-        }.boxed();
+        }
+        .boxed();
 
         let set_variable_game = {
             text::keyword("game")
@@ -223,7 +224,8 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         })]
                     },
                 )
-        }.boxed();
+        }
+        .boxed();
 
         let set_variable_saved = {
             text::keyword("saved")
@@ -270,7 +272,8 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         })]
                     },
                 )
-        }.boxed();
+        }
+        .boxed();
 
         /*
         IFS
@@ -446,7 +449,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             if_game,
             set_variable_game,
             set_variable_local,
-            set_variable_saved
+            set_variable_saved,
         ))
     });
 
@@ -456,11 +459,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
 pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>>
 {
     let player_event = text::keyword("PlayerEvent")
-        .ignore_then(
-            ident()
-                .padded()
-                .delimited_by(just('('), just(')'))
-        )
+        .ignore_then(ident().padded().delimited_by(just('('), just(')')))
         .padded()
         .then(
             actions_parser()
