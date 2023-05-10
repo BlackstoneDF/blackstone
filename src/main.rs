@@ -125,12 +125,11 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
 
     match result.clone().into_result() {
         Ok(vector) => {
-            println!("it's ok");
+            println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
             for subvector in vector {
                 let subvector = subvector.into_iter().flatten().collect::<Vec<_>>();
                 let _ = subvector.get(0).expect("codeless?");
                 let name = path.to_string();
-                println!("\t\x1b[32;1mSending\x1b[0m `{path}` to client.");
 
                 match target {
                     CompileTarget::Recode => compile_with_recode(subvector, name),
@@ -167,7 +166,7 @@ Built-in commands:
     build                       Builds all code in the `scripts` directory & sends it via `recode` mod.
     build-stdout [script]       Sends the code data to the console instead of to `recode`.
                                 Useful if you don't have `recode` installed.
-    build-test                  Run the tests in the code.
+    build-test                  Run the tests in the code. (Coming soon!)
     add [package]               Add an external package to your scripts.
     recode                      Gives a link to the `recode` mod, for ease of use with Blackstone
     help                        Shows this message!

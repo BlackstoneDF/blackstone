@@ -57,7 +57,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                     vec![Some(Block::Code {
                         block: "player_action",
                         items,
-                        action: f,
+                        action: first_upper(&f),
                         data: "",
                         target: "Selection",
                         inverted: "",
@@ -87,7 +87,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                     vec![Some(Block::Code {
                         block: "entity_action",
                         items,
-                        action: f,
+                        action: first_upper(&f),
                         data: "",
                         target: "Selection",
                         inverted: "",
@@ -117,7 +117,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                     vec![Some(Block::Code {
                         block: "game_action",
                         items,
-                        action: f,
+                        action: first_upper(&f),
                         data: "",
                         target: "Selection",
                         inverted: "",
@@ -168,7 +168,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         vec![Some(Block::Code {
                             block: "set_var",
                             items,
-                            action: tmp_effect,
+                            action: first_upper(&tmp_effect),
                             data: "",
                             target: "",
                             inverted: "",
@@ -216,7 +216,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         vec![Some(Block::Code {
                             block: "set_var",
                             items,
-                            action: tmp_effect,
+                            action: first_upper(&tmp_effect),
                             data: "",
                             target: "",
                             inverted: "",
@@ -264,7 +264,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         vec![Some(Block::Code {
                             block: "set_var",
                             items,
-                            action: tmp_effect,
+                            action: first_upper(&tmp_effect),
                             data: "",
                             target: "",
                             inverted: "",
@@ -310,7 +310,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         Some(Block::Code {
                             block: "if_player",
                             items: vec![],
-                            action: name,
+                            action: first_upper(&name),
                             data: "",
                             target: "Selection",
                             inverted: "",
@@ -362,7 +362,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         Some(Block::Code {
                             block: "if_entity",
                             items: vec![],
-                            action: name,
+                            action: first_upper(&name),
                             data: "",
                             target: "Selection",
                             inverted: "",
@@ -414,7 +414,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         Some(Block::Code {
                             block: "if_game",
                             items: vec![],
-                            action: name,
+                            action: first_upper(&name),
                             data: "",
                             target: "Selection",
                             inverted: "",
@@ -566,6 +566,7 @@ pub fn argument_list<'a>() -> impl Parser<'a, &'a str, Vec<ItemData>, Err<Rich<'
         .padded()
 }
 
+/// This matches an ItemData to it's ID in the item type.
 fn data_to_id(data: &ItemData) -> String {
     match data {
         ItemData::Number { .. } => "num".to_string(),
@@ -573,5 +574,14 @@ fn data_to_id(data: &ItemData) -> String {
         ItemData::VanillaItem { .. } => "item".to_string(),
         ItemData::Location { .. } => "loc".to_string(),
         _ => "var".to_string(),
+    }
+}
+
+/// Converts the first letter of a String to uppercase.
+fn first_upper(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        None => String::new(),
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
     }
 }
