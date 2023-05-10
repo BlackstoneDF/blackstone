@@ -458,8 +458,13 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
 
 pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>>
 {
-    let player_event = text::keyword("PlayerEvent")
-        .ignore_then(ident().padded().delimited_by(just('('), just(')')))
+    let player_event = text::keyword("event")
+        .padded()
+        .ignore_then(text::keyword("player"))
+        .padded()
+        .ignore_then(just('.'))
+        .padded()
+        .ignore_then(ident().padded())
         .padded()
         .then(
             actions_parser()
@@ -482,7 +487,7 @@ pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, E
                 0,
                 Some(Block::EventDefinition {
                     block: "event",
-                    action: name,
+                    action: first_upper(&name),
                 }),
             );
             out
