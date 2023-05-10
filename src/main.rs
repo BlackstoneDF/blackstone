@@ -166,16 +166,17 @@ Blackstone's compiler & build tooling
 {bold}Usage:{reset} {prefix} [commands]
 
 {bold}Built-in commands:{reset}
-    {bold}version{reset}                     Get the current version of Blackstone.
-    {bold}init{reset}                        Initialize a new Blackstone environment in your current directory.
-    {bold}build-one [script]{reset}          Builds the code provided & sends it via `recode` mod.
-    {bold}build{reset}                       Builds all code in the `scripts` directory & sends it via `recode` mod.
-    {bold}build-stdout [script]{reset}       Sends the code data to the console instead of to `recode`.
-                                Useful if you don't have `recode` installed.
+    {bold}version{reset}                     Get the current version of Blackstone
+    {bold}init{reset}                        Initialize a new Blackstone environment in your current directory
+    {bold}build-one [script]{reset}          Builds the code provided & sends it via `recode` mod
+    {bold}build{reset}                       Builds all code in the `scripts` directory & sends it via `recode` mod
+    {bold}build-stdout [script]{reset}       Sends the code data to the console instead of to `recode`
+                                Useful if you don't have `recode` installed
     {bold}build-test{reset}                  Run the tests in the code. (Coming soon!)
-    {bold}add [package]{reset}               Add an external package to your scripts.
+    {bold}add [package]{reset}               Add an external package to your scripts
     {bold}recode{reset}                      Gives a link to the `recode` mod, for ease of use with Blackstone
-    {bold}help{reset}                        Shows this message!
+    {bold}help{reset}                        Shows this message
+    {bold}docs{reset}                        View documentation (Coming soon!)
     "#
     );
 }
