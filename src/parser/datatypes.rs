@@ -27,12 +27,10 @@ pub fn parse_text<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>
     // Text
     // This argument represents a Text type on DiamondFire.
     // It is converted from a String literal.
-    let text = just('"')
+    just('"')
         .ignore_then(none_of('"').repeated().collect::<String>())
         .then_ignore(just('"'))
-        .map(|f| ItemData::Text { data: f });
-
-    text
+        .map(|f| ItemData::Text { data: f })
 }
 
 pub fn parse_location<'a>() -> impl Parser<'a, &'a str, ItemData, Err<Rich<'a, char>>> {

@@ -14,9 +14,7 @@ pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, char>>> {
     one_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%")
         .then(one_of(pt2).repeated().collect::<String>())
         .map(|(init_char, second_char)| {
-            let collected = format!("{init_char}{second_char}");
-            let collected = collected.replace("<", "(").replace(">", ")");
-            collected
+            format!("{init_char}{second_char}").replace('<', "(").replace('>', ")")
         })
 }
 

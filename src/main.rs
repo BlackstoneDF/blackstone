@@ -80,6 +80,7 @@ fn main() -> io::Result<()> {
                 println!("Recode on modrinth: https://modrinth.com/mod/recode");
                 println!("Recode on github: https://github.com/homchom/recode");
             }
+            "docs" => todo!(),
             _ => help_message(prefix), //"help" is included in the catch-all
         }
     } else {

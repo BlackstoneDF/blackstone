@@ -453,7 +453,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
         ))
     });
 
-    return recurs;
+    recurs
 }
 
 pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, Err<Rich<'a, char>>>
