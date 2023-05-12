@@ -1,3 +1,4 @@
-on player.join {
-    player.sendMessage("this is my message")
+event player.join {
+    player.sendMessage("this is my message");
+    var local.x = with(10);
 }
