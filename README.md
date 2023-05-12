@@ -37,15 +37,15 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [x] If Player
 - [x] If Entity
 - [x] If Game
-- [ ] Set Variable
-- [ ] If Variable
+- [x] Set Variable
+- [x] If Variable
 - [ ] Repeat
 - [x] Function
 - [x] Call Function
 - [x] Process
 - [x] Start Process
 - [ ] Else
-- [ ] Select Object
+- [x] Select Object
 - [ ] NOT Functionality
 
 ### Values
