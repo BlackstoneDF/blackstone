@@ -1,11 +1,11 @@
 [package]
 name = "shulker"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/BlackstoneDF/blackstone"
-homepage = "https://github.com/BlackstoneDF/blackstone"
+homepage = "https://blackstonedf.github.io/"
 description = "A build tool for the Blackstone programming language."
 
 
