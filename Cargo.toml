@@ -7,9 +7,10 @@ readme = "README.md"
 repository = "https://github.com/BlackstoneDF/blackstone"
 homepage = "https://blackstonedf.github.io/"
 description = "A compiler for the Blackstone programming language."
+default-run = "bl"
 
 [[bin]]
-path = "./src"
+path = "./src/main.rs"
 name = "bl"
 
 # Please try to minimize dependencies.
