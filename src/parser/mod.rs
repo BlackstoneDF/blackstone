@@ -14,7 +14,9 @@ pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, char>>> {
     one_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%.")
         .then(one_of(pt2).repeated().collect::<String>())
         .map(|(init_char, second_char)| {
-            format!("{init_char}{second_char}").replace('<', "(").replace('>', ")")
+            format!("{init_char}{second_char}")
+                .replace('<', "(")
+                .replace('>', ")")
         })
 }
 
@@ -28,11 +30,11 @@ fn ident_to_var(input: &str) -> ItemData {
             },
             "save" => ItemData::Variable {
                 scope: VariableScope::Saved,
-                name:  words.get(1).unwrap_or(&"_NULL").to_string(),
+                name: words.get(1).unwrap_or(&"_NULL").to_string(),
             },
             _ => ItemData::Variable {
                 scope: VariableScope::Unsaved,
-                name:  words.get(1).unwrap_or(&"_NULL").to_string(),
+                name: words.get(1).unwrap_or(&"_NULL").to_string(),
             },
         }
     } else {

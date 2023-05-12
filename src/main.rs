@@ -159,7 +159,6 @@ fn help_message(prefix: &str) {
     println!("{bold}");
     shulker_header();
     println!("{reset}");
-    
 
     println!(
         r#"
