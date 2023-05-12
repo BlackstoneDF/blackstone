@@ -8,6 +8,9 @@ repository = "https://github.com/BlackstoneDF/blackstone"
 homepage = "https://blackstonedf.github.io/"
 description = "A compiler for the Blackstone programming language."
 
+[[bin]]
+path = "./src"
+name = "bl"
 
 # Please try to minimize dependencies.
 # I don't want a really long time taken when building.
