@@ -736,11 +736,11 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         inverted: "",
                         sub_action: "".to_string(),
                     }));
-                    out.push(Some(Block::Code {
+                    out.push(Some(Block::CodeDataString {
                         block: "call_func",
                         items: vec![],
-                        action: ident,
-                        data: "",
+                        action: "".to_string(),
+                        data: ident.clone(),
                         target: "",
                         inverted: "",
                         sub_action: String::new(),
@@ -788,11 +788,11 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         inverted: "",
                         sub_action: "".to_string(),
                     }));
-                    out.push(Some(Block::Code {
+                    out.push(Some(Block::CodeDataString {
                         block: "start_process",
                         items: vec![],
-                        action: ident,
-                        data: "",
+                        action: String::new(),
+                        data: ident,
                         target: "",
                         inverted: "",
                         sub_action: String::new(),
@@ -801,6 +801,47 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                 })
         }
         .boxed();
+
+        let unpack = {
+            text::keyword("unpack")
+                .padded()
+                .ignore_then(
+                    ident()
+                        .padded()
+                        .repeated()
+                        .collect::<Vec<_>>()
+                ).map(|idents| {
+                    let mut out = vec![];
+                    for (index, id) in idents.into_iter().enumerate() {
+                        out.push(Some(Block::Code {
+                            block: "set_var",
+                            items: vec![
+                                Item {
+                                    slot: 1,
+                                    id: "var".to_string(),
+                                    item: ItemData::Variable { scope: VariableScope::Local, name: id }
+                                },
+                                Item {
+                                    slot: 2,
+                                    id: "var".to_string(),
+                                    item: ItemData::Variable { scope: VariableScope::Local, name: "__FUNCTION_PARAMETERS".to_string() }
+                                },
+                                Item {
+                                    slot: 3,
+                                    id: "num".to_string(),
+                                    item: ItemData::Number { data: (index as f32) }
+                                }
+                            ],
+                            action: "GetListValue".to_string(),
+                            data: "",
+                            target: "",
+                            inverted: "",
+                            sub_action: String::new(),
+                        }));
+                    }
+                    out
+                })
+        }.boxed();
         /*
         OTHER
          */
@@ -818,6 +859,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             repeat,
             func,
             proc,
+            unpack
         ))
     });
 

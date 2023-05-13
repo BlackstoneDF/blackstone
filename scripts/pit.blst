@@ -1,0 +1,3 @@
+event player.join {
+    func myFunction(10);
+}

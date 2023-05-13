@@ -23,6 +23,15 @@ pub enum Block<'a> {
         inverted: &'a str,
         sub_action: String,
     },
+    CodeDataString {
+        block: &'a str,
+        items: Vec<Item>,
+        action: String,
+        data: String,
+        target: &'a str,
+        inverted: &'a str,
+        sub_action: String,
+    },
     /// Defines the definition of an event (either PlayerEvent or EntityEvent)
     ///   - &'a str `block`: The associated block (Diamond Block for PlayerEvent, Gold Block for EntityEvent)
     ///   - &'a str `action`: The associated action (e.g. join or killPlayer)
@@ -60,6 +69,25 @@ impl Block<'_> {
     pub fn to_json(&self) -> String {
         match self {
             Block::Code {
+                block,
+                items,
+                action,
+                data,
+                target,
+                inverted,
+                sub_action,
+            } => {
+                let mut items_str = String::new();
+                for item in items {
+                    items_str.push_str(item.to_json().as_str());
+                    items_str.push(',');
+                }
+                items_str.pop();
+                format!(
+                    r#"{{"id":"block","block":"{block}","args":{{"items":[{items_str}]}},"action":"{action}","target":"{target}","inverted":"{inverted}","data":"{data}","subAction":"{sub_action}"}}"#
+                )
+            }
+            Block::CodeDataString {
                 block,
                 items,
                 action,
