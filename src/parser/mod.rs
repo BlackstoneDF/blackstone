@@ -1,8 +1,4 @@
-use chumsky::{
-    prelude::Rich,
-    primitive::one_of,
-    IterParser, Parser,
-};
+use chumsky::{prelude::Rich, primitive::one_of, IterParser, Parser};
 
 use crate::codegen::{item_data::ItemData, misc::VariableScope};
 use chumsky::extra::Err;

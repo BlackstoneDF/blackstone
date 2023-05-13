@@ -1,8 +1,0 @@
-event player.join { 
-    if player.isGrounded() {
-
-    };
-    if not player.isGrounded() {
-
-    }
-}

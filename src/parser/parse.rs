@@ -9,7 +9,7 @@ use crate::codegen::{
     block::Block,
     item::Item,
     item_data::ItemData,
-    misc::{BracketDirection, BracketType},
+    misc::{BracketDirection, BracketType, VariableScope},
 };
 use chumsky::extra::Err;
 
@@ -185,11 +185,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
         let if_player = {
             text::keyword("if")
                 .padded()
-                .ignore_then(
-                    text::keyword("not")
-                    .or_not()
-                    .padded()
-                )
+                .ignore_then(text::keyword("not").or_not().padded())
                 .then(text::keyword("player"))
                 .padded()
                 .then(just('.'))
@@ -208,65 +204,72 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .padded(),
                 )
                 .padded()
-                .map(|(((((ifnot, _), _), name), item_args), args): (((((std::option::Option<&str>, &str), char), std::string::String), Vec<ItemData>), Vec<Vec<Option<Block>>>)| {
-                    let mut out = vec![];
-                    for block in args {
-                        for sub_block in block.into_iter().flatten() {
-                            out.append(&mut vec![Some(sub_block)]);
+                .map(
+                    |(((((ifnot, _), _), name), item_args), args): (
+                        (
+                            (
+                                ((std::option::Option<&str>, &str), char),
+                                std::string::String,
+                            ),
+                            Vec<ItemData>,
+                        ),
+                        Vec<Vec<Option<Block>>>,
+                    )| {
+                        let mut out = vec![];
+                        for block in args {
+                            for sub_block in block.into_iter().flatten() {
+                                out.append(&mut vec![Some(sub_block)]);
+                            }
                         }
-                    }
 
-                    let mut inverted = "";
-                    if let Some(_) = ifnot {
-                        inverted = "NOT";
-                    }
-                    let mut items: Vec<Item> = vec![];
-                    for (slot, data) in item_args.into_iter().enumerate() {
-                        let id = data_to_id(&data);
-                        let slot = slot + 1;
-                        items.push(Item {
-                            id,
-                            slot: slot.try_into().expect("failed ot convert to usize"),
-                            item: data,
-                        })
-                    }
+                        let mut inverted = "";
+                        if let Some(_) = ifnot {
+                            inverted = "NOT";
+                        }
+                        let mut items: Vec<Item> = vec![];
+                        for (slot, data) in item_args.into_iter().enumerate() {
+                            let id = data_to_id(&data);
+                            let slot = slot + 1;
+                            items.push(Item {
+                                id,
+                                slot: slot.try_into().expect("failed ot convert to usize"),
+                                item: data,
+                            })
+                        }
 
-                    out.insert(
-                        0,
-                        Some(Block::Code {
-                            block: "if_player",
-                            items,
-                            action: first_upper(&name),
-                            data: "",
-                            target: "Selection",
-                            inverted,
-                            sub_action: String::new(),
-                        }),
-                    );
-                    out.insert(
-                        1,
-                        Some(Block::Bracket {
-                            direct: BracketDirection::Open,
+                        out.insert(
+                            0,
+                            Some(Block::Code {
+                                block: "if_player",
+                                items,
+                                action: first_upper(&name),
+                                data: "",
+                                target: "Selection",
+                                inverted,
+                                sub_action: String::new(),
+                            }),
+                        );
+                        out.insert(
+                            1,
+                            Some(Block::Bracket {
+                                direct: BracketDirection::Open,
+                                typ: BracketType::Norm,
+                            }),
+                        );
+                        out.push(Some(Block::Bracket {
+                            direct: BracketDirection::Close,
                             typ: BracketType::Norm,
-                        }),
-                    );
-                    out.push(Some(Block::Bracket {
-                        direct: BracketDirection::Close,
-                        typ: BracketType::Norm,
-                    }));
-                    out
-                })
+                        }));
+                        out
+                    },
+                )
         }
         .boxed();
 
         let if_entity = {
             text::keyword("if")
                 .padded()
-                .ignore_then(
-                    text::keyword("not")
-                    .or_not()
-                    .padded()
-                )
+                .ignore_then(text::keyword("not").or_not().padded())
                 .then(text::keyword("entity"))
                 .padded()
                 .then(just('.'))
@@ -284,65 +287,71 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .padded(),
                 )
                 .padded()
-                .map(|(((((ifnot, _), _), name), item_args), args): (((((std::option::Option<&str>, &str), char), std::string::String), Vec<ItemData>), Vec<Vec<Option<Block>>>)| {
-                    let mut out = vec![];
-                    for block in args {
-                        for sub_block in block.into_iter().flatten() {
-                            out.append(&mut vec![Some(sub_block)]);
+                .map(
+                    |(((((ifnot, _), _), name), item_args), args): (
+                        (
+                            (
+                                ((std::option::Option<&str>, &str), char),
+                                std::string::String,
+                            ),
+                            Vec<ItemData>,
+                        ),
+                        Vec<Vec<Option<Block>>>,
+                    )| {
+                        let mut out = vec![];
+                        for block in args {
+                            for sub_block in block.into_iter().flatten() {
+                                out.append(&mut vec![Some(sub_block)]);
+                            }
                         }
-                    }
-                    let mut inverted = "";
-                    if let Some(_) = ifnot {
-                        inverted = "NOT";
-                    }
+                        let mut inverted = "";
+                        if let Some(_) = ifnot {
+                            inverted = "NOT";
+                        }
 
-                    let mut items: Vec<Item> = vec![];
-                    for (slot, data) in item_args.into_iter().enumerate() {
-                        let id = data_to_id(&data);
-                        let slot = slot + 1;
-                        items.push(Item {
-                            id,
-                            slot: slot.try_into().expect("failed ot convert to usize"),
-                            item: data,
-                        })
-                    }
+                        let mut items: Vec<Item> = vec![];
+                        for (slot, data) in item_args.into_iter().enumerate() {
+                            let id = data_to_id(&data);
+                            let slot = slot + 1;
+                            items.push(Item {
+                                id,
+                                slot: slot.try_into().expect("failed ot convert to usize"),
+                                item: data,
+                            })
+                        }
 
-
-                    out.insert(
-                        0,
-                        Some(Block::Code {
-                            block: "if_entity",
-                            items,
-                            action: first_upper(&name),
-                            data: "",
-                            target: "Selection",
-                            inverted,
-                            sub_action: String::new(),
-                        }),
-                    );
-                    out.insert(
-                        1,
-                        Some(Block::Bracket {
-                            direct: BracketDirection::Open,
+                        out.insert(
+                            0,
+                            Some(Block::Code {
+                                block: "if_entity",
+                                items,
+                                action: first_upper(&name),
+                                data: "",
+                                target: "Selection",
+                                inverted,
+                                sub_action: String::new(),
+                            }),
+                        );
+                        out.insert(
+                            1,
+                            Some(Block::Bracket {
+                                direct: BracketDirection::Open,
+                                typ: BracketType::Norm,
+                            }),
+                        );
+                        out.push(Some(Block::Bracket {
+                            direct: BracketDirection::Close,
                             typ: BracketType::Norm,
-                        }),
-                    );
-                    out.push(Some(Block::Bracket {
-                        direct: BracketDirection::Close,
-                        typ: BracketType::Norm,
-                    }));
-                    out
-                })
+                        }));
+                        out
+                    },
+                )
         }
         .boxed();
 
         let if_game = {
             text::keyword("if")
-                .ignore_then(
-                    text::keyword("not")
-                    .or_not()
-                    .padded()
-                )
+                .ignore_then(text::keyword("not").or_not().padded())
                 .padded()
                 .then(text::keyword("plot"))
                 .padded()
@@ -415,11 +424,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
         let if_variable = {
             text::keyword("if")
                 .padded()
-                .ignore_then(
-                    text::keyword("not")
-                    .or_not()
-                    .padded()
-                )
+                .ignore_then(text::keyword("not").or_not().padded())
                 .padded()
                 .then(text::keyword("var"))
                 .padded()
@@ -440,64 +445,66 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .delimited_by(just('{'), just('}'))
                         .padded(),
                 )
-                .map(|((((((ifnot, _), variable), effect), name), item_args), args)| {
-                    let mut out = vec![];
-                    for block in args {
-                        for sub_block in block.into_iter().flatten() {
-                            out.append(&mut vec![Some(sub_block)]);
+                .map(
+                    |((((((ifnot, _), variable), effect), name), item_args), args)| {
+                        let mut out = vec![];
+                        for block in args {
+                            for sub_block in block.into_iter().flatten() {
+                                out.append(&mut vec![Some(sub_block)]);
+                            }
                         }
-                    }
-                    let mut items: Vec<Item> = vec![];
-                    for (slot, data) in item_args.into_iter().enumerate() {
-                        let id = data_to_id(&data);
-                        let slot = slot + 1;
-                        items.push(Item {
-                            id,
-                            slot: slot.try_into().expect("failed ot convert to usize"),
-                            item: data,
-                        })
-                    }
-                    items.insert(
-                        0,
-                        Item {
-                            slot: 0,
-                            id: "var".to_string(),
-                            item: variable,
-                        },
-                    );
-                    let mut tmp_effect = effect;
-                    if tmp_effect == "with" {
-                        tmp_effect = &name;
-                    }
-                    let mut inverted = "";
-                    if let Some(_) = ifnot {
-                        inverted = "NOT";
-                    }
-                    out.insert(
-                        0,
-                        Some(Block::Code {
-                            block: "if_var",
-                            items,
-                            action: first_upper(&tmp_effect),
-                            data: "",
-                            target: "",
-                            inverted,
-                            sub_action: String::new(),
-                        }),
-                    );
-                    out.insert(
-                        1,
-                        Some(Block::Bracket {
-                            direct: BracketDirection::Open,
+                        let mut items: Vec<Item> = vec![];
+                        for (slot, data) in item_args.into_iter().enumerate() {
+                            let id = data_to_id(&data);
+                            let slot = slot + 1;
+                            items.push(Item {
+                                id,
+                                slot: slot.try_into().expect("failed ot convert to usize"),
+                                item: data,
+                            })
+                        }
+                        items.insert(
+                            0,
+                            Item {
+                                slot: 0,
+                                id: "var".to_string(),
+                                item: variable,
+                            },
+                        );
+                        let mut tmp_effect = effect;
+                        if tmp_effect == "with" {
+                            tmp_effect = &name;
+                        }
+                        let mut inverted = "";
+                        if let Some(_) = ifnot {
+                            inverted = "NOT";
+                        }
+                        out.insert(
+                            0,
+                            Some(Block::Code {
+                                block: "if_var",
+                                items,
+                                action: first_upper(&tmp_effect),
+                                data: "",
+                                target: "",
+                                inverted,
+                                sub_action: String::new(),
+                            }),
+                        );
+                        out.insert(
+                            1,
+                            Some(Block::Bracket {
+                                direct: BracketDirection::Open,
+                                typ: BracketType::Norm,
+                            }),
+                        );
+                        out.push(Some(Block::Bracket {
+                            direct: BracketDirection::Close,
                             typ: BracketType::Norm,
-                        }),
-                    );
-                    out.push(Some(Block::Bracket {
-                        direct: BracketDirection::Close,
-                        typ: BracketType::Norm,
-                    }));
-                    out
-                })
+                        }));
+                        out
+                    },
+                )
         }
         .boxed();
 
@@ -624,18 +631,23 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                             sub_action: first_upper(&t2),
                         }));
                     }
-                    out.push(Some(Block::Bracket { direct: BracketDirection::Open, typ: BracketType::Repeat }));
+                    out.push(Some(Block::Bracket {
+                        direct: BracketDirection::Open,
+                        typ: BracketType::Repeat,
+                    }));
                     for code in codes {
                         for subcode in code {
                             out.push(subcode);
                         }
                     }
-                    out.push(Some(Block::Bracket { direct: BracketDirection::Close, typ: BracketType::Repeat }));
+                    out.push(Some(Block::Bracket {
+                        direct: BracketDirection::Close,
+                        typ: BracketType::Repeat,
+                    }));
                     out
                 })
                 .boxed()
         };
-
 
         let _else = {
             text::keyword("else")
@@ -650,7 +662,8 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .padded()
                         .delimited_by(just('{'), just('}'))
                         .padded(),
-                ).map(|blocks| {
+                )
+                .map(|blocks| {
                     let mut out = vec![];
                     for block in blocks {
                         for sub_block in block.into_iter().flatten() {
@@ -682,7 +695,112 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                     }));
                     out
                 })
-        }.boxed();
+        }
+        .boxed();
+
+        let func = {
+            text::keyword("func")
+                .padded()
+                .ignore_then(ident())
+                .padded()
+                .then(argument_list())
+                .map(|(ident, args)| {
+                    let mut out = vec![];
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, data) in args.into_iter().enumerate() {
+                        let id = data_to_id(&data);
+                        let slot = slot + 1;
+                        items.push(Item {
+                            id,
+                            slot: (slot as i32) + 1,
+                            item: data,
+                        })
+                    }
+                    items.insert(
+                        0,
+                        Item {
+                            slot: 0,
+                            id: "var".to_string(),
+                            item: ItemData::Variable {
+                                scope: VariableScope::Local,
+                                name: "__FUNCTION_PARAMS".to_string(),
+                            },
+                        },
+                    );
+                    out.push(Some(Block::Code {
+                        block: "set_var",
+                        items,
+                        action: "CreateList".to_string(),
+                        data: "",
+                        target: "",
+                        inverted: "",
+                        sub_action: "".to_string(),
+                    }));
+                    out.push(Some(Block::Code {
+                        block: "call_func",
+                        items: vec![],
+                        action: ident,
+                        data: "",
+                        target: "",
+                        inverted: "",
+                        sub_action: String::new(),
+                    }));
+                    out
+                })
+        }
+        .boxed();
+
+        let proc = {
+            text::keyword("proc")
+                .padded()
+                .ignore_then(ident())
+                .padded()
+                .then(argument_list())
+                .map(|(ident, args)| {
+                    let mut out = vec![];
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, data) in args.into_iter().enumerate() {
+                        let id = data_to_id(&data);
+                        let slot = slot + 1;
+                        items.push(Item {
+                            id,
+                            slot: (slot as i32) + 1,
+                            item: data,
+                        })
+                    }
+                    items.insert(
+                        0,
+                        Item {
+                            slot: 0,
+                            id: "var".to_string(),
+                            item: ItemData::Variable {
+                                scope: VariableScope::Local,
+                                name: "__FUNCTION_PARAMS".to_string(),
+                            },
+                        },
+                    );
+                    out.push(Some(Block::Code {
+                        block: "set_var",
+                        items: items,
+                        action: "CreateList".to_string(),
+                        data: "",
+                        target: "",
+                        inverted: "",
+                        sub_action: "".to_string(),
+                    }));
+                    out.push(Some(Block::Code {
+                        block: "start_process",
+                        items: vec![],
+                        action: ident,
+                        data: "",
+                        target: "",
+                        inverted: "",
+                        sub_action: String::new(),
+                    }));
+                    out
+                })
+        }
+        .boxed();
         /*
         OTHER
          */
@@ -698,6 +816,8 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             _else,
             select_object,
             repeat,
+            func,
+            proc,
         ))
     });
 
