@@ -1,8 +1,8 @@
 event player.join { 
-    if var local.x = with(10) {
+    if player.isGrounded() {
 
     };
-    if not var local.x = with(20) {
+    if not player.isGrounded() {
 
     }
 }

@@ -185,12 +185,18 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
         let if_player = {
             text::keyword("if")
                 .padded()
-                .ignore_then(text::keyword("player"))
+                .ignore_then(
+                    text::keyword("not")
+                    .or_not()
+                    .padded()
+                )
+                .then(text::keyword("player"))
                 .padded()
-                .ignore_then(just('.'))
+                .then(just('.'))
                 .padded()
-                .ignore_then(ident())
+                .then(ident())
                 .padded()
+                .then(argument_list())
                 .then(
                     actions
                         .clone()
@@ -202,22 +208,38 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .padded(),
                 )
                 .padded()
-                .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+                .map(|(((((ifnot, _), _), name), item_args), args): (((((std::option::Option<&str>, &str), char), std::string::String), Vec<ItemData>), Vec<Vec<Option<Block>>>)| {
                     let mut out = vec![];
                     for block in args {
                         for sub_block in block.into_iter().flatten() {
                             out.append(&mut vec![Some(sub_block)]);
                         }
                     }
+
+                    let mut inverted = "";
+                    if let Some(_) = ifnot {
+                        inverted = "NOT";
+                    }
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, data) in item_args.into_iter().enumerate() {
+                        let id = data_to_id(&data);
+                        let slot = slot + 1;
+                        items.push(Item {
+                            id,
+                            slot: slot.try_into().expect("failed ot convert to usize"),
+                            item: data,
+                        })
+                    }
+
                     out.insert(
                         0,
                         Some(Block::Code {
                             block: "if_player",
-                            items: vec![],
+                            items,
                             action: first_upper(&name),
                             data: "",
                             target: "Selection",
-                            inverted: "",
+                            inverted,
                             sub_action: String::new(),
                         }),
                     );
@@ -240,11 +262,17 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
         let if_entity = {
             text::keyword("if")
                 .padded()
-                .ignore_then(text::keyword("entity"))
+                .ignore_then(
+                    text::keyword("not")
+                    .or_not()
+                    .padded()
+                )
+                .then(text::keyword("entity"))
                 .padded()
-                .ignore_then(just('.'))
+                .then(just('.'))
                 .padded()
-                .ignore_then(ident())
+                .then(ident())
+                .then(argument_list())
                 .then(
                     actions
                         .clone()
@@ -256,22 +284,39 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .padded(),
                 )
                 .padded()
-                .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+                .map(|(((((ifnot, _), _), name), item_args), args): (((((std::option::Option<&str>, &str), char), std::string::String), Vec<ItemData>), Vec<Vec<Option<Block>>>)| {
                     let mut out = vec![];
                     for block in args {
                         for sub_block in block.into_iter().flatten() {
                             out.append(&mut vec![Some(sub_block)]);
                         }
                     }
+                    let mut inverted = "";
+                    if let Some(_) = ifnot {
+                        inverted = "NOT";
+                    }
+
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, data) in item_args.into_iter().enumerate() {
+                        let id = data_to_id(&data);
+                        let slot = slot + 1;
+                        items.push(Item {
+                            id,
+                            slot: slot.try_into().expect("failed ot convert to usize"),
+                            item: data,
+                        })
+                    }
+
+
                     out.insert(
                         0,
                         Some(Block::Code {
                             block: "if_entity",
-                            items: vec![],
+                            items,
                             action: first_upper(&name),
                             data: "",
                             target: "Selection",
-                            inverted: "",
+                            inverted,
                             sub_action: String::new(),
                         }),
                     );
@@ -301,7 +346,11 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                 .padded()
                 .then(text::keyword("plot"))
                 .padded()
+                .then(just("."))
+                .padded()
                 .then(ident())
+                .padded()
+                .then(argument_list())
                 .then(
                     actions
                         .clone()
@@ -313,9 +362,9 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .padded(),
                 )
                 .padded()
-                .map(|(((ifnot, sm2), name), args)| {
+                .map(|(((((ifnot, _), _), name), item_args), args)| {
                     let mut inverted = "";
-                    if let Some(v) = ifnot {
+                    if let Some(_) = ifnot {
                         inverted = "NOT";
                     }
                     let mut out = vec![];
@@ -324,11 +373,22 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                             out.append(&mut vec![Some(sub_block)]);
                         }
                     }
+                    let mut items: Vec<Item> = vec![];
+                    for (slot, data) in item_args.into_iter().enumerate() {
+                        let id = data_to_id(&data);
+                        let slot = slot + 1;
+                        items.push(Item {
+                            id,
+                            slot: slot.try_into().expect("failed ot convert to usize"),
+                            item: data,
+                        })
+                    }
+
                     out.insert(
                         0,
                         Some(Block::Code {
                             block: "if_game",
-                            items: vec![],
+                            items,
                             action: first_upper(&name),
                             data: "",
                             target: "Selection",
@@ -380,7 +440,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .delimited_by(just('{'), just('}'))
                         .padded(),
                 )
-                .map(|((((((ifnot, unknown), variable), effect), name), item_args), args)| {
+                .map(|((((((ifnot, _), variable), effect), name), item_args), args)| {
                     let mut out = vec![];
                     for block in args {
                         for sub_block in block.into_iter().flatten() {
@@ -410,7 +470,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         tmp_effect = &name;
                     }
                     let mut inverted = "";
-                    if let Some(v) = ifnot {
+                    if let Some(_) = ifnot {
                         inverted = "NOT";
                     }
                     out.insert(

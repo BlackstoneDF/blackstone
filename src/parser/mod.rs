@@ -1,6 +1,6 @@
 use chumsky::{
     prelude::Rich,
-    primitive::{none_of, one_of},
+    primitive::one_of,
     IterParser, Parser,
 };
 
