@@ -1,3 +1,7 @@
 event player.join {
     func myFunction(10);
 }
+
+func myFunction() {
+    unpack v1 v2 v3;
+}

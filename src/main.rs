@@ -30,7 +30,7 @@ fn main() -> io::Result<()> {
                     let file =
                         std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
                     process_inputs(&file, &display, CompileTarget::Recode);
-                    std::thread::sleep(std::time::Duration::from_millis(200));
+                    
                 }
 
                 let dur = start.elapsed();
@@ -137,6 +137,8 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
                     CompileTarget::Recode => compile_with_recode(subvector, name),
                     CompileTarget::Stdout => compile_to_console(subvector),
                 }
+
+                std::thread::sleep(std::time::Duration::from_millis(200));
             }
         }
         Err(errors) => {

@@ -64,7 +64,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 
 ### Bonus / Planned Features
 
-- [ ] Function Parameters
+- [x] Function Parameters
 - [ ] Object-Oriented Programming
 - [ ] Compiler-Enforced Strong Typing
 - [ ] Tests
