@@ -30,7 +30,6 @@ fn main() -> io::Result<()> {
                     let file =
                         std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
                     process_inputs(&file, &display, CompileTarget::Recode);
-                    
                 }
 
                 let dur = start.elapsed();

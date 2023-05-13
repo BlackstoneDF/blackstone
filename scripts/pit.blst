@@ -2,6 +2,8 @@ event player.join {
     func myFunction(10);
 }
 
-func myFunction() {
-    unpack v1 v2 v3;
+func myFunction(number) {
+    unpack v1;
+
+    
 }

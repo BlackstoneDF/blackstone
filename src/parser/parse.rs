@@ -805,12 +805,8 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
         let unpack = {
             text::keyword("unpack")
                 .padded()
-                .ignore_then(
-                    ident()
-                        .padded()
-                        .repeated()
-                        .collect::<Vec<_>>()
-                ).map(|idents| {
+                .ignore_then(ident().padded().repeated().collect::<Vec<_>>())
+                .map(|idents| {
                     let mut out = vec![];
                     for (index, id) in idents.into_iter().enumerate() {
                         out.push(Some(Block::Code {
@@ -819,18 +815,26 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                                 Item {
                                     slot: 1,
                                     id: "var".to_string(),
-                                    item: ItemData::Variable { scope: VariableScope::Local, name: id }
+                                    item: ItemData::Variable {
+                                        scope: VariableScope::Local,
+                                        name: id,
+                                    },
                                 },
                                 Item {
                                     slot: 2,
                                     id: "var".to_string(),
-                                    item: ItemData::Variable { scope: VariableScope::Local, name: "__FUNCTION_PARAMETERS".to_string() }
+                                    item: ItemData::Variable {
+                                        scope: VariableScope::Local,
+                                        name: "__FUNCTION_PARAMETERS".to_string(),
+                                    },
                                 },
                                 Item {
                                     slot: 3,
                                     id: "num".to_string(),
-                                    item: ItemData::Number { data: (index as f32) }
-                                }
+                                    item: ItemData::Number {
+                                        data: (index as f32),
+                                    },
+                                },
                             ],
                             action: "GetListValue".to_string(),
                             data: "",
@@ -841,7 +845,8 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                     }
                     out
                 })
-        }.boxed();
+        }
+        .boxed();
         /*
         OTHER
          */
@@ -859,7 +864,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             repeat,
             func,
             proc,
-            unpack
+            unpack,
         ))
     });
 
