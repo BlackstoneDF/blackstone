@@ -1,7 +1,8 @@
-event player.join {
-    player.sendMessage("this is my message");
-    var local.x = with(20);
-    select AllPlayers::nil() {
-            player.sendMessage("Hi!");
-    }
+event player.join { 
+    if var local.x = with(10) {
+
+    }; 
+    else {
+
+    };
 }

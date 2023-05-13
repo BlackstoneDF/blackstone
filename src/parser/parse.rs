@@ -489,6 +489,53 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                 })
                 .boxed()
         };
+
+        let _else = {
+            text::keyword("else")
+                .padded()
+                .ignore_then(
+                    actions
+                        .clone()
+                        .padded()
+                        .separated_by(just(';'))
+                        .allow_trailing()
+                        .collect::<Vec<_>>()
+                        .padded()
+                        .delimited_by(just('{'), just('}'))
+                        .padded(),
+                ).map(|blocks| {
+                    let mut out = vec![];
+                    for block in blocks {
+                        for sub_block in block.into_iter().flatten() {
+                            out.append(&mut vec![Some(sub_block)]);
+                        }
+                    }
+                    out.insert(
+                        0,
+                        Some(Block::Code {
+                            block: "else",
+                            items: vec![],
+                            action: "".to_string(),
+                            data: "",
+                            target: "Selection",
+                            inverted: "",
+                            sub_action: String::new(),
+                        }),
+                    );
+                    out.insert(
+                        1,
+                        Some(Block::Bracket {
+                            direct: BracketDirection::Open,
+                            typ: BracketType::Norm,
+                        }),
+                    );
+                    out.push(Some(Block::Bracket {
+                        direct: BracketDirection::Close,
+                        typ: BracketType::Norm,
+                    }));
+                    out
+                })
+        }.boxed();
         /*
         OTHER
          */
@@ -501,6 +548,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             if_entity,
             if_game,
             if_variable,
+            _else,
             select_object,
         ))
     });
@@ -554,7 +602,8 @@ pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, E
         .padded()
         .then(
             actions_parser()
-                .repeated()
+                .separated_by(just(';'))
+                .allow_trailing()
                 .collect::<Vec<_>>()
                 .padded()
                 .delimited_by(just('{'), just('}'))
@@ -587,7 +636,8 @@ pub fn events_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, E
         .padded()
         .then(
             actions_parser()
-                .repeated()
+                .separated_by(just(';'))
+                .allow_trailing()
                 .collect::<Vec<_>>()
                 .padded()
                 .delimited_by(just('{'), just('}'))
