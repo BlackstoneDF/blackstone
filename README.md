@@ -44,7 +44,7 @@ You can also install it through our `Releases` page on the sidebar. During offic
 - [x] Call Function
 - [x] Process
 - [x] Start Process
-- [ ] Else
+- [x] Else
 - [x] Select Object
 - [ ] NOT Functionality
 

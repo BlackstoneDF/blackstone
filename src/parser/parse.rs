@@ -184,10 +184,11 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
 
         let if_player = {
             text::keyword("if")
-                .ignore_then(just(' '))
-                .ignore_then(just('!'))
+                .padded()
                 .ignore_then(text::keyword("player"))
+                .padded()
                 .ignore_then(just('.'))
+                .padded()
                 .ignore_then(ident())
                 .padded()
                 .then(
@@ -238,9 +239,11 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
 
         let if_entity = {
             text::keyword("if")
-                .ignore_then(just(' '))
+                .padded()
                 .ignore_then(text::keyword("entity"))
+                .padded()
                 .ignore_then(just('.'))
+                .padded()
                 .ignore_then(ident())
                 .then(
                     actions
@@ -290,10 +293,15 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
 
         let if_game = {
             text::keyword("if")
-                .ignore_then(just(' '))
-                .ignore_then(text::keyword("plot"))
-                .ignore_then(just('.'))
-                .ignore_then(ident())
+                .ignore_then(
+                    text::keyword("not")
+                    .or_not()
+                    .padded()
+                )
+                .padded()
+                .then(text::keyword("plot"))
+                .padded()
+                .then(ident())
                 .then(
                     actions
                         .clone()
@@ -305,7 +313,11 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .padded(),
                 )
                 .padded()
-                .map(|(name, args): (String, Vec<Vec<Option<Block>>>)| {
+                .map(|(((ifnot, sm2), name), args)| {
+                    let mut inverted = "";
+                    if let Some(v) = ifnot {
+                        inverted = "NOT";
+                    }
                     let mut out = vec![];
                     for block in args {
                         for sub_block in block.into_iter().flatten() {
@@ -320,7 +332,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                             action: first_upper(&name),
                             data: "",
                             target: "Selection",
-                            inverted: "",
+                            inverted,
                             sub_action: String::new(),
                         }),
                     );
@@ -343,9 +355,15 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
         let if_variable = {
             text::keyword("if")
                 .padded()
-                .ignore_then(text::keyword("var"))
+                .ignore_then(
+                    text::keyword("not")
+                    .or_not()
+                    .padded()
+                )
                 .padded()
-                .ignore_then(variable_parser())
+                .then(text::keyword("var"))
+                .padded()
+                .then(variable_parser())
                 .padded()
                 .then(operation)
                 .padded()
@@ -362,7 +380,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                         .delimited_by(just('{'), just('}'))
                         .padded(),
                 )
-                .map(|((((variable, effect), name), item_args), args)| {
+                .map(|((((((ifnot, unknown), variable), effect), name), item_args), args)| {
                     let mut out = vec![];
                     for block in args {
                         for sub_block in block.into_iter().flatten() {
@@ -391,6 +409,10 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                     if tmp_effect == "with" {
                         tmp_effect = &name;
                     }
+                    let mut inverted = "";
+                    if let Some(v) = ifnot {
+                        inverted = "NOT";
+                    }
                     out.insert(
                         0,
                         Some(Block::Code {
@@ -399,7 +421,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                             action: first_upper(&tmp_effect),
                             data: "",
                             target: "",
-                            inverted: "",
+                            inverted,
                             sub_action: String::new(),
                         }),
                     );
@@ -490,6 +512,71 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                 .boxed()
         };
 
+        let repeat = {
+            text::keyword("repeat")
+                .padded()
+                .ignore_then(
+                    ident()
+                        .padded()
+                        .then_ignore(just("::"))
+                        .padded()
+                        .then(ident())
+                        .padded()
+                        .then(argument_list())
+                        .padded()
+                        .separated_by(just("->"))
+                        .collect::<Vec<_>>(),
+                )
+                .then(
+                    actions
+                        .clone()
+                        .separated_by(just(';'))
+                        .allow_trailing()
+                        .collect::<Vec<_>>()
+                        .padded()
+                        .delimited_by(just('{'), just('}'))
+                        .padded(),
+                )
+                .map(|(selections, codes)| {
+                    let mut out = vec![];
+                    for selection in selections {
+                        let ((t1, mut t2), args) = selection;
+                        let mut items: Vec<Item> = vec![];
+                        for (slot, data) in args.into_iter().enumerate() {
+                            let id = data_to_id(&data);
+                            let slot = slot + 1;
+                            items.push(Item {
+                                id,
+                                slot: slot.try_into().expect("failed ot convert to usize"),
+                                item: data,
+                            })
+                        }
+                        if t2 == "nil" {
+                            t2 = "".to_string();
+                        }
+                        out.push(Some(Block::Code {
+                            block: "repeat",
+                            items,
+                            action: first_upper(&t1),
+                            data: "",
+                            target: "",
+                            inverted: "",
+                            sub_action: first_upper(&t2),
+                        }));
+                    }
+                    out.push(Some(Block::Bracket { direct: BracketDirection::Open, typ: BracketType::Repeat }));
+                    for code in codes {
+                        for subcode in code {
+                            out.push(subcode);
+                        }
+                    }
+                    out.push(Some(Block::Bracket { direct: BracketDirection::Close, typ: BracketType::Repeat }));
+                    out
+                })
+                .boxed()
+        };
+
+
         let _else = {
             text::keyword("else")
                 .padded()
@@ -550,6 +637,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             if_variable,
             _else,
             select_object,
+            repeat,
         ))
     });
 

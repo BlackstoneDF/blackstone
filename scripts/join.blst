@@ -1,8 +1,8 @@
 event player.join { 
     if var local.x = with(10) {
 
-    }; 
-    else {
-
     };
+    if not var local.x = with(20) {
+
+    }
 }
