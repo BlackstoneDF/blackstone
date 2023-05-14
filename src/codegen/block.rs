@@ -61,7 +61,7 @@ pub enum Block<'a> {
     },
 }
 
-static START_PROCESS_DEFAULT: &str = include_str!("../../backend/static/START_PROCESS_ITEMS");
+static START_PROCESS_DEFAULT: &str = r#"{"item":{"id":"bl_tag","data":{"option":"Don't copy","tag":"Local Variables","action":"dynamic","block":"start_process"}},"slot":25},{"item":{"id":"bl_tag","data":{"option":"With current targets","tag":"Target Mode","action":"dynamic","block":"start_process"}},"slot":26}"#;
 
 #[allow(dead_code, unused)]
 impl Block<'_> {

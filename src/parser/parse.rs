@@ -649,7 +649,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
                 .boxed()
         };
 
-        let _else = {
+        let r#else = {
             text::keyword("else")
                 .padded()
                 .ignore_then(
@@ -859,7 +859,7 @@ pub fn actions_parser<'a>() -> impl Parser<'a, &'a str, Vec<Option<Block<'a>>>, 
             if_entity,
             if_game,
             if_variable,
-            _else,
+            r#else,
             select_object,
             repeat,
             func,

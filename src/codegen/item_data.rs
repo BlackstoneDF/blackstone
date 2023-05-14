@@ -16,7 +16,7 @@ pub enum ItemData {
     ///   - String `data` - The underlying String value.
     Text { data: String },
     /// A vanilla Minecraft item.
-    ///   - String `data` - Associated data with the item.
+    ///   - String `data` - Associated data with the item. It is NBT.
     VanillaItem { data: String },
     /// A DF Sound type.
     ///   - String `sound` - the name of the sound
@@ -60,7 +60,7 @@ pub enum ItemData {
         motion_variation: u32,
     },
     #[default]
-    NoData,
+    NoData
 }
 
 #[allow(dead_code, unused)]
@@ -112,7 +112,7 @@ impl ItemData {
                     spread.0, spread.1, motion.0, motion.1, motion.2
                 )
             }
-            Self::NoData => r#""NoData""#.to_string(),
+            Self::NoData => panic!("uh oh, no data"),
         }
     }
 }

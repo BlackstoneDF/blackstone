@@ -1,8 +1,10 @@
 use ariadne::*;
 use chumsky::Parser;
+use diamondfire_actiondump::registry::CodeRegistry;
+
 use codegen::{block::Block, misc::process_block_vec};
 
-use std::{env, io, io::Write, net::TcpStream};
+use std::{env, io, io::{Write, Read}, net::TcpStream};
 
 mod codegen;
 mod parser;
@@ -14,6 +16,8 @@ fn main() -> io::Result<()> {
     let start = std::time::Instant::now();
 
     let prefix = "shulker"; // cmd prefix
+
+    
 
     if let Some(arg) = args.get(1) {
         match arg.as_str() {
