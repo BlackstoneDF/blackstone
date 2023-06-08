@@ -4,6 +4,7 @@ use crate::codegen::{item_data::ItemData, misc::VariableScope};
 use chumsky::extra::Err;
 pub mod datatypes;
 pub mod parse;
+pub mod token;
 
 pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, char>>> {
     let pt2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%<>.";

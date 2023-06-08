@@ -1,10 +1,9 @@
 use ariadne::*;
 use chumsky::Parser;
-use diamondfire_actiondump::registry::CodeRegistry;
 
 use codegen::{block::Block, misc::process_block_vec};
 
-use std::{env, io, io::{Write, Read}, net::TcpStream};
+use std::{env, io, io::{Write}, net::TcpStream};
 
 mod codegen;
 mod parser;
@@ -17,8 +16,6 @@ fn main() -> io::Result<()> {
 
     let prefix = "shulker"; // cmd prefix
 
-    
-
     if let Some(arg) = args.get(1) {
         match arg.as_str() {
             "build" => {
@@ -26,13 +23,13 @@ fn main() -> io::Result<()> {
                 let paths = std::fs::read_dir("./scripts")?;
                 for path in paths {
                     let display = path
-                        .expect("somehow doesnt exist")
+                        .expect("/scripts directory does not exist")
                         .path()
                         .display()
                         .to_string();
                     println!("\t\x1b[32;1mBuilding\x1b[0m `{display}`.");
                     let file =
-                        std::fs::read_to_string(display.clone()).expect("somehow doesnt exist");
+                        std::fs::read_to_string(display.clone()).expect("somehow doesn't exist");
                     process_inputs(&file, &display, CompileTarget::Recode);
                 }
 
@@ -99,10 +96,10 @@ fn compile_with_recode(vector: Vec<Block>, _name: String) {
         r#"{"type": "template","source": "Blackstone","data":"{'name':'my name','data':'%s%'}"}"#;
     let send = send.replace("%s%", &s);
     // let send = send.replace("%n%", &name);
-    let mut stream = TcpStream::connect("localhost:31372").expect("failed to connect");
+    let mut stream = TcpStream::connect("localhost:31372").expect("Failed to connect");
     stream
         .write_all(send.as_bytes())
-        .expect("failed to write all");
+        .expect("Failed to write all bytes");
 }
 
 fn compile_to_console(vector: Vec<Block>) {
@@ -152,7 +149,7 @@ fn process_inputs(input: &str, path: &str, target: CompileTarget) {
                     .with_label(Label::new(e.span().start..e.span().end).with_color(Color::Red))
                     .finish()
                     .print(Source::from(input))
-                    .expect("failed to print?");
+                    .expect("Unexpected error: Failed to print");
             }
         }
     }
