@@ -1,0 +1,64 @@
+file:
+  items:
+    - event_decl:
+      # No visibility
+      signature:
+        decl_token: 
+        span: ~
+      iden:
+        to_string: Join
+        span: ~
+      event_name:
+        to_string: event
+        span: ~
+      block:
+        statements:
+          - var_declare:
+            type: let
+            decl_token:
+              string: msg
+              span: ~ 
+            equals_token:
+              span: ~
+            expr:
+              string: welcome to this game!
+              span: ~
+            terminator_token:
+              span: ~
+          - func_call:
+            path: 
+              segments:
+                - iden:
+                  string: player
+                  span: ~
+                - path_separator:
+                  span: ~
+                - iden:
+                  string: sendMessage
+                  span: ~
+              span: ~
+            paren_token:
+              span: ~
+            args: 
+              - literal:
+                text:
+                  elements:
+                    # TODO: Think of better names
+                    - text_part:
+                      text: "Hello "
+                      span: ~
+                    - selector_text_part:
+                      string: player
+                      span: ~
+                    - text_part:
+                      text: ", "
+                      span: ~
+                    - template_part:
+                      text: "${msg}"
+                      inner: "msg"
+                      span: ~
+                  span: ~
+            span: ~
+        span: ~
+      span: ~
+  span: ~

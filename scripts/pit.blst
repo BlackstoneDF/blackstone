@@ -1,7 +1,0 @@
-event player.join {
-    func myFunction(10);
-}
-
-func myFunction() {
-    unpack arg1
-}

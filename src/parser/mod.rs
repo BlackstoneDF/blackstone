@@ -1,43 +1,50 @@
-use chumsky::{prelude::Rich, primitive::one_of, IterParser, Parser};
+use chumsky::{
+    extra,
+    input::{Stream, ValueInput},
+    prelude::{Input, Rich},
+    primitive::{any, todo, Just, choice, Choice, just},
+    span::SimpleSpan,
+    Parser,
+};
+use logos::Lexer;
 
-use crate::codegen::{item_data::ItemData, misc::VariableScope};
-use chumsky::extra::Err;
-pub mod datatypes;
-pub mod parse;
-pub mod token;
+use crate::lexer::Token;
 
-pub fn ident<'a>() -> impl Parser<'a, &'a str, String, Err<Rich<'a, char>>> {
-    let pt2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%<>.";
-    one_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ%.")
-        .then(one_of(pt2).repeated().collect::<String>())
-        .map(|(init_char, second_char)| {
-            format!("{init_char}{second_char}")
-                .replace('<', "(")
-                .replace('>', ")")
-        })
-}
+use self::ast::AstFile;
 
-fn ident_to_var(input: &str) -> ItemData {
-    let words = input.split('.').collect::<Vec<_>>();
-    if let Some(scope) = words.get(0) {
-        match *scope {
-            "local" => ItemData::Variable {
-                scope: VariableScope::Local,
-                name: words.get(1).unwrap_or(&"_NULL").to_string(),
-            },
-            "save" => ItemData::Variable {
-                scope: VariableScope::Saved,
-                name: words.get(1).unwrap_or(&"_NULL").to_string(),
-            },
-            _ => ItemData::Variable {
-                scope: VariableScope::Unsaved,
-                name: words.get(1).unwrap_or(&"_NULL").to_string(),
-            },
+pub mod ast;
+mod parsers;
+
+pub fn parse(tokens: Lexer<Token>, src: &str) -> AstFile {
+    let token_iter = tokens.spanned().map(|(tok, span)| {
+        if let Ok(token) = tok {
+            (token, span.into())
+        } else {
+            panic!("ERROR {span:?}");
         }
-    } else {
-        ItemData::Variable {
-            scope: VariableScope::Unsaved,
-            name: input.to_string(),
-        }
+    });
+
+    let token_stream = Stream::from_iter(token_iter).spanned((src.len()..src.len()).into());
+
+    let out = parsers::items::event::parse().parse(token_stream);
+    println!("{:?}", out);
+    AstFile {
+        items: todo!(),
+        span: tokens.span().into(),
     }
 }
+
+/* 
+pub fn expr<'input, 'block, I: ValueInput<'input, Token = Token, Span = SimpleSpan>>(
+) -> impl Parser<'input, I, Pain, extra::Err<Rich<'input, Token>>> {
+    choice((
+        just(Token::Identifier),
+
+        just(Token::If),
+        just(Token::FunctionDef),
+        just(Token::ProcessDef),
+        just(Token::MacroDef),
+        just(Token::EventDef)
+    ))
+}
+*/

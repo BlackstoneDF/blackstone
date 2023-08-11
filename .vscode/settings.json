@@ -1,9 +1,0 @@
-{
-    "cSpell.words": [
-        "chumsky",
-        "codegen"
-    ],
-    "rust-analyzer.linkedProjects": [
-        ".\\Cargo.toml"
-    ]
-}
