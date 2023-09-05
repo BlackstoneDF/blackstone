@@ -1,6 +1,6 @@
 use chumsky::span::SimpleSpan;
 
-use crate::parser::ast::{Span, expr::Iden};
+use crate::parser::ast::{Span, expr::Identifier};
 
 use super::Block;
 
@@ -10,9 +10,9 @@ use super::Block;
 #[derive(Debug)]
 pub struct EventDeceleration {
     pub event_token: Span,
-    pub iden: Iden,
+    pub iden: Identifier,
     pub paren_token: Span,
-    pub event_iden: Iden,
+    pub event_iden: Identifier,
     pub block: Block
 }
 

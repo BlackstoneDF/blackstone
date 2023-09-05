@@ -6,7 +6,9 @@ use logos::{Logos, Lexer};
 #[derive(Logos, Clone, PartialEq, Debug)]
 #[logos(skip r"[ \t\n\f]+")]
 pub enum Token {
-    Error,
+
+    // Hard Keywords
+
 
     // Soft Keywords
     #[token("if")]
@@ -19,6 +21,15 @@ pub enum Token {
     MacroDef,
     #[token("event")]
     EventDef,
+    #[token("chain")]
+    ChainDef,
+
+    #[token("let")]
+    Let,
+    #[token("alias")]
+    Alias,
+    #[token("sel")]
+    Sel,
 
     // Key symbols
     #[token(r"//[^\n]*")]
@@ -33,6 +44,10 @@ pub enum Token {
     Colon,
     #[token(",")]
     Comma,
+    #[token("=")]
+    Equals,
+    #[token(";")]
+    Semicolon,
 
     // Open and close things
     #[token("(")]
@@ -50,10 +65,10 @@ pub enum Token {
 
     #[regex("[a-zA-Z_][a-zA-Z0-9_]*", extract)]
     Identifier(String),
-    #[regex(r"\d+(\.\d+)?")]
-    Number,
-    #[regex(r#""([^"\\]*(?:\\.[^"\\]*)*)""#)]
-    String,
+    #[regex(r"\d+(\.\d+)?", extract)]
+    Number(String),
+    #[regex(r#""([^"\\]*(?:\\.[^"\\]*)*)""#, extract)]
+    String(String),
 }
 
 fn extract(lexer: &mut Lexer<Token>) -> String {

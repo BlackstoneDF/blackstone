@@ -3,8 +3,8 @@ use super::Span;
 
 #[derive(Debug)]
 pub struct Statement {
-    typ: StatementType,
-    span: Span
+    pub typ: StatementType,
+    pub span: Span
 }
 
 #[derive(Debug)]

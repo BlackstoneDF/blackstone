@@ -5,6 +5,7 @@ use self::item::Item;
 pub mod expr;
 pub mod item;
 pub mod statement;
+pub mod common;
 
 // To swap out when we need file ids and stuff
 type Span = SimpleSpan;

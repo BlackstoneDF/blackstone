@@ -1,20 +1,83 @@
 use chumsky::span::SimpleSpan;
 use indexmap::IndexMap;
 
-use super::Expression;
+use crate::{lexer::Token, parser::ast::Span};
 
+use super::{Expression, Identifier};
+
+/// A literal is an expression that isn't a call
+/// At least in the ast, something like var("name") is considered as a call
+/// A literal is something like 1, "a", [2] or {a: 7}
 pub enum Literal {
-    DataType(DataType),
+    Text(),
+    Number(),
     Struct(StructLiteral),
-    List(Vec<Expression>),
+    List(ListLiteral),
+    Dict(DictionaryLiteral),
 }
 
+pub struct TextLiteral {
+    
+}
+
+/// Example
+/// ```bls
+/// ["a", b, "c", 1, [2, 3]]
+/// ```
+pub struct ListLiteral {
+    opening: Span,
+    elements: Vec<(Expression, Option<Span>)>,
+    closing: Span,
+}
+
+/// Example:
+/// ```bls
+/// Person {
+///   name: "bob",
+///   age: 3
+/// }
+/// ```
+#[derive(Debug)]
 pub struct StructLiteral {
-    name: String,
-    pairs: IndexMap<String, Expression>
+    name: Identifier,
+    opening: Span,
+    pairs: Vec<StructKVPair>,
+    closing: Span,
 }
 
-// TODO impl
+/// Example:
+/// ```bls
+/// name: "bob",
+/// ```
+#[derive(Debug)]
+pub struct StructKVPair {
+    key: Identifier,
+    colon: Span,
+    value_span: Expression,
+    comma: Option<Span>,
+}
+
+pub struct DictionaryLiteral {
+    opening: Span,
+    pairs: Vec<DictKVPair>,
+    closing: Span,
+}
+
+/// Example:
+/// ```bls
+/// "hello to": "bob",
+/// ```
+#[derive(Debug)]
+pub struct DictKVPair {
+    key: Expression,
+    colon: Span,
+    value_span: Expression,
+    comma: Option<Span>,
+}
+
+// TODO: Move this because ast does not handle this
+/// NOT FOR AST
+#[derive(Debug)]
 pub enum DataType {
     String(StringLiteral),
     Number(NumberLiteral),
@@ -29,16 +92,19 @@ pub enum DataType {
     False,
 }
 
+#[derive(Debug)]
 pub struct StringLiteral {
     string: String,
-    span: SimpleSpan
+    span: SimpleSpan,
 }
 
+#[derive(Debug)]
 pub struct NumberLiteral {
-    digits: String, 
-    span: SimpleSpan
+    digits: String,
+    span: SimpleSpan,
 }
 
+#[derive(Debug)]
 pub struct Particle {
     particle: String,
     amount: u32,
@@ -57,34 +123,40 @@ pub struct Particle {
     roll: Option<f64>,
 }
 
+#[derive(Debug)]
 pub struct Variable {
     name: String,
     scope: VariableScope,
 }
 
+#[derive(Debug)]
 pub struct PotionEffect {
     effect: String,
     duration: i8,
     amplifier: i8,
 }
 
+#[derive(Debug)]
 pub struct GameValue {
     name: String,
     target: Target,
 }
 
+#[derive(Debug)]
 pub struct Sound {
     sound: String,
     pitch: f64,
     volume: f64,
 }
 
+#[derive(Debug)]
 pub struct Vector {
     x: f64,
     y: f64,
     z: f64,
 }
 
+#[derive(Debug)]
 pub struct Location {
     x: f64,
     y: f64,
@@ -94,12 +166,14 @@ pub struct Location {
     is_block: bool,
 }
 
+#[derive(Debug)]
 pub enum VariableScope {
     Local,
     Game,
     Save,
 }
 
+#[derive(Debug)]
 pub enum Target {
     Selection,
     Default,
@@ -114,6 +188,7 @@ pub enum Target {
     AllMobs,
 }
 
+#[derive(Debug)]
 pub struct Color {
     red: u8,
     green: u8,

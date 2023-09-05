@@ -5,15 +5,16 @@ use chumsky::{
     input::ValueInput,
     prelude::Rich,
     primitive::{choice, just},
+    select,
     span::SimpleSpan,
-    Parser, select,
+    Parser,
 };
 
 use crate::{
     lexer::Token,
     parser::{
-        ast::{expr::Iden, item::event::EventDeceleration},
-        parsers::block,
+        ast::{expr::Identifier, item::event::EventDeceleration},
+        parsers::block, iden,
     },
     util::id2,
 };
@@ -22,10 +23,7 @@ pub fn parse<'input, 'block, I: ValueInput<'input, Token = Token, Span = SimpleS
 ) -> impl Parser<'input, I, EventDeceleration, extra::Err<Rich<'input, Token>>> {
     // event Join(event) {}
 
-    let expr_parse = select! {
-        Token::EventDef
-    };
-    /* 
+    /*
             just(Token::Identifier),
             just(Token::EventDef),
             just(Token::FunctionDef),
@@ -33,18 +31,16 @@ pub fn parse<'input, 'block, I: ValueInput<'input, Token = Token, Span = SimpleS
             just(Token::ProcessDef),
     */
     just(Token::EventDef)
-        .then(just(Token::Identifier))
+        .then(iden())
         .then(just(Token::OpenParen))
-        .then(expr_parse)
-        .or_not()
+        .then(iden())
         .then(just(Token::CloseParen))
         .then(block::parse().delimited_by(just(Token::OpenBrace), just(Token::CloseBrace)))
-        .then(just(Token::CloseBrace))
         .map_with_span(|tokens, span| {
-            println!("{:?}", tokens);
+            println!("Yes: {:?}", tokens);
             EventDeceleration {
                 event_token: todo!(),
-                iden: Iden {
+                iden: Identifier {
                     string: todo!(),
                     span: todo!(),
                 },

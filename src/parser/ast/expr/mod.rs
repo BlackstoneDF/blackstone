@@ -6,17 +6,19 @@ use super::Span;
 
 pub mod literal;
 
+#[derive(Debug)]
 pub enum ExprType {
     Literal(DataType),
 }
 
+#[derive(Debug)]
 pub struct Expression {
     pub expr_type: ExprType,
-    pub span: SimpleSpan
+    pub span: SimpleSpan,
 }
 
 #[derive(Debug)]
-pub struct Iden {
+pub struct Identifier {
     pub string: String,
-    pub span: Span
+    pub span: Span,
 }
