@@ -1,15 +1,14 @@
-use chumsky::span::SimpleSpan;
+use self::bind::EventDeceleration;
 
-use self::event::EventDeceleration;
+use super::{Spanned, stmt::Statement};
 
-use super::{Span, statement::Statement};
-
-pub mod event;
+pub mod bind;
+pub mod utils;
 
 #[derive(Debug)]
 pub struct Item {
     typ: ItemType,
-    span: Span
+    span: Spanned
 }
 
 #[derive(Debug)]
@@ -20,5 +19,6 @@ pub enum ItemType {
 #[derive(Debug)]
 pub struct Block {
     pub statements: Vec<Statement>,
-    pub span: Span 
+    pub span: Spanned
 }
+

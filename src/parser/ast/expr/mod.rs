@@ -2,7 +2,7 @@ use chumsky::span::SimpleSpan;
 
 use self::literal::DataType;
 
-use super::Span;
+use super::Spanned;
 
 pub mod literal;
 
@@ -20,5 +20,5 @@ pub struct Expression {
 #[derive(Debug)]
 pub struct Identifier {
     pub string: String,
-    pub span: Span,
+    pub span: Spanned,
 }

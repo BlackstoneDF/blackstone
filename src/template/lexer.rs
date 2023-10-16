@@ -5,7 +5,7 @@ use std::{
 };
 
 use chumsky::span::SimpleSpan;
-use logos::{Logos, Span};
+use logos::{Logos};
 
 use crate::lexer::{self, Token};
 
@@ -20,7 +20,7 @@ impl<'a> Iterator for StringLexer<'a> {
         let begin = self.source.next();
         if let Some(begin) = begin {
             let size = begin.0;
-            let span = (SimpleSpan::new(size, size + 1));
+            let _span = SimpleSpan::new(size, size + 1);
             Some(match begin.1 {
                 '$' => self.parse_template(size),
                 it => self.parse_string(it, size),
@@ -43,6 +43,7 @@ impl<'a> StringLexer<'a> {
         &mut self,
         beginning: usize,
     ) -> Result<(StringToken, SimpleSpan), StringLexerError> {
+        let _a :char = 'a';
         let next = self.source.next();
         match next {
             Some((span, next)) => {

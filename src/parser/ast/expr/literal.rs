@@ -1,7 +1,7 @@
 use chumsky::span::SimpleSpan;
-use indexmap::IndexMap;
 
-use crate::{lexer::Token, parser::ast::Span};
+
+use crate::{parser::ast::Spanned};
 
 use super::{Expression, Identifier};
 
@@ -25,9 +25,9 @@ pub struct TextLiteral {
 /// ["a", b, "c", 1, [2, 3]]
 /// ```
 pub struct ListLiteral {
-    opening: Span,
-    elements: Vec<(Expression, Option<Span>)>,
-    closing: Span,
+    opening: Spanned,
+    elements: Vec<(Expression, Option<Spanned>)>,
+    closing: Spanned,
 }
 
 /// Example:
@@ -40,9 +40,9 @@ pub struct ListLiteral {
 #[derive(Debug)]
 pub struct StructLiteral {
     name: Identifier,
-    opening: Span,
+    opening: Spanned,
     pairs: Vec<StructKVPair>,
-    closing: Span,
+    closing: Spanned,
 }
 
 /// Example:
@@ -52,15 +52,15 @@ pub struct StructLiteral {
 #[derive(Debug)]
 pub struct StructKVPair {
     key: Identifier,
-    colon: Span,
+    colon: Spanned,
     value_span: Expression,
-    comma: Option<Span>,
+    comma: Option<Spanned>,
 }
 
 pub struct DictionaryLiteral {
-    opening: Span,
+    opening: Spanned,
     pairs: Vec<DictKVPair>,
-    closing: Span,
+    closing: Spanned,
 }
 
 /// Example:
@@ -70,9 +70,9 @@ pub struct DictionaryLiteral {
 #[derive(Debug)]
 pub struct DictKVPair {
     key: Expression,
-    colon: Span,
+    colon: Spanned,
     value_span: Expression,
-    comma: Option<Span>,
+    comma: Option<Spanned>,
 }
 
 // TODO: Move this because ast does not handle this

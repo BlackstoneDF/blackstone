@@ -1,8 +1,7 @@
 use chumsky::{
     extra,
-    input::{Stream, ValueInput},
-    prelude::{Input, Rich},
-    primitive::{any, todo, Just, choice, Choice, just},
+    input::{ValueInput},
+    prelude::{Rich},
     span::SimpleSpan,
     Parser, select,
 };
@@ -15,7 +14,8 @@ use self::ast::AstFile;
 pub mod ast;
 mod parsers;
 
-pub fn parse_file(tokens: Lexer<Token>, src: &str) -> AstFile {
+pub fn parse_file(_tokens: Lexer<Token>, _src: &str) -> AstFile {
+    /*
     let token_iter = tokens.spanned().map(|(tok, span)| {
         if let Ok(token) = tok {
             (token, span.into())
@@ -33,6 +33,8 @@ pub fn parse_file(tokens: Lexer<Token>, src: &str) -> AstFile {
         items: todo!(),
         span: tokens.span().into(),
     }
+    */
+    todo!()
 }
 
 pub fn iden<'input, 'block, I: ValueInput<'input, Token = Token, Span = SimpleSpan>>(
